@@ -1,0 +1,73 @@
+{
+	"pages": [{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "主页"
+			}
+		},
+		{
+			"path": "pages/activity/activity",
+			"style": {
+				"navigationBarTitleText": "活动"
+			}
+		},
+		{
+			"path": "pages/registration/registration",
+			"style": {
+				"navigationBarTitleText": "我的活动"
+			}
+		},
+		{
+			"path": "pages/user/user",
+			"style": {
+				"navigationBarTitleText": "个人信息"
+			}
+		},
+		{
+			"path" : "pages/searchActivity/searchActivity",
+			"style" : 
+			{
+				"navigationBarTitleText" : ""
+				// "navigationStyle": "custom"  // 自定义导航栏
+			}
+		}
+	],
+	"tabBar": {
+		"fontSize": "16px",
+		"spacing": "5px",
+		"color": "#bfbfbf",
+		"backgroundColor": "#ffffff",
+		"list": [{
+				"text": "主页",
+				"pagePath": "pages/index/index",
+				"iconPath": "/static/image/iconfonts/主页.png",
+				"selectedIconPath": "/static/image/iconfonts/主页 (1).png"
+			},
+			{
+				"text": "活动",
+				"pagePath": "pages/activity/activity",
+				"iconPath": "/static/image/iconfonts/活动.png",
+				"selectedIconPath": "/static/image/iconfonts/活动 (1).png"
+			},
+			{
+				"text": "我的活动",
+				"pagePath": "pages/registration/registration",
+				"iconPath": "/static/image/iconfonts/活动报名.png",
+				"selectedIconPath": "/static/image/iconfonts/活动报名 (1).png"
+			},
+			{
+				"text": "个人",
+				"pagePath": "pages/user/user",
+				"iconPath": "/static/image/iconfonts/个人.png",
+				"selectedIconPath": "/static/image/iconfonts/个人 (1).png"
+			}
+		]
+	},
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"uniIdRouter": {}
+}
