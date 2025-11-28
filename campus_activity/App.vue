@@ -1,4 +1,4 @@
-<script>
+<script >
 	export default {
 		onLaunch: function() {
 			console.log('App Launch')
@@ -20,5 +20,10 @@
 	.safety_area{
 		width: 100vw;
 		height: env(safe-area-inset-bottom);
+	}
+	
+	.container{
+		padding: 20rpx 24rpx;
+		min-height: 100vh;
 	}
 </style>

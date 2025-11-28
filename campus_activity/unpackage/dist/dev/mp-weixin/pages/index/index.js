@@ -35,7 +35,10 @@ const _sfc_main = {
         e: common_vendor.f(4, (item, k0, i0) => {
           return {
             a: common_vendor.t(item),
-            b: item
+            b: item,
+            c: common_vendor.o(($event) => common_vendor.index.navigateTo({
+              url: "/pages/clubDetails/clubDetails"
+            }), item)
           };
         }),
         f: common_assets._imports_0$1,

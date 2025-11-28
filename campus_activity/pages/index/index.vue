@@ -35,7 +35,9 @@
 
 			<view class="tribe_list">
 				<scroll-view class="tribe_scroll" scroll-x :show-scrollbar="false">
-					<view class="scroll_item_container" v-for="item in 4" :key="item">
+					<view class="scroll_item_container" v-for="item in 4" :key="item" @click="uni.navigateTo({
+						url:'/pages/clubDetails/clubDetails'
+					})">
 						<view class="tribe_card">
 							<view class="tribe_avatar">
 								<image src="/static/logo.png" mode="aspectFill"></image>
@@ -88,7 +90,6 @@
 <style lang="scss" scoped>
 	.home_container {
 		padding: 20rpx 24rpx;
-		// background: #f8f8f8;
 		min-height: 100vh;
 
 		// 搜索区域

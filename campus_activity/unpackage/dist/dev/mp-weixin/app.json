@@ -4,7 +4,8 @@
     "pages/activity/activity",
     "pages/registration/registration",
     "pages/user/user",
-    "pages/searchActivity/searchActivity"
+    "pages/searchActivity/searchActivity",
+    "pages/clubDetails/clubDetails"
   ],
   "window": {
     "navigationBarTextStyle": "black",

@@ -27,8 +27,17 @@
 			"path" : "pages/searchActivity/searchActivity",
 			"style" : 
 			{
-				"navigationBarTitleText" : ""
+				"navigationBarTitleText" : "",
 				// "navigationStyle": "custom"  // 自定义导航栏
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/clubDetails/clubDetails",
+			"style" : 
+			{
+				"navigationBarTitleText" : "",
+				"navigationBarBackgroundColor": "#fff"
 			}
 		}
 	],
