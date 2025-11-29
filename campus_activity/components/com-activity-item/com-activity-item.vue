@@ -1,5 +1,5 @@
 <template>
-	<view class="com-activity-item_cotainer">
+	<view class="com-activity-item_cotainer" @click="onToActivitDetail">
 		<view class="activity_tag">报名中</view>
 		<view class="activity_image">
 			<image src="/static/logo.png" mode="aspectFill"></image>
@@ -11,6 +11,11 @@
 </template>
 
 <script setup>
+	function onToActivitDetail(){
+		uni.navigateTo({
+			url:'/pages/activityDetail/activityDetail'
+		})
+	}
 </script>
 
 <style lang="scss" scoped>

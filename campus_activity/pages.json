@@ -39,6 +39,13 @@
 				"navigationBarTitleText" : "",
 				"navigationBarBackgroundColor": "#fff"
 			}
+		},
+		{
+			"path" : "pages/activityDetail/activityDetail",
+			"style" : 
+			{
+				"navigationBarTitleText" : "活动详情"
+			}
 		}
 	],
 	"tabBar": {
