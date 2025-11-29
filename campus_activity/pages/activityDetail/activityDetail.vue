@@ -75,7 +75,7 @@
 						</view>
 						<view class="info_item">
 							<view class="info_label">
-								<uni-icons type="clock" size="16" color="#666"></uni-icons>
+								<uni-icons type="calendar" size="16" color="#666"></uni-icons>
 								<text>活动时间</text>
 							</view>
 							<view class="info_value">2025.10.01-2025.11.01</view>
@@ -86,6 +86,13 @@
 								<text>活动级别</text>
 							</view>
 							<view class="info_value">院级</view>
+						</view>
+						<view class="info_item">
+							<view class="info_label">
+								<uni-icons type="bars" size="16" color="#666"></uni-icons>
+								<text>活动类型</text>
+							</view>
+							<view class="info_value">文体艺术</view>
 						</view>
 						<view class="info_item">
 							<view class="info_label">
@@ -413,6 +420,7 @@
 
 		.activityDetail_btn {
 			display: flex;
+			justify-content: space-between;
 			position: fixed;
 			left: 0;
 			bottom: 0;
@@ -443,7 +451,7 @@
 			}
 
 			.primary_btn {
-				flex: 1;
+				width: 60vw;
 				height: 80rpx;
 				line-height: 80rpx;
 				text-align: center;

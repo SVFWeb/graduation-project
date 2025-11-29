@@ -241,6 +241,7 @@
 }
 .activityDetail .activityDetail_btn.data-v-3c8aaa9f {
   display: flex;
+  justify-content: space-between;
   position: fixed;
   left: 0;
   bottom: 0;
@@ -268,7 +269,7 @@
   color: #FCB857;
 }
 .activityDetail .activityDetail_btn .primary_btn.data-v-3c8aaa9f {
-  flex: 1;
+  width: 60vw;
   height: 80rpx;
   line-height: 80rpx;
   text-align: center;

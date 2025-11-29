@@ -46,6 +46,14 @@
 			{
 				"navigationBarTitleText" : "活动详情"
 			}
+		},
+		{
+			"path" : "pages/activity/components/com-filter-list/com-filter-list",
+			"style" : 
+			{
+				"navigationBarTitleText" : "",
+				"navigationBarBackgroundColor": "#fff"
+			}
 		}
 	],
 	"tabBar": {

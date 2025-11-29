@@ -7990,12 +7990,15 @@ const createSubpackageApp = initCreateSubpackageApp();
   wx.createSubpackageApp = global.createSubpackageApp = createSubpackageApp;
 }
 exports._export_sfc = _export_sfc;
+exports.computed = computed;
 exports.createSSRApp = createSSRApp;
 exports.e = e;
 exports.f = f;
 exports.index = index;
 exports.n = n;
 exports.o = o;
+exports.onMounted = onMounted;
+exports.onUnmounted = onUnmounted;
 exports.p = p;
 exports.ref = ref;
 exports.resolveComponent = resolveComponent;

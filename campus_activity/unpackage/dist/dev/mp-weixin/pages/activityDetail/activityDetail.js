@@ -56,7 +56,7 @@ const _sfc_main = {
           color: "#666"
         }),
         h: common_vendor.p({
-          type: "clock",
+          type: "calendar",
           size: "16",
           color: "#666"
         }),
@@ -66,24 +66,29 @@ const _sfc_main = {
           color: "#666"
         }),
         j: common_vendor.p({
-          type: "person",
+          type: "bars",
           size: "16",
           color: "#666"
         }),
         k: common_vendor.p({
-          type: "star",
+          type: "person",
           size: "16",
           color: "#666"
         }),
         l: common_vendor.p({
+          type: "star",
+          size: "16",
+          color: "#666"
+        }),
+        m: common_vendor.p({
           type: isCollected.value ? "star-filled" : "star",
           size: "22",
           color: isCollected.value ? "#FCB857" : "#666"
         }),
-        m: common_vendor.t(isCollected.value ? "已收藏" : "收藏"),
-        n: isCollected.value ? 1 : "",
-        o: common_vendor.o(toggleCollect),
-        p: common_vendor.o(handleSignUp)
+        n: common_vendor.t(isCollected.value ? "已收藏" : "收藏"),
+        o: isCollected.value ? 1 : "",
+        p: common_vendor.o(toggleCollect),
+        q: common_vendor.o(handleSignUp)
       };
     };
   }

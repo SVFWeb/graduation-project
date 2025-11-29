@@ -6,7 +6,8 @@
     "pages/user/user",
     "pages/searchActivity/searchActivity",
     "pages/clubDetails/clubDetails",
-    "pages/activityDetail/activityDetail"
+    "pages/activityDetail/activityDetail",
+    "pages/activity/components/com-filter-list/com-filter-list"
   ],
   "window": {
     "navigationBarTextStyle": "black",
