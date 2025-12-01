@@ -24,14 +24,10 @@
 	})
 	const type = ref()
 
-
 	const filterList = computed(() => filterListData.value[type.value])
 
 	function onGoTo(value) {
-		uni.$emit('filterBack', {
-			value,
-			type:type.value
-		})
+		uni.$emit(`filterBack_${type.value}`, {value})
 		uni.navigateBack()
 	}
 

@@ -11,10 +11,9 @@
 		onMounted,
 		onUnmounted
 	} from 'vue'
-	import useFilterTag from '../../../../hooks/useFilterTag';
+	import useFilterTag from '@/hooks/useFilterTag';
 	const props = defineProps(['title', 'type'])
 	const tag = useFilterTag(props.title, props.type)
-
 
 	function goFilter() {
 		uni.navigateTo({
@@ -22,9 +21,8 @@
 		})
 	}
 
-
-	onMounted(() => uni.$on('filterBack', tag.onChangeTitle))
-	onUnmounted(() => uni.$off('filterBack', tag.onChangeTitle))
+	onMounted(() => uni.$on(`filterBack_${props.type}`, tag.onChangeTitle))
+	onUnmounted(() => uni.$off(`filterBack_${props.type}`, tag.onChangeTitle))
 </script>
 
 <style lang="scss" scoped>
