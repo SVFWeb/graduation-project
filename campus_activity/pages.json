@@ -54,6 +54,13 @@
 				"navigationBarTitleText" : "",
 				"navigationBarBackgroundColor": "#fff"
 			}
+		},
+		{
+			"path" : "pages/activity/components/com-filter-btn/com-filter-btn",
+			"style" : 
+			{
+				"navigationBarTitleText" : ""
+			}
 		}
 	],
 	"tabBar": {
