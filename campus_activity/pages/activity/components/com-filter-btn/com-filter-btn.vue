@@ -13,8 +13,9 @@
 		onUnmounted
 	} from 'vue'
 	const props = defineProps(['title', 'type'])
+	const $emit=defineEmits(['update:title','update:type'])
+	const initTitle=ref(props.title)
 	const isActive = ref(false)
-	const title = ref(props.title)
 
 	function goFilter() {
 		uni.navigateTo({
@@ -25,10 +26,10 @@
 	function onChangeTitle(e) {
 		if (e.value === '全部') {
 			isActive.value = false
-			title.value = props.title
+			$emit('update:title',initTitle.value)
 		} else {
 			isActive.value = true
-			title.value = e.value
+			$emit('update:title',e.value)
 		}
 	}
 

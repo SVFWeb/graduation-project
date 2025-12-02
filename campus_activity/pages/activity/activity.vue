@@ -5,9 +5,9 @@
 		</view>
 
 		<view class="activity_filter_tag_list">
-			<com-filter-btn title="状态" type="status"></com-filter-btn>
-			<com-filter-btn title="分类" type="cate"></com-filter-btn>
-			<com-filter-btn title="级别" type="level"></com-filter-btn>
+			<com-filter-btn v-model:title="filterRes.status" type="status"></com-filter-btn>
+			<com-filter-btn v-model:title="filterRes.cate" type="cate"></com-filter-btn>
+			<com-filter-btn v-model:title="filterRes.level" type="level"></com-filter-btn>
 		</view>
 
 		<view class="activity_list">
@@ -20,6 +20,13 @@
 	import comSearch from '../../components/com-search/com-search.vue';
 	import comActivityItem from '../../components/com-activity-item/com-activity-item.vue';
 	import comFilterBtn from './components/com-filter-btn/com-filter-btn.vue';
+	import { ref } from 'vue'
+	
+	const filterRes=ref({
+		status:'状态',
+		cate:'分类',
+		level:'级别'
+	})
 </script>
 
 <style lang="scss" scoped>

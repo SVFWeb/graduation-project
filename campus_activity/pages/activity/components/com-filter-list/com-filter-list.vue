@@ -27,7 +27,9 @@
 	const filterList = computed(() => filterListData.value[type.value])
 
 	function onGoTo(value) {
-		uni.$emit(`filterBack_${type.value}`, {value})
+		uni.$emit(`filterBack_${type.value}`, {
+			value
+		})
 		uni.navigateBack()
 	}
 
