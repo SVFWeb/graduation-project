@@ -19,7 +19,7 @@
 
 	function goFilter() {
 		uni.navigateTo({
-			url: `/pages/activity/components/com-filter-list/com-filter-list?type=${props.type}`
+			url: `/pages/filterTagList/filterTagList?type=${props.type}`
 		})
 	}
 

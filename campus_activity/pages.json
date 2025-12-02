@@ -48,20 +48,13 @@
 			}
 		},
 		{
-			"path" : "pages/activity/components/com-filter-list/com-filter-list",
+			"path" : "pages/filterTagList/filterTagList",
 			"style" : 
 			{
 				"navigationBarTitleText" : "",
 				"navigationBarBackgroundColor": "#fff"
 			}
 		},
-		{
-			"path" : "pages/activity/components/com-filter-btn/com-filter-btn",
-			"style" : 
-			{
-				"navigationBarTitleText" : ""
-			}
-		}
 	],
 	"tabBar": {
 		"fontSize": "16px",

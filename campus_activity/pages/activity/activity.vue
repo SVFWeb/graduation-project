@@ -17,9 +17,9 @@
 </template>
 
 <script setup>
-	import comSearch from '../../components/com-search/com-search.vue';
-	import comActivityItem from '../../components/com-activity-item/com-activity-item.vue';
-	import comFilterBtn from './components/com-filter-btn/com-filter-btn.vue';
+	import comSearch from '@/components/com-search/com-search.vue';
+	import comActivityItem from '@/components/com-activity-item/com-activity-item.vue';
+	import comFilterBtn from '@/components/com-filter-btn/com-filter-btn.vue';
 	import { ref } from 'vue'
 	
 	const filterRes=ref({
