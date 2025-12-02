@@ -1,19 +1,20 @@
 <template>
 	<view class="com-filter-btn">
-		<view :class="{'filter_tag':true,'active':tag.isActive.value}" @click="goFilter">
-			{{ tag.title.value }}
+		<view :class="{'filter_tag':true,'active':isActive}" @click="goFilter">
+			{{ title }}
 		</view>
 	</view>
 </template>
 
 <script setup>
 	import {
+		ref,
 		onMounted,
 		onUnmounted
 	} from 'vue'
-	import useFilterTag from '@/hooks/useFilterTag';
 	const props = defineProps(['title', 'type'])
-	const tag = useFilterTag(props.title, props.type)
+	const isActive = ref(false)
+	const title = ref(props.title)
 
 	function goFilter() {
 		uni.navigateTo({
@@ -21,8 +22,18 @@
 		})
 	}
 
-	onMounted(() => uni.$on(`filterBack_${props.type}`, tag.onChangeTitle))
-	onUnmounted(() => uni.$off(`filterBack_${props.type}`, tag.onChangeTitle))
+	function onChangeTitle(e) {
+		if (e.value === '全部') {
+			isActive.value = false
+			title.value = props.title
+		} else {
+			isActive.value = true
+			title.value = e.value
+		}
+	}
+
+	onMounted(() => uni.$on(`filterBack_${props.type}`, onChangeTitle))
+	onUnmounted(() => uni.$off(`filterBack_${props.type}`, onChangeTitle))
 </script>
 
 <style lang="scss" scoped>
