@@ -36,32 +36,8 @@
 		}
 
 		.activity_filter_tag_list {
-			position: relative;
 			margin-bottom: 30rpx;
 			display: flex;
-			align-items: center;
-
-			.filter_tag {
-				margin-right: 20rpx;
-				padding: 0 20rpx;
-				height: 50rpx;
-				text-align: center;
-				line-height: 50rpx;
-				border: 1px solid #DEDEDE;
-				border-radius: 10rpx;
-				font-size: 28rpx;
-
-				&--filter {
-					background-color: $uni-topic-color;
-					border: 1px transparent;
-					color: #fff;
-				}
-			}
-
-			.reset {
-				position: absolute;
-				right: 0;
-			}
 		}
 
 		.activity_list {

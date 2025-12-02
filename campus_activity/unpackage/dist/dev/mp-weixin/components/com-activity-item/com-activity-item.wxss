@@ -41,7 +41,7 @@
   background: #FF6B35;
   color: #fff;
   font-size: 20rpx;
-  border-radius: 20rpx;
+  border-radius: 10rpx;
   line-height: 1;
 }
 .com-activity-item_cotainer .activity_tag--class.data-v-63dc9a1c {

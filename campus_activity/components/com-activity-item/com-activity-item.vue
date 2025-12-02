@@ -37,7 +37,7 @@
 			background: #FF6B35;
 			color: #fff;
 			font-size: 20rpx;
-			border-radius: 20rpx;
+			border-radius: 10rpx;
 			line-height: 1;
 
 			&--class {

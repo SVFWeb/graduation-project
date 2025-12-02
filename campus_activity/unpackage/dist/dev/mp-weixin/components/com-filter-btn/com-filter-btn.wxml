@@ -1,0 +1,1 @@
+<view class="com-filter-btn data-v-2ed28089"><view class="{{['data-v-2ed28089', 'filter_tag', b && 'active']}}" bindtap="{{c}}">{{a}}</view></view>

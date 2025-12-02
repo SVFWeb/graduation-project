@@ -55,6 +55,13 @@
 				"navigationBarBackgroundColor": "#fff"
 			}
 		},
+		{
+			"path" : "pages/myActivity/myActivity",
+			"style" : 
+			{
+				"navigationBarTitleText" : "我的活动"
+			}
+		}
 	],
 	"tabBar": {
 		"fontSize": "16px",
