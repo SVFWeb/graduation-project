@@ -10,13 +10,36 @@ const _sfc_main = {
   __name: "registration",
   setup(__props) {
     const filterValue = common_vendor.ref("筛选");
+    const activeTab = common_vendor.ref("participate");
+    const tabs = [
+      {
+        label: "参与",
+        value: "participate"
+      },
+      {
+        label: "管理",
+        value: "manage"
+      },
+      {
+        label: "收藏",
+        value: "collect"
+      }
+    ];
     return (_ctx, _cache) => {
       return {
-        a: common_vendor.o(($event) => filterValue.value = $event),
-        b: common_vendor.p({
+        a: common_vendor.f(tabs, (tab, k0, i0) => {
+          return {
+            a: common_vendor.t(tab.label),
+            b: tab.value,
+            c: activeTab.value === tab.value ? 1 : "",
+            d: common_vendor.o(($event) => activeTab.value = tab.value, tab.value)
+          };
+        }),
+        b: common_vendor.o(($event) => filterValue.value = $event),
+        c: common_vendor.p({
           title: filterValue.value
         }),
-        c: common_vendor.f(6, (item, k0, i0) => {
+        d: common_vendor.f(6, (item, k0, i0) => {
           return {
             a: item,
             b: "1e5d1fa0-2-" + i0

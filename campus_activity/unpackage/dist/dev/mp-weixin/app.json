@@ -7,8 +7,7 @@
     "pages/searchActivity/searchActivity",
     "pages/clubDetails/clubDetails",
     "pages/activityDetail/activityDetail",
-    "pages/filterTagList/filterTagList",
-    "pages/myActivity/myActivity"
+    "pages/filterTagList/filterTagList"
   ],
   "window": {
     "navigationBarTextStyle": "black",

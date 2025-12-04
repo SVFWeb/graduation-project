@@ -1,4 +1,7 @@
 {
   "component": true,
-  "usingComponents": {}
+  "usingComponents": {
+    "uni-card": "../../../../uni_modules/uni-card/components/uni-card/uni-card",
+    "uni-popup": "../../../../uni_modules/uni-popup/components/uni-popup/uni-popup"
+  }
 }

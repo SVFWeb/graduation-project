@@ -5215,6 +5215,10 @@ function vFor(source, renderItem) {
   }
   return ret;
 }
+function setRef(ref2, id, opts = {}) {
+  const { $templateRefs } = getCurrentInstance();
+  $templateRefs.push({ i: id, r: ref2, k: opts.k, f: opts.f });
+}
 const o$1 = (value, key) => vOn(value, key);
 const f$1 = (source, renderItem) => vFor(source, renderItem);
 const s$1 = (value) => stringifyStyle(value);
@@ -5222,6 +5226,7 @@ const e$1 = (target, ...sources) => extend(target, ...sources);
 const n$1 = (value) => normalizeClass(value);
 const t$1 = (val) => toDisplayString(val);
 const p$1 = (props) => renderProps(props);
+const sr = (ref2, id, opts) => setRef(ref2, id, opts);
 function createApp$1(rootComponent, rootProps = null) {
   rootComponent && (rootComponent.mpType = "app");
   return createVueApp(rootComponent, rootProps).use(plugin);
@@ -7043,7 +7048,7 @@ function isConsoleWritable() {
 function initRuntimeSocketService() {
   const hosts = "26.245.181.160,192.168.1.106,127.0.0.1";
   const port = "8090";
-  const id = "mp-weixin_KJ7afL";
+  const id = "mp-weixin_DsZd3A";
   const lazy = typeof swan !== "undefined";
   let restoreError = lazy ? () => {
   } : initOnError();
@@ -8040,12 +8045,6 @@ const pages = [
       navigationBarTitleText: "",
       navigationBarBackgroundColor: "#fff"
     }
-  },
-  {
-    path: "pages/myActivity/myActivity",
-    style: {
-      navigationBarTitleText: "我的活动"
-    }
   }
 ];
 const tabBar = {
@@ -8418,7 +8417,7 @@ class S {
 function T(e2) {
   return e2 && "string" == typeof e2 ? JSON.parse(e2) : e2;
 }
-const b = true, E = "mp-weixin", A = T(define_process_env_UNI_SECURE_NETWORK_CONFIG_default), P = E, C = T('{"address":["127.0.0.1","26.245.181.160","192.168.1.106"],"servePort":7000,"debugPort":9000,"initialLaunchType":"local","skipFiles":["<node_internals>/**","D:/HBuilderX/plugins/unicloud/**/*.js"]}'), O = T('[{"provider":"alipay","spaceName":"ljy-data","spaceId":"env-00jxuc2o76k9","spaceAppId":"2021006114668726","accessKey":"74li80axEPh8JZpK","secretKey":"SIsUTTWCmLGEKJnL"}]') || [];
+const b = true, E = "mp-weixin", A = T(define_process_env_UNI_SECURE_NETWORK_CONFIG_default), P = E, C = T('{"address":["127.0.0.1","26.245.181.160","192.168.1.106"],"servePort":7000,"debugPort":9001,"initialLaunchType":"local","skipFiles":["<node_internals>/**","D:/HBuilderX/plugins/unicloud/**/*.js"]}'), O = T('[{"provider":"alipay","spaceName":"ljy-data","spaceId":"env-00jxuc2o76k9","spaceAppId":"2021006114668726","accessKey":"74li80axEPh8JZpK","secretKey":"SIsUTTWCmLGEKJnL"}]') || [];
 let N = "";
 try {
   N = "__UNI__D37EE2B";
@@ -10962,5 +10961,6 @@ exports.p = p$1;
 exports.ref = ref;
 exports.resolveComponent = resolveComponent;
 exports.s = s$1;
+exports.sr = sr;
 exports.t = t$1;
 //# sourceMappingURL=../../.sourcemap/mp-weixin/common/vendor.js.map

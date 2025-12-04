@@ -56,10 +56,11 @@
 			}
 		},
 		{
-			"path" : "pages/myActivity/myActivity",
+			"path" : "pages/registration/participationDetails/participationDetails",
 			"style" : 
 			{
-				"navigationBarTitleText" : "我的活动"
+				"navigationBarTitleText" : "参与详情",
+				"navigationBarBackgroundColor": "#fff"
 			}
 		}
 	],

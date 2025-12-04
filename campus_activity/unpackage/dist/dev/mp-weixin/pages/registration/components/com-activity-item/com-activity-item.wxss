@@ -142,3 +142,7 @@
   border-radius: 14rpx;
   z-index: -1;
 }
+.com-activity-item .popup_container.data-v-1ca0b774 {
+  width: 100vw;
+  height: 600rpx;
+}
