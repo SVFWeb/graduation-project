@@ -5,7 +5,7 @@
 				<uni-icons type="search" size="20" color="#999"></uni-icons>
 				<input :value="value" @input="onInput" class="text" placeholder="搜索"></input>
 			</view>
-			<uni-icons type="close" size="20" @click="onClearSearchText"></uni-icons>
+			<uni-icons type="close" size="20" v-if="isShowCloseIcon" @click="onClearSearchText"></uni-icons>
 			<view class="btn" @click="onSearch">搜索</view>
 		</view>
 	</view>
@@ -13,33 +13,28 @@
 
 <script setup>
 	import {
+		computed,
 		ref,
-		watch
 	} from 'vue';
 
 	const props = defineProps(['value'])
 	const emit = defineEmits(['update:value', 'click'])
-	const searchText = ref('')
+
+	const isShowCloseIcon = computed(() => props.value != '')
 
 	// 处理输入事件
 	function onInput(e) {
-		searchText.value = e.detail.value
+		emit('update:value', e.detail.value)
 	}
 
 	function onSearch() {
-		if (searchText.value === '') return
-		emit('update:value', searchText.value)
+		if (props.value === '') return
 		emit('click')
 	}
 
 	function onClearSearchText() {
-		console.log(1);
-		// emit('update:value', searchText.value)
+		emit('update:value', '')
 	}
-
-	watch(() => props.value, () => {
-		searchText.value = props.value
-	})
 </script>
 
 <style lang="scss" scoped>
