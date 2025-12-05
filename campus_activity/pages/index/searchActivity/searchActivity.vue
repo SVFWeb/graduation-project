@@ -7,7 +7,7 @@
 
 		<view class="activity_history">
 			<view class="title" v-if="!isShowSearchHistory">
-				<view class="left" >
+				<view class="left">
 					历史搜索
 				</view>
 				<view class="right" @click="onClear">
@@ -42,12 +42,15 @@
 	const searchValue = ref('')
 	const searchHistory = ref(uni.getStorageSync('searchHistory') || [])
 	const activityList = ref([])
-	
-	const isShowSearchHistory=computed(()=>searchHistory.value.length===0)
+
+	const isShowSearchHistory = computed(() => searchHistory.value.length === 0)
 
 	function onSearch() {
 		searchHistory.value.unshift(searchValue.value)
 		searchHistory.value = [...new Set(searchHistory.value)]
+		if (searchHistory.value.length > 10) {
+			searchHistory.value.pop()
+		}
 		uni.setStorageSync('searchHistory', searchHistory.value)
 		// 模拟获取数据
 		activityList.value = [1, 2, 3]
@@ -61,7 +64,6 @@
 	function onClickHistory(item) {
 		searchValue.value = item
 	}
-	
 </script>
 
 <style lang="scss" scoped>
