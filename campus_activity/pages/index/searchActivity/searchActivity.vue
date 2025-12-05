@@ -6,24 +6,25 @@
 		</view>
 
 		<view class="activity_history">
-			<view class="title">
-				<view class="left">
+			<view class="title" v-if="!isShowSearchHistory">
+				<view class="left" >
 					历史搜索
 				</view>
-				<view class="right">
+				<view class="right" @click="onClear">
 					清空
 				</view>
 			</view>
 
 			<view class="history_list">
-				<view class="history_item" v-for="item in 6" :key="item">
-					子非鱼
+				<view class="history_item" v-for="(item,index) in searchHistory" :key="item+index"
+					@click="onClickHistory(item)">
+					{{item}}
 				</view>
 			</view>
 		</view>
 
 		<view class="search-activity_list">
-			<com-activity-item v-for="item in 4"></com-activity-item>
+			<com-activity-item v-for="item in activityList.length" :key="item"></com-activity-item>
 		</view>
 
 	</view>
@@ -31,16 +32,36 @@
 
 <script setup>
 	import {
+		computed,
+		onMounted,
 		ref
 	} from 'vue'
 	import comSearch from '@/components/com-search/com-search.vue';
 	import comActivityItem from '@/components/com-activity-item/com-activity-item.vue';
 
-	const searchValue = ref()
+	const searchValue = ref('')
+	const searchHistory = ref(uni.getStorageSync('searchHistory') || [])
+	const activityList = ref([])
+	
+	const isShowSearchHistory=computed(()=>searchHistory.value.length===0)
 
 	function onSearch() {
-		console.log(searchValue.value);
+		searchHistory.value.unshift(searchValue.value)
+		searchHistory.value = [...new Set(searchHistory.value)]
+		uni.setStorageSync('searchHistory', searchHistory.value)
+		// 模拟获取数据
+		activityList.value = [1, 2, 3]
 	}
+
+	function onClear() {
+		searchHistory.value = []
+		uni.clearStorageSync('searchHistory')
+	}
+
+	function onClickHistory(item) {
+		searchValue.value = item
+	}
+	
 </script>
 
 <style lang="scss" scoped>
