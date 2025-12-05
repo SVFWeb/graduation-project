@@ -2,7 +2,7 @@
 	<view class="com-search-activity_container">
 
 		<view class="search-activity">
-			<com-search></com-search>
+			<com-search v-model:value="searchValue" @click="onSearch"></com-search>
 		</view>
 
 		<view class="activity_history">
@@ -11,7 +11,7 @@
 					历史搜索
 				</view>
 				<view class="right">
-					删除
+					清空
 				</view>
 			</view>
 
@@ -30,8 +30,17 @@
 </template>
 
 <script setup>
-	import comSearch from '../../components/com-search/com-search.vue';
-	import comActivityItem from '../../components/com-activity-item/com-activity-item.vue';
+	import {
+		ref
+	} from 'vue'
+	import comSearch from '@/components/com-search/com-search.vue';
+	import comActivityItem from '@/components/com-activity-item/com-activity-item.vue';
+
+	const searchValue = ref()
+
+	function onSearch() {
+		console.log(searchValue.value);
+	}
 </script>
 
 <style lang="scss" scoped>

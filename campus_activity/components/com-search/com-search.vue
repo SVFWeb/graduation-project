@@ -3,14 +3,29 @@
 		<view class="search_input">
 			<view class="search_box">
 				<uni-icons type="search" size="20" color="#999"></uni-icons>
-				<input class="text" placeholder="搜索活动"></input>
+				<input :value="value" @input="onInput" class="text" placeholder="搜索"></input>
 			</view>
-			<view class="btn">搜索</view>
+			<view class="btn" @click="onSearch">搜索</view>
 		</view>
 	</view>
 </template>
 
 <script setup>
+import { ref } from 'vue';
+
+	const props=defineProps(['value'])
+	const emit=defineEmits(['update:value','click'])
+	const searchText=ref()
+
+	// 处理输入事件
+	function onInput(e) {
+		searchText.value = e.detail.value
+	}
+	
+	function onSearch(){
+		emit('update:value', searchText.value)
+		emit('click')
+	}
 </script>
 
 <style lang="scss" scoped>

@@ -24,7 +24,7 @@
 			}
 		},
 		{
-			"path" : "pages/searchActivity/searchActivity",
+			"path" : "pages/index/searchActivity/searchActivity",
 			"style" : 
 			{
 				"navigationBarTitleText" : "",
@@ -60,6 +60,14 @@
 			"style" : 
 			{
 				"navigationBarTitleText" : "参与详情",
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/index/tribeList/tribeList",
+			"style" : 
+			{
+				"navigationBarTitleText" : "",
 				"navigationBarBackgroundColor": "#fff"
 			}
 		}

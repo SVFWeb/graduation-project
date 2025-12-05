@@ -2,7 +2,7 @@
 	<view class="home_container">
 		<!-- 搜索区域 -->
 		<view class="home_search" @click="uni.navigateTo({
-			url:'/pages/searchActivity/searchActivity'
+			url:'/pages/index/searchActivity/searchActivity'
 		})">
 			<com-search></com-search>
 		</view>
@@ -21,15 +21,22 @@
 
 		<!-- 公告 -->
 		<view class="home_announcement">
-			<uni-notice-bar style="border-radius: 36rpx;border: 1rpx solid #ffeae5;" showIcon scrollable single text="精彩热门活动，欢迎您来报名~~"></uni-notice-bar>
+			<uni-notice-bar style="border-radius: 36rpx;border: 1rpx solid #ffeae5;" showIcon scrollable single
+				text="精彩热门活动，欢迎您来报名~~"></uni-notice-bar>
 		</view>
-		
+
 		<!-- 社团 -->
 		<view class="home_tribe">
 			<view class="tribe_title">
 				<com-title>
 					<template #left>社团</template>
-					<template #right>More+</template>
+					<template #right>
+						<view @click="()=>{uni.navigateTo({
+						url:'/pages/index/tribeList/tribeList'
+					})}">
+							More+
+						</view>
+					</template>
 				</com-title>
 			</view>
 
@@ -60,7 +67,7 @@
 			</com-title>
 
 			<view class="activity_list">
-				<com-activity-item  v-for="item in 6" :key="item">
+				<com-activity-item v-for="item in 6" :key="item">
 				</com-activity-item>
 			</view>
 		</view>
@@ -74,7 +81,7 @@
 
 			<view class="activity_list">
 				<com-activity-item v-for="item in 6" :key="item">
-					
+
 				</com-activity-item>
 			</view>
 		</view>
