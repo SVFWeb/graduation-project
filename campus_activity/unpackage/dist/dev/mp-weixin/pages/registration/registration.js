@@ -9,6 +9,7 @@ const comActivityItem = () => "./components/com-activity-item/com-activity-item.
 const _sfc_main = {
   __name: "registration",
   setup(__props) {
+    const searchValue = common_vendor.ref("");
     const filterValue = common_vendor.ref("筛选");
     const activeTab = common_vendor.ref("participate");
     const tabs = [
@@ -25,9 +26,17 @@ const _sfc_main = {
         value: "collect"
       }
     ];
+    function onSearch() {
+      common_vendor.index.__f__("log", "at pages/registration/registration.vue:51", searchValue.value);
+    }
     return (_ctx, _cache) => {
       return {
-        a: common_vendor.f(tabs, (tab, k0, i0) => {
+        a: common_vendor.o(onSearch),
+        b: common_vendor.o(($event) => searchValue.value = $event),
+        c: common_vendor.p({
+          value: searchValue.value
+        }),
+        d: common_vendor.f(tabs, (tab, k0, i0) => {
           return {
             a: common_vendor.t(tab.label),
             b: tab.value,
@@ -35,11 +44,11 @@ const _sfc_main = {
             d: common_vendor.o(($event) => activeTab.value = tab.value, tab.value)
           };
         }),
-        b: common_vendor.o(($event) => filterValue.value = $event),
-        c: common_vendor.p({
+        e: common_vendor.o(($event) => filterValue.value = $event),
+        f: common_vendor.p({
           title: filterValue.value
         }),
-        d: common_vendor.f(6, (item, k0, i0) => {
+        g: common_vendor.f(6, (item, k0, i0) => {
           return {
             a: item,
             b: "1e5d1fa0-2-" + i0

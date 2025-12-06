@@ -23,27 +23,27 @@
 /* 垂直间距 */
 /* 透明度 */
 /* 文章场景相关 */
-.com-search-activity_container.data-v-9598bda9 {
+.com-search-activity_container.data-v-b69fed56 {
   padding: 20rpx 24rpx;
   min-height: 100vh;
 }
-.com-search-activity_container .search-activity.data-v-9598bda9 {
+.com-search-activity_container .search-activity.data-v-b69fed56 {
   margin-bottom: 50rpx;
 }
-.com-search-activity_container .activity_history .title.data-v-9598bda9 {
+.com-search-activity_container .activity_history .title.data-v-b69fed56 {
   margin-bottom: 50rpx;
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-size: 16px;
 }
-.com-search-activity_container .activity_history .title .left.data-v-9598bda9 {
+.com-search-activity_container .activity_history .title .left.data-v-b69fed56 {
   font-weight: 500;
 }
-.com-search-activity_container .activity_history .title .right.data-v-9598bda9 {
+.com-search-activity_container .activity_history .title .right.data-v-b69fed56 {
   color: #FCB857;
 }
-.com-search-activity_container .activity_history .history_list .history_item.data-v-9598bda9 {
+.com-search-activity_container .activity_history .history_list .history_item.data-v-b69fed56 {
   display: inline-block;
   margin: 0 20rpx 20rpx 0;
   padding: 10rpx 30rpx;
@@ -55,7 +55,7 @@
   box-sizing: content-box;
   font-size: 25rpx;
 }
-.com-search-activity_container .search-activity_list.data-v-9598bda9 {
+.com-search-activity_container .search-activity_list.data-v-b69fed56 {
   display: flex;
   flex-wrap: wrap;
   align-items: center;

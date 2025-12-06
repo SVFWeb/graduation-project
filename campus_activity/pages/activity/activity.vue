@@ -1,7 +1,7 @@
 <template>
 	<view class="activity container">
 		<view class="activity_search">
-			<com-search></com-search>
+			<com-search v-model:value="searchValue" @click="onSearch"></com-search>
 		</view>
 
 		<view class="activity_filter_tag_list">
@@ -17,16 +17,21 @@
 </template>
 
 <script setup>
+	import { ref } from 'vue'
 	import comSearch from '@/components/com-search/com-search.vue';
 	import comActivityItem from '@/components/com-activity-item/com-activity-item.vue';
 	import comFilterBtn from '@/components/com-filter-btn/com-filter-btn.vue';
-	import { ref } from 'vue'
 	
+	const searchValue=ref('')
 	const filterRes=ref({
 		status:'状态',
 		cate:'分类',
 		level:'级别'
 	})
+	
+	function onSearch(){
+		console.log(filterRes.value);
+	}
 </script>
 
 <style lang="scss" scoped>

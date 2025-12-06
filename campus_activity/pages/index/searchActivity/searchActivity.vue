@@ -46,6 +46,7 @@
 	const isShowSearchHistory = computed(() => searchHistory.value.length === 0)
 
 	function onSearch() {
+		if(searchValue.value=='') return 
 		searchHistory.value.unshift(searchValue.value)
 		searchHistory.value = [...new Set(searchHistory.value)]
 		if (searchHistory.value.length > 10) {

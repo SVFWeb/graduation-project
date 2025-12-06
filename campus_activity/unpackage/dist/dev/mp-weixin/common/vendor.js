@@ -7046,9 +7046,9 @@ function isConsoleWritable() {
   return isWritable;
 }
 function initRuntimeSocketService() {
-  const hosts = "26.245.181.160,192.168.1.106,127.0.0.1";
+  const hosts = "26.245.181.160,192.168.1.107,127.0.0.1";
   const port = "8090";
-  const id = "mp-weixin_DsZd3A";
+  const id = "mp-weixin_kSa2jT";
   const lazy = typeof swan !== "undefined";
   let restoreError = lazy ? () => {
   } : initOnError();
@@ -8020,7 +8020,7 @@ const pages = [
     }
   },
   {
-    path: "pages/searchActivity/searchActivity",
+    path: "pages/index/searchActivity/searchActivity",
     style: {
       navigationBarTitleText: "",
       navigationBarBackgroundColor: "#fff"
@@ -8041,6 +8041,20 @@ const pages = [
   },
   {
     path: "pages/filterTagList/filterTagList",
+    style: {
+      navigationBarTitleText: "",
+      navigationBarBackgroundColor: "#fff"
+    }
+  },
+  {
+    path: "pages/registration/participationDetails/participationDetails",
+    style: {
+      navigationBarTitleText: "参与详情",
+      navigationBarBackgroundColor: "#fff"
+    }
+  },
+  {
+    path: "pages/index/tribeList/tribeList",
     style: {
       navigationBarTitleText: "",
       navigationBarBackgroundColor: "#fff"
@@ -8417,7 +8431,7 @@ class S {
 function T(e2) {
   return e2 && "string" == typeof e2 ? JSON.parse(e2) : e2;
 }
-const b = true, E = "mp-weixin", A = T(define_process_env_UNI_SECURE_NETWORK_CONFIG_default), P = E, C = T('{"address":["127.0.0.1","26.245.181.160","192.168.1.106"],"servePort":7000,"debugPort":9001,"initialLaunchType":"local","skipFiles":["<node_internals>/**","D:/HBuilderX/plugins/unicloud/**/*.js"]}'), O = T('[{"provider":"alipay","spaceName":"ljy-data","spaceId":"env-00jxuc2o76k9","spaceAppId":"2021006114668726","accessKey":"74li80axEPh8JZpK","secretKey":"SIsUTTWCmLGEKJnL"}]') || [];
+const b = true, E = "mp-weixin", A = T(define_process_env_UNI_SECURE_NETWORK_CONFIG_default), P = E, C = T('{"address":["127.0.0.1","26.245.181.160","192.168.1.107"],"servePort":7000,"debugPort":9000,"initialLaunchType":"local","skipFiles":["<node_internals>/**","D:/HBuilderX/plugins/unicloud/**/*.js"]}'), O = T('[{"provider":"alipay","spaceName":"ljy-data","spaceId":"env-00jxuc2o76k9","spaceAppId":"2021006114668726","accessKey":"74li80axEPh8JZpK","secretKey":"SIsUTTWCmLGEKJnL"}]') || [];
 let N = "";
 try {
   N = "__UNI__D37EE2B";

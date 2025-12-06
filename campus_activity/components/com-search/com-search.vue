@@ -17,7 +17,12 @@
 		ref,
 	} from 'vue';
 
-	const props = defineProps(['value'])
+	const props = defineProps({
+		value: {
+			type: String,
+			default: ''
+		}
+	})
 	const emit = defineEmits(['update:value', 'click'])
 
 	const isShowCloseIcon = computed(() => props.value != '')
@@ -28,7 +33,6 @@
 	}
 
 	function onSearch() {
-		if (props.value === '') return
 		emit('click')
 	}
 

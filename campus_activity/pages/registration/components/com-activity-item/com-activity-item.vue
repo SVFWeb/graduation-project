@@ -39,13 +39,13 @@
 				</view>
 				<view class="rate">
 					<view class="left">
-						你的评分0.0
+						你的评分：{{ rateValue }}
 					</view>
 					<view class="right">
-						<uni-rate size="35" allow-half :value="3.5" />
+						<uni-rate size="35" allow-half v-model="rateValue" />
 					</view>
 				</view>
-				<view class="btn">确定</view>
+				<view class="btn" @click="onGitRate">确定</view>
 			</view>
 		</uni-popup>
 	</view>
@@ -57,25 +57,27 @@
 	} from 'vue'
 
 	const rateActivityPopup = ref()
+	const rateValue = ref(0)
 
 	function onActivityDetail() {
 		uni.navigateTo({
 			url: '/pages/activityDetail/activityDetail'
 		})
 	}
-	
-	function onParticipationDetail(){
+
+	function onParticipationDetail() {
 		uni.navigateTo({
-			url:'/pages/registration/participationDetails/participationDetails'
+			url: '/pages/registration/participationDetails/participationDetails'
 		})
 	}
 
 	function onOpenRate() {
 		rateActivityPopup.value.open()
 	}
-	
-	function onCloseRate(){
+
+	function onCloseRate() {
 		rateActivityPopup.value.close()
+		rateValue.value = 0
 	}
 
 	function onChangePopup({
@@ -83,8 +85,10 @@
 	}) {
 		show ? uni.hideTabBar() : uni.showTabBar()
 	}
-	
-	
+
+	function onGitRate() {
+		onCloseRate()
+	}
 </script>
 
 <style lang="scss" scoped>
@@ -229,23 +233,23 @@
 			padding: 20rpx 20rpx 0 20rpx;
 			width: 100vw;
 			height: 600rpx;
-			
-			.title{
+
+			.title {
 				height: 90rpx;
 				display: flex;
 				align-items: center;
 				justify-content: space-between;
 				border-bottom: 1px solid #e0e0e0;
 			}
-			
-			.rate{
+
+			.rate {
 				flex: 1;
 				display: flex;
 				align-items: center;
 				justify-content: space-between;
 			}
-			
-			.btn{
+
+			.btn {
 				border-top: 1px solid #e0e0e0;
 				text-align: center;
 				height: 90rpx;

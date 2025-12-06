@@ -18,7 +18,7 @@ const _sfc_main = {
     return (_ctx, _cache) => {
       return {
         a: common_vendor.o(($event) => common_vendor.index.navigateTo({
-          url: "/pages/searchActivity/searchActivity"
+          url: "/pages/index/searchActivity/searchActivity"
         })),
         b: common_vendor.f(4, (item, k0, i0) => {
           return {
@@ -32,7 +32,12 @@ const _sfc_main = {
           single: true,
           text: "精彩热门活动，欢迎您来报名~~"
         }),
-        e: common_vendor.f(4, (item, k0, i0) => {
+        e: common_vendor.o(() => {
+          common_vendor.index.navigateTo({
+            url: "/pages/index/tribeList/tribeList"
+          });
+        }),
+        f: common_vendor.f(4, (item, k0, i0) => {
           return {
             a: common_vendor.t(item),
             b: item,
@@ -41,14 +46,14 @@ const _sfc_main = {
             }), item)
           };
         }),
-        f: common_assets._imports_0$1,
-        g: common_vendor.f(6, (item, k0, i0) => {
+        g: common_assets._imports_0$1,
+        h: common_vendor.f(6, (item, k0, i0) => {
           return {
             a: item,
             b: "1cf27b2a-4-" + i0
           };
         }),
-        h: common_vendor.f(6, (item, k0, i0) => {
+        i: common_vendor.f(6, (item, k0, i0) => {
           return {
             a: item,
             b: "1cf27b2a-6-" + i0

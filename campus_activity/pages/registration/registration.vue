@@ -1,7 +1,7 @@
 <template>
 	<view class="registration container">
 		<view class="registration_search">
-			<com-search></com-search>
+			<com-search v-model:value="searchValue" @click="onSearch"></com-search>
 		</view>
 		<view class="registration_filter">
 			<view class="left">
@@ -29,6 +29,7 @@
 		ref
 	} from 'vue'
 
+	const searchValue = ref('')
 	const filterValue = ref('筛选')
 	const activeTab = ref('participate')
 
@@ -45,6 +46,10 @@
 			value: 'collect'
 		}
 	]
+
+	function onSearch() {
+		console.log(searchValue.value);
+	}
 </script>
 
 <style lang="scss" scoped>

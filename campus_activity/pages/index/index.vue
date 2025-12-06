@@ -63,7 +63,11 @@
 		<view class="home_activity">
 			<com-title>
 				<template #left>社团活动</template>
-				<template #right>More+</template>
+				<template #right>
+					<navigator open-type="reLaunch" url="/pages/activity/activity">
+						More+
+					</navigator>
+				</template>
 			</com-title>
 
 			<view class="activity_list">
@@ -76,7 +80,11 @@
 		<view class="home_activity">
 			<com-title>
 				<template #left>班级活动</template>
-				<template #right>More+</template>
+				<template #right>
+					<navigator open-type="reLaunch" url="/pages/activity/activity">
+						More+
+					</navigator>
+				</template>
 			</com-title>
 
 			<view class="activity_list">

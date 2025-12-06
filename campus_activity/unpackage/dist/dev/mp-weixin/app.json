@@ -4,10 +4,12 @@
     "pages/activity/activity",
     "pages/registration/registration",
     "pages/user/user",
-    "pages/searchActivity/searchActivity",
+    "pages/index/searchActivity/searchActivity",
     "pages/clubDetails/clubDetails",
     "pages/activityDetail/activityDetail",
-    "pages/filterTagList/filterTagList"
+    "pages/filterTagList/filterTagList",
+    "pages/registration/participationDetails/participationDetails",
+    "pages/index/tribeList/tribeList"
   ],
   "window": {
     "navigationBarTextStyle": "black",
