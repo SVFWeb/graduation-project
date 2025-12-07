@@ -55,7 +55,12 @@
             "urlCheck" : false,
             "minified" : true
         },
-        "usingComponents" : true
+        "usingComponents" : true,
+        "permission" : {
+			"scope.userLocation": {
+				"desc": "需要访问相机进行扫码"
+			}
+		}
     },
     "mp-alipay" : {
         "usingComponents" : true

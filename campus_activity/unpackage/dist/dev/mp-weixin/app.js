@@ -4,14 +4,17 @@ const common_vendor = require("./common/vendor.js");
 if (!Math) {
   "./pages/index/index.js";
   "./pages/activity/activity.js";
-  "./pages/registration/registration.js";
+  "./pages/myActivity/myActivity.js";
   "./pages/user/user.js";
   "./pages/index/searchActivity/searchActivity.js";
   "./pages/clubDetails/clubDetails.js";
   "./pages/activityDetail/activityDetail.js";
   "./pages/filterTagList/filterTagList.js";
-  "./pages/registration/participationDetails/participationDetails.js";
+  "./pages/myActivity/participationDetails/participationDetails.js";
   "./pages/index/tribeList/tribeList.js";
+  "./pages/scanCode/scanCode.js";
+  "./pages/login/login.js";
+  "./pages/registration/registration.js";
 }
 const _sfc_main = {
   onLaunch: function() {
@@ -30,6 +33,21 @@ function createApp() {
     app
   };
 }
+const routeTypes = ["navigateTo", "redirectTo", "switchTab", "reLaunch", "navigateBack"];
+const routeNoControl = ["/pages/login/login", "/pages/registration/registration"];
+routeTypes.forEach((item) => {
+  common_vendor.index.addInterceptor(item, {
+    invoke(option) {
+      const token = common_vendor.index.getStorageSync("token");
+      if (!token && !routeNoControl.includes(option.url)) {
+        common_vendor.index.redirectTo({
+          url: "/pages/login/login"
+        });
+        return false;
+      }
+    }
+  });
+});
 createApp().app.mount("#app");
 exports.createApp = createApp;
 //# sourceMappingURL=../.sourcemap/mp-weixin/app.js.map

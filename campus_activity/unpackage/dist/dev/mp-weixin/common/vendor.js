@@ -7048,7 +7048,7 @@ function isConsoleWritable() {
 function initRuntimeSocketService() {
   const hosts = "26.245.181.160,192.168.1.105,127.0.0.1";
   const port = "8090";
-  const id = "mp-weixin_q6KUrR";
+  const id = "mp-weixin_Ouf6b5";
   const lazy = typeof swan !== "undefined";
   let restoreError = lazy ? () => {
   } : initOnError();
@@ -8008,7 +8008,7 @@ const pages = [
     }
   },
   {
-    path: "pages/registration/registration",
+    path: "pages/myActivity/myActivity",
     style: {
       navigationBarTitleText: "我的活动"
     }
@@ -8047,7 +8047,7 @@ const pages = [
     }
   },
   {
-    path: "pages/registration/participationDetails/participationDetails",
+    path: "pages/myActivity/participationDetails/participationDetails",
     style: {
       navigationBarTitleText: "参与详情",
       navigationBarBackgroundColor: "#fff"
@@ -8058,6 +8058,24 @@ const pages = [
     style: {
       navigationBarTitleText: "",
       navigationBarBackgroundColor: "#fff"
+    }
+  },
+  {
+    path: "pages/scanCode/scanCode",
+    style: {
+      navigationBarTitleText: "扫码签到"
+    }
+  },
+  {
+    path: "pages/login/login",
+    style: {
+      navigationBarTitleText: ""
+    }
+  },
+  {
+    path: "pages/registration/registration",
+    style: {
+      navigationBarTitleText: ""
     }
   }
 ];
@@ -8080,8 +8098,14 @@ const tabBar = {
       selectedIconPath: "/static/image/iconfonts/活动 (1).png"
     },
     {
+      text: "扫码签到",
+      pagePath: "pages/scanCode/scanCode",
+      iconPath: "/static/image/iconfonts/扫码.png",
+      selectedIconPath: "/static/image/iconfonts/扫码 (1).png"
+    },
+    {
       text: "我的活动",
-      pagePath: "pages/registration/registration",
+      pagePath: "pages/myActivity/myActivity",
       iconPath: "/static/image/iconfonts/活动报名.png",
       selectedIconPath: "/static/image/iconfonts/活动报名 (1).png"
     },

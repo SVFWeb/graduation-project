@@ -1,6 +1,6 @@
 <template>
 	<view>
-		注册
+		登录
 	</view>
 </template>
 

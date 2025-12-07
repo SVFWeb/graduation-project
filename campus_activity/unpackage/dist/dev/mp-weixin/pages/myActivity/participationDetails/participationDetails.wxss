@@ -23,13 +23,13 @@
 /* 垂直间距 */
 /* 透明度 */
 /* 文章场景相关 */
-.participation.data-v-cf519fc0 {
+.participation.data-v-bb36080a {
   display: flex;
   flex-direction: column;
 }
-.participation .participation_step.data-v-cf519fc0 {
+.participation .participation_step.data-v-bb36080a {
   margin-top: 20vh;
 }
-.participation .participation_list.data-v-cf519fc0 {
+.participation .participation_list.data-v-bb36080a {
   margin-top: 270rpx;
 }

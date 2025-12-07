@@ -29,7 +29,7 @@ const _sfc_main = {
           options: list.value,
           active: active.value
         }),
-        b: common_vendor.o(() => common_vendor.index.__f__("log", "at pages/registration/participationDetails/participationDetails.vue:9", 11)),
+        b: common_vendor.o(() => common_vendor.index.__f__("log", "at pages/myActivity/participationDetails/participationDetails.vue:9", 11)),
         c: common_vendor.p({
           showArrow: true,
           clickable: true,
@@ -43,6 +43,6 @@ const _sfc_main = {
     };
   }
 };
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-cf519fc0"]]);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-bb36080a"]]);
 wx.createPage(MiniProgramPage);
-//# sourceMappingURL=../../../../.sourcemap/mp-weixin/pages/registration/participationDetails/participationDetails.js.map
+//# sourceMappingURL=../../../../.sourcemap/mp-weixin/pages/myActivity/participationDetails/participationDetails.js.map

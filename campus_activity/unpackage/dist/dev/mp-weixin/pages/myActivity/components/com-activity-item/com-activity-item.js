@@ -56,7 +56,7 @@ const _sfc_main = {
           modelValue: rateValue.value
         }),
         i: common_vendor.o(onGitRate),
-        j: common_vendor.sr(rateActivityPopup, "1ca0b774-0", {
+        j: common_vendor.sr(rateActivityPopup, "e7715fb0-0", {
           "k": "rateActivityPopup"
         }),
         k: common_vendor.o(onChangePopup),
@@ -68,6 +68,6 @@ const _sfc_main = {
     };
   }
 };
-const Component = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-1ca0b774"]]);
+const Component = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-e7715fb0"]]);
 wx.createComponent(Component);
-//# sourceMappingURL=../../../../../.sourcemap/mp-weixin/pages/registration/components/com-activity-item/com-activity-item.js.map
+//# sourceMappingURL=../../../../../.sourcemap/mp-weixin/pages/myActivity/components/com-activity-item/com-activity-item.js.map

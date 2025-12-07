@@ -2,14 +2,17 @@
   "pages": [
     "pages/index/index",
     "pages/activity/activity",
-    "pages/registration/registration",
+    "pages/myActivity/myActivity",
     "pages/user/user",
     "pages/index/searchActivity/searchActivity",
     "pages/clubDetails/clubDetails",
     "pages/activityDetail/activityDetail",
     "pages/filterTagList/filterTagList",
-    "pages/registration/participationDetails/participationDetails",
-    "pages/index/tribeList/tribeList"
+    "pages/myActivity/participationDetails/participationDetails",
+    "pages/index/tribeList/tribeList",
+    "pages/scanCode/scanCode",
+    "pages/login/login",
+    "pages/registration/registration"
   ],
   "window": {
     "navigationBarTextStyle": "black",
@@ -34,8 +37,14 @@
         "selectedIconPath": "/static/image/iconfonts/活动 (1).png"
       },
       {
+        "text": "扫码签到",
+        "pagePath": "pages/scanCode/scanCode",
+        "iconPath": "/static/image/iconfonts/扫码.png",
+        "selectedIconPath": "/static/image/iconfonts/扫码 (1).png"
+      },
+      {
         "text": "我的活动",
-        "pagePath": "pages/registration/registration",
+        "pagePath": "pages/myActivity/myActivity",
         "iconPath": "/static/image/iconfonts/活动报名.png",
         "selectedIconPath": "/static/image/iconfonts/活动报名 (1).png"
       },
@@ -46,6 +55,11 @@
         "selectedIconPath": "/static/image/iconfonts/个人 (1).png"
       }
     ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "需要访问相机进行扫码"
+    }
   },
   "usingComponents": {}
 }
