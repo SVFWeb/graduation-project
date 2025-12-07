@@ -21,8 +21,7 @@
 
 		<!-- 公告 -->
 		<view class="home_announcement">
-			<uni-notice-bar style="border-radius: 36rpx;border: 1rpx solid #ffeae5;" showIcon scrollable single
-				text="精彩热门活动，欢迎您来报名~~"></uni-notice-bar>
+			<uni-notice-bar showIcon scrollable single text="精彩热门活动，欢迎您来报名~~"></uni-notice-bar>
 		</view>
 
 		<!-- 社团 -->
@@ -168,7 +167,7 @@
 				}
 			}
 		}
-
+		
 		// 社团区域
 		.home_tribe {
 			margin-bottom: 40rpx;
@@ -184,7 +183,7 @@
 					.scroll_item_container {
 						display: inline-block;
 						width: 480rpx;
-						height: 180rpx;
+						height: 200rpx;
 						margin-right: 20rpx;
 
 						&:last-child {
@@ -194,7 +193,7 @@
 						.tribe_card {
 							display: flex;
 							align-items: center;
-							height: 100%;
+							height: 190rpx;
 							background: #fff;
 							border-radius: 16rpx;
 							padding: 24rpx;
