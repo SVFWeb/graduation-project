@@ -1,6 +1,7 @@
 {
   "navigationBarTitleText": "个人信息",
   "usingComponents": {
-    "uni-icons": "../../uni_modules/uni-icons/components/uni-icons/uni-icons"
+    "uni-icons": "../../uni_modules/uni-icons/components/uni-icons/uni-icons",
+    "custom-tabbar": "../../components/custom-tabbar/custom-tabbar"
   }
 }

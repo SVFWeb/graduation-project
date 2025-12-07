@@ -28,7 +28,6 @@
 			"style" : 
 			{
 				"navigationBarTitleText" : "",
-				// "navigationStyle": "custom"  // 自定义导航栏
 				"navigationBarBackgroundColor": "#fff"
 			}
 		},
@@ -94,6 +93,7 @@
 		}
 	],
 	"tabBar": {
+		"custom": true,
 		"fontSize": "16px",
 		"spacing": "5px",
 		"color": "#bfbfbf",

@@ -8080,6 +8080,7 @@ const pages = [
   }
 ];
 const tabBar = {
+  custom: true,
   fontSize: "16px",
   spacing: "5px",
   color: "#bfbfbf",
@@ -10979,6 +10980,11 @@ let er = new class {
 const createLifeCycleHook = (lifecycle, flag = 0) => (hook, target = getCurrentInstance()) => {
   !isInSSRComponentSetup && injectHook(lifecycle, hook, target);
 };
+const onShow = /* @__PURE__ */ createLifeCycleHook(
+  ON_SHOW,
+  1 | 2
+  /* HookFlags.PAGE */
+);
 const onLoad = /* @__PURE__ */ createLifeCycleHook(
   ON_LOAD,
   2
@@ -10994,6 +11000,7 @@ exports.n = n$1;
 exports.o = o$1;
 exports.onLoad = onLoad;
 exports.onMounted = onMounted;
+exports.onShow = onShow;
 exports.onUnmounted = onUnmounted;
 exports.p = p$1;
 exports.ref = ref;

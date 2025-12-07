@@ -7,8 +7,9 @@ if (!Array) {
 }
 const _easycom_uni_icons = () => "../../uni_modules/uni-icons/components/uni-icons/uni-icons.js";
 if (!Math) {
-  _easycom_uni_icons();
+  (_easycom_uni_icons + customTabbar)();
 }
+const customTabbar = () => "../../components/custom-tabbar/custom-tabbar.js";
 const _sfc_main = {
   __name: "user",
   setup(__props) {

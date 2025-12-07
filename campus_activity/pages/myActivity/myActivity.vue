@@ -19,12 +19,15 @@
 			<com-activity-item v-for="item in 6" :key="item"></com-activity-item>
 		</view>
 	</view>
+	<!-- 自定义tabBar -->
+	<custom-tabbar></custom-tabbar>
 </template>
 
 <script setup>
 	import comSearch from '../../components/com-search/com-search.vue';
 	import comFilterBtn from '../../components/com-filter-btn/com-filter-btn.vue';
 	import comActivityItem from './components/com-activity-item/com-activity-item.vue';
+	import customTabbar from '../../components/custom-tabbar/custom-tabbar.vue';
 	import {
 		ref
 	} from 'vue'
@@ -55,6 +58,7 @@
 <style lang="scss" scoped>
 	.registration {
 		padding: 24rpx 32rpx;
+		padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
 		min-height: 100vh;
 		background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
 

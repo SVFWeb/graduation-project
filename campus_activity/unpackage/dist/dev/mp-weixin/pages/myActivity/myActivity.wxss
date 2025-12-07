@@ -25,6 +25,7 @@
 /* 文章场景相关 */
 .registration.data-v-7b5135b5 {
   padding: 24rpx 32rpx;
+  padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
   min-height: 100vh;
   background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
 }

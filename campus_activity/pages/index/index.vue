@@ -93,17 +93,21 @@
 			</view>
 		</view>
 	</view>
+	<!-- 自定义tabBar -->
+	<custom-tabbar></custom-tabbar>
 </template>
 
 <script setup>
 	import comTitle from './component/com-title.vue';
 	import comSearch from '../../components/com-search/com-search.vue';
 	import comActivityItem from '../../components/com-activity-item/com-activity-item.vue';
+	import customTabbar from '../../components/custom-tabbar/custom-tabbar.vue';
 </script>
 
 <style lang="scss" scoped>
 	.home_container {
 		padding: 20rpx 24rpx;
+		padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
 		min-height: 100vh;
 
 		// 搜索区域

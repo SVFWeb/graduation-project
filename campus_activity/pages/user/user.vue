@@ -69,26 +69,30 @@
 			退出登录
 		</view>
 	</view>
+	<!-- 自定义tabBar -->
+	<custom-tabbar></custom-tabbar>
 </template>
 
 <script setup>
 	import {
 		ref
 	} from 'vue';
+	import customTabbar from '@/components/custom-tabbar/custom-tabbar.vue';
 </script>
 
 <style lang="scss" scoped>
 	.user {
 		position: relative;
+		padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
 
 		.user-outLogin {
 			position: absolute;
 			left: 220rpx;
 			/* #ifdef H5 */
-			bottom: 200rpx;
+			bottom: calc(200rpx + 120rpx + env(safe-area-inset-bottom));
 			/* #endif */
 			/* #ifndef H5*/
-			bottom: 10rpx;
+			bottom: calc(10rpx + 120rpx + env(safe-area-inset-bottom));
 			/* #endif */
 
 			width: 300rpx;

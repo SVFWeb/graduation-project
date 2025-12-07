@@ -25,11 +25,12 @@
 /* 文章场景相关 */
 .user.data-v-0f7520f0 {
   position: relative;
+  padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
 }
 .user .user-outLogin.data-v-0f7520f0 {
   position: absolute;
   left: 220rpx;
-  bottom: 10rpx;
+  bottom: calc(130rpx + env(safe-area-inset-bottom));
   width: 300rpx;
   height: 100rpx;
   text-align: center;

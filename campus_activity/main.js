@@ -25,8 +25,8 @@ export function createApp() {
 
 // 需要权限的api
 const routeTypes = ['navigateTo', 'redirectTo', 'switchTab', 'reLaunch', 'navigateBack'];
-// 不需要权限的路由地址
-const routeNoControl=['/pages/login/login','/pages/registration/registration']
+// 不需要权限的页面
+const routeNoControl=['/pages/index/index','/pages/login/login','/pages/registration/registration','/pages/activity/activity','/pages/user/user']
 
 // 为每个api添加拦截器
 routeTypes.forEach(item => {

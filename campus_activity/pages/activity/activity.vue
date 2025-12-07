@@ -14,6 +14,8 @@
 			<com-activity-item v-for="item in 6"></com-activity-item>
 		</view>
 	</view>
+	<!-- 自定义tabBar -->
+	<custom-tabbar></custom-tabbar>
 </template>
 
 <script setup>
@@ -21,6 +23,7 @@
 	import comSearch from '@/components/com-search/com-search.vue';
 	import comActivityItem from '@/components/com-activity-item/com-activity-item.vue';
 	import comFilterBtn from '@/components/com-filter-btn/com-filter-btn.vue';
+	import customTabbar from '@/components/custom-tabbar/custom-tabbar.vue';
 	
 	const searchValue=ref('')
 	const filterRes=ref({
@@ -36,6 +39,8 @@
 
 <style lang="scss" scoped>
 	.activity {
+		padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
+		
 		.activity_search {
 			margin-bottom: 30rpx;
 		}

@@ -1,11 +1,12 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
 if (!Math) {
-  (comSearch + comFilterBtn + comActivityItem)();
+  (comSearch + comFilterBtn + comActivityItem + customTabbar)();
 }
 const comSearch = () => "../../components/com-search/com-search.js";
 const comActivityItem = () => "../../components/com-activity-item/com-activity-item.js";
 const comFilterBtn = () => "../../components/com-filter-btn/com-filter-btn.js";
+const customTabbar = () => "../../components/custom-tabbar/custom-tabbar.js";
 const _sfc_main = {
   __name: "activity",
   setup(__props) {
@@ -16,7 +17,7 @@ const _sfc_main = {
       level: "级别"
     });
     function onSearch() {
-      common_vendor.index.__f__("log", "at pages/activity/activity.vue:33", filterRes.value);
+      common_vendor.index.__f__("log", "at pages/activity/activity.vue:36", filterRes.value);
     }
     return (_ctx, _cache) => {
       return {
