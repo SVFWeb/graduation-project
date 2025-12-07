@@ -67,7 +67,7 @@
 
 	function onParticipationDetail() {
 		uni.navigateTo({
-			url: '/pages/registration/participationDetails/participationDetails'
+			url: '/pages/myActivity/participationDetails/participationDetails'
 		})
 	}
 

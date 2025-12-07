@@ -40,19 +40,15 @@ const _sfc_main = {
       }
     ];
     const currentPath = common_vendor.ref("");
-    const hasToken = common_vendor.ref(false);
     const tabList = common_vendor.computed(() => {
       return allTabs.filter((tab) => {
-        if (tab.requireAuth && !hasToken.value) {
+        const token = common_vendor.index.getStorageSync("token");
+        if (tab.requireAuth && !token) {
           return false;
         }
         return true;
       });
     });
-    function checkToken() {
-      const token = common_vendor.index.getStorageSync("token");
-      hasToken.value = !!token;
-    }
     function updateCurrentPath() {
       const pages = getCurrentPages();
       if (pages.length === 0)
@@ -65,21 +61,14 @@ const _sfc_main = {
         return;
       }
       common_vendor.index.switchTab({
-        url: item.pagePath,
-        success: () => {
-          currentPath.value = item.pagePath;
-        }
+        url: item.pagePath
       });
     }
-    function init() {
-      checkToken();
-      updateCurrentPath();
-    }
     common_vendor.onMounted(() => {
-      init();
+      updateCurrentPath();
     });
     common_vendor.onShow(() => {
-      init();
+      updateCurrentPath();
     });
     return (_ctx, _cache) => {
       return {

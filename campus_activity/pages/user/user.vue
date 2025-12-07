@@ -108,8 +108,8 @@
 	// 用户信息
 	.user-info {
 		height: 280rpx;
-		background: $uni-topic-color;
-		border-radius: 0 0 32rpx 32rpx;
+		background: linear-gradient(135deg, #FCB857 0%, #FF9800 100%);
+		// border-radius: 0 0 32rpx 32rpx;
 		padding: 60rpx 30rpx 40rpx;
 		margin: 0 -24rpx 30rpx -24rpx;
 		display: flex;

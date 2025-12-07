@@ -59,30 +59,26 @@
 	]
 
 	const currentPath = ref('')
-	const hasToken = ref(false)
 
 	// 根据token状态过滤tab列表
 	const tabList = computed(() => {
 		return allTabs.filter(tab => {
+			const token = uni.getStorageSync('token')
 			// 如果tab需要登录但用户未登录，则隐藏
-			if (tab.requireAuth && !hasToken.value) {
+			if (tab.requireAuth && !token) {
 				return false
 			}
 			return true
 		})
 	})
 
-	// 检查token
-	function checkToken() {
-		const token = uni.getStorageSync('token')
-		hasToken.value = !!token
-	}
-
 	// 更新当前路径
 	function updateCurrentPath() {
+		// 获取页面栈
 		const pages = getCurrentPages()
+		// 页面栈还没初始化或当前没有页面
 		if (pages.length === 0) return
-
+		// 获取栈顶页面（当前显示页面）
 		const currentPage = pages[pages.length - 1]
 		currentPath.value = '/' + currentPage.route
 	}
@@ -95,26 +91,17 @@
 		}
 
 		uni.switchTab({
-			url: item.pagePath,
-			success: () => {
-				currentPath.value = item.pagePath
-			}
+			url: item.pagePath
 		})
 	}
 
-	// 初始化
-	function init() {
-		checkToken()
-		updateCurrentPath()
-	}
-
 	onMounted(() => {
-		init()
+		updateCurrentPath()
 	})
 
 	// 使用onShow生命周期
 	onShow(() => {
-		init()
+		updateCurrentPath()
 	})
 </script>
 

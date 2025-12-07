@@ -41,8 +41,7 @@
 }
 .user-info.data-v-0f7520f0 {
   height: 280rpx;
-  background: #FCB857;
-  border-radius: 0 0 32rpx 32rpx;
+  background: linear-gradient(135deg, #FCB857 0%, #FF9800 100%);
   padding: 60rpx 30rpx 40rpx;
   margin: 0 -24rpx 30rpx -24rpx;
   display: flex;

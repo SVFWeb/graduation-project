@@ -23,7 +23,7 @@ const _sfc_main = {
     }
     function onParticipationDetail() {
       common_vendor.index.navigateTo({
-        url: "/pages/registration/participationDetails/participationDetails"
+        url: "/pages/myActivity/participationDetails/participationDetails"
       });
     }
     function onOpenRate() {
