@@ -7,9 +7,9 @@
 				<image class="avatar" src="/static/logo.png" mode="aspectFill"></image>
 				<view class="user-detail">
 					<view class="name-row">
-						 <view class="name" v-if="!token">
-						 	<navigator url="/pages/login/login">立即登录</navigator>
-						 </view>
+						<view class="name" v-if="!token">
+							<navigator url="/pages/system/login/login">立即登录</navigator>
+						</view>
 						<text class="name" v-else>林嘉宇</text>
 					</view>
 					<text class="student-id" v-if="token">学号：2023123456</text>
@@ -21,7 +21,9 @@
 		<view class="quick-section">
 			<view class="quick-grid">
 				<!-- 基本信息 -->
-				<view class="quick-item">
+				<view class="quick-item" @click="()=>uni.navigateTo({
+						url:'/pages/user/userInfo/userInfo'
+					})">
 					<view class="quick-icon green">
 						<uni-icons type="person" size="24" color="#fff"></uni-icons>
 					</view>
@@ -68,10 +70,14 @@
 			</view>
 		</view>
 
-		<view v-if="token" class="user-outLogin">
+		<view v-if="token" class="user-outLogin" @click="onOutLogin">
 			退出登录
 		</view>
 	</view>
+	<uni-popup ref="logoutPopup" type="dialog" background-color="#fff">
+		<uni-popup-dialog type="info" title="退出登录" content="确认退出当前账号？" confirmText="退出" cancelText="取消"
+			@confirm="confirmLogout" />
+	</uni-popup>
 	<!-- 自定义tabBar -->
 	<custom-tabbar></custom-tabbar>
 </template>
@@ -81,8 +87,21 @@
 		ref
 	} from 'vue';
 	import customTabbar from '@/components/custom-tabbar/custom-tabbar.vue';
-	
-	const token=uni.getStorageSync('token')
+
+	const token = uni.getStorageSync('token')
+
+	const logoutPopup = ref(null)
+
+	function onOutLogin() {
+		logoutPopup.value?.open()
+	}
+
+	function confirmLogout() {
+		uni.clearStorageSync()
+		uni.reLaunch({
+			url: '/pages/index/index'
+		})
+	}
 </script>
 
 <style lang="scss" scoped>

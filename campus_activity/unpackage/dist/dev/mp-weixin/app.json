@@ -11,9 +11,10 @@
     "pages/myActivity/participationDetails/participationDetails",
     "pages/index/tribeList/tribeList",
     "pages/scanCode/scanCode",
-    "pages/login/login",
-    "pages/registration/registration",
-    "pages/userInfo/userInfo"
+    "pages/system/login/login",
+    "pages/system/registration/registration",
+    "pages/system/userInfo/userInfo",
+    "pages/user/userInfo/userInfo"
   ],
   "window": {
     "navigationBarTextStyle": "black",

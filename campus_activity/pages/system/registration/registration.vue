@@ -27,7 +27,7 @@
 
 			<view class="link-section">
 				<text class="link-text" @click="()=>uni.redirectTo({
-			url:'/pages/login/login'
+			url:'/pages/system/login/login'
 		})">已有账号？立即登录</text>
 			</view>
 		</view>
@@ -110,7 +110,7 @@
 			// 注册成功后跳转到个人信息完善页面
 			setTimeout(() => {
 				uni.redirectTo({
-					url: '/pages/userInfo/userInfo'
+					url: '/pages/system/userInfo/userInfo'
 				})
 			}, 1500)
 		} catch (e) {
@@ -204,3 +204,8 @@
 		}
 	}
 </style>
+
+
+
+
+

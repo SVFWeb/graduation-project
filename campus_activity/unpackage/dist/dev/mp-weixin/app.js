@@ -13,9 +13,10 @@ if (!Math) {
   "./pages/myActivity/participationDetails/participationDetails.js";
   "./pages/index/tribeList/tribeList.js";
   "./pages/scanCode/scanCode.js";
-  "./pages/login/login.js";
-  "./pages/registration/registration.js";
-  "./pages/userInfo/userInfo.js";
+  "./pages/system/login/login.js";
+  "./pages/system/registration/registration.js";
+  "./pages/system/userInfo/userInfo.js";
+  "./pages/user/userInfo/userInfo.js";
 }
 const _sfc_main = {
   onLaunch: function() {
@@ -35,17 +36,29 @@ function createApp() {
   };
 }
 const routeTypes = ["navigateTo", "redirectTo", "switchTab", "reLaunch", "navigateBack"];
-const routeNoControl = ["/pages/index/index", "/pages/login/login", "/pages/registration/registration", "/pages/activity/activity", "/pages/user/user", "/pages/userInfo/userInfo"];
+const routeNoControl = ["/pages/index/index", "/pages/system/login/login", "/pages/system/registration/registration", "/pages/activity/activity", "/pages/user/user", "/pages/system/userInfo/userInfo"];
 routeTypes.forEach((item) => {
   common_vendor.index.addInterceptor(item, {
     invoke(option) {
       const token = common_vendor.index.getStorageSync("token");
-      common_vendor.index.getStorageSync("profileCompleted");
+      const profileCompleted = common_vendor.index.getStorageSync("profileCompleted");
       if (!token && !routeNoControl.includes(option.url)) {
         common_vendor.index.reLaunch({
-          url: "/pages/login/login"
+          url: "/pages/system/login/login"
         });
         return false;
+      }
+      if (token && !profileCompleted) {
+        const allowedPages = ["/pages/system/login/login", "/pages/system/registration/registration", "/pages/system/userInfo/userInfo"];
+        if (item === "switchTab" && option.url === "/pages/index/index") {
+          return true;
+        }
+        if (!allowedPages.includes(option.url)) {
+          common_vendor.index.redirectTo({
+            url: "/pages/system/userInfo/userInfo"
+          });
+          return false;
+        }
       }
     }
   });

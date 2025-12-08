@@ -2,5 +2,17 @@
   "setting": {
     "compileHotReLoad": false
   },
-  "condition": {}
+  "condition": {
+    "miniprogram": {
+      "list": [
+        {
+          "name": "pages/user/userInfo/userInfo",
+          "pathName": "pages/user/userInfo/userInfo",
+          "query": "",
+          "scene": null,
+          "launchMode": "default"
+        }
+      ]
+    }
+  }
 }

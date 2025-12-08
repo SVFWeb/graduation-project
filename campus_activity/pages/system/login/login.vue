@@ -90,7 +90,7 @@
 			if (!profileCompleted) {
 				// 未完善个人信息，跳转到完善信息页面
 				uni.reLaunch({
-					url: '/pages/userInfo/userInfo'
+					url: '/pages/system/userInfo/userInfo'
 				})
 			} else {
 				// 已完善个人信息，跳转到首页
@@ -106,7 +106,7 @@
 	
 	const goToRegister = () => {
 		uni.navigateTo({
-			url: '/pages/registration/registration'
+			url: '/pages/system/registration/registration'
 		})
 	}
 </script>
@@ -197,3 +197,8 @@
 		}
 	}
 </style>
+
+
+
+
+

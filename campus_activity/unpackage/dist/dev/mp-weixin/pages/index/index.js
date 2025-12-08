@@ -21,7 +21,7 @@ const _sfc_main = {
       const profileCompleted = common_vendor.index.getStorageSync("profileCompleted");
       if (token && !profileCompleted) {
         common_vendor.index.redirectTo({
-          url: "/pages/userInfo/userInfo"
+          url: "/pages/system/userInfo/userInfo"
         });
       }
     });
