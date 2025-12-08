@@ -15,6 +15,7 @@ if (!Math) {
   "./pages/scanCode/scanCode.js";
   "./pages/login/login.js";
   "./pages/registration/registration.js";
+  "./pages/userInfo/userInfo.js";
 }
 const _sfc_main = {
   onLaunch: function() {
@@ -34,13 +35,14 @@ function createApp() {
   };
 }
 const routeTypes = ["navigateTo", "redirectTo", "switchTab", "reLaunch", "navigateBack"];
-const routeNoControl = ["/pages/index/index", "/pages/login/login", "/pages/registration/registration", "/pages/activity/activity", "/pages/user/user"];
+const routeNoControl = ["/pages/index/index", "/pages/login/login", "/pages/registration/registration", "/pages/activity/activity", "/pages/user/user", "/pages/userInfo/userInfo"];
 routeTypes.forEach((item) => {
   common_vendor.index.addInterceptor(item, {
     invoke(option) {
       const token = common_vendor.index.getStorageSync("token");
+      common_vendor.index.getStorageSync("profileCompleted");
       if (!token && !routeNoControl.includes(option.url)) {
-        common_vendor.index.redirectTo({
+        common_vendor.index.reLaunch({
           url: "/pages/login/login"
         });
         return false;

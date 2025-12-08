@@ -26,15 +26,18 @@ export function createApp() {
 // 需要权限的api
 const routeTypes = ['navigateTo', 'redirectTo', 'switchTab', 'reLaunch', 'navigateBack'];
 // 不需要权限的页面
-const routeNoControl=['/pages/index/index','/pages/login/login','/pages/registration/registration','/pages/activity/activity','/pages/user/user']
+const routeNoControl=['/pages/index/index','/pages/login/login','/pages/registration/registration','/pages/activity/activity','/pages/user/user','/pages/userInfo/userInfo']
 
 // 为每个api添加拦截器
 routeTypes.forEach(item => {
 	uni.addInterceptor(item, {
 		invoke(option) {
 			const token = uni.getStorageSync('token')
+			const profileCompleted = uni.getStorageSync('profileCompleted')
+			
+			// 检查是否登录
 			if (!token && !routeNoControl.includes(option.url)) {
-				uni.redirectTo({
+				uni.reLaunch({
 					url: '/pages/login/login'
 				})
 				return false

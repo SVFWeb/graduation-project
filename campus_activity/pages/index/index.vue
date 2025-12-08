@@ -98,10 +98,24 @@
 </template>
 
 <script setup>
+	import { onShow } from '@dcloudio/uni-app'
 	import comTitle from './component/com-title.vue';
 	import comSearch from '../../components/com-search/com-search.vue';
 	import comActivityItem from '../../components/com-activity-item/com-activity-item.vue';
 	import customTabbar from '../../components/custom-tabbar/custom-tabbar.vue';
+	
+	// 页面显示时检查是否完善个人信息
+	onShow(() => {
+		const token = uni.getStorageSync('token')
+		const profileCompleted = uni.getStorageSync('profileCompleted')
+		
+		// 如果已登录但未完善个人信息，跳转到完善信息页面
+		if (token && !profileCompleted) {
+			uni.redirectTo({
+				url: '/pages/userInfo/userInfo'
+			})
+		}
+	})
 </script>
 
 <style lang="scss" scoped>

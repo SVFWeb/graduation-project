@@ -7,9 +7,12 @@
 				<image class="avatar" src="/static/logo.png" mode="aspectFill"></image>
 				<view class="user-detail">
 					<view class="name-row">
-						<text class="name">林嘉宇</text>
+						 <view class="name" v-if="!token">
+						 	<navigator url="/pages/login/login">立即登录</navigator>
+						 </view>
+						<text class="name" v-else>林嘉宇</text>
 					</view>
-					<text class="student-id">学号：2023123456</text>
+					<text class="student-id" v-if="token">学号：2023123456</text>
 				</view>
 			</view>
 		</view>
@@ -65,7 +68,7 @@
 			</view>
 		</view>
 
-		<view class="user-outLogin">
+		<view v-if="token" class="user-outLogin">
 			退出登录
 		</view>
 	</view>
@@ -78,6 +81,8 @@
 		ref
 	} from 'vue';
 	import customTabbar from '@/components/custom-tabbar/custom-tabbar.vue';
+	
+	const token=uni.getStorageSync('token')
 </script>
 
 <style lang="scss" scoped>

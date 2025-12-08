@@ -12,7 +12,8 @@
     "pages/index/tribeList/tribeList",
     "pages/scanCode/scanCode",
     "pages/login/login",
-    "pages/registration/registration"
+    "pages/registration/registration",
+    "pages/userInfo/userInfo"
   ],
   "window": {
     "navigationBarTextStyle": "black",

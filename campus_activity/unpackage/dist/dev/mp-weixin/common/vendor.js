@@ -8081,6 +8081,14 @@ const pages = [
       navigationBarBackgroundColor: "#e6f4ff",
       navigationBarTextStyle: "black"
     }
+  },
+  {
+    path: "pages/userInfo/userInfo",
+    style: {
+      navigationBarTitleText: "完善信息",
+      navigationBarBackgroundColor: "#e6f4ff",
+      navigationBarTextStyle: "black"
+    }
   }
 ];
 const tabBar = {
@@ -11007,9 +11015,11 @@ exports.onMounted = onMounted;
 exports.onShow = onShow;
 exports.onUnmounted = onUnmounted;
 exports.p = p$1;
+exports.reactive = reactive;
 exports.ref = ref;
 exports.resolveComponent = resolveComponent;
 exports.s = s$1;
 exports.sr = sr;
 exports.t = t$1;
+exports.unref = unref;
 //# sourceMappingURL=../../.sourcemap/mp-weixin/common/vendor.js.map

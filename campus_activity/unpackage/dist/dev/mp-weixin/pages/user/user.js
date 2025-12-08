@@ -13,35 +13,41 @@ const customTabbar = () => "../../components/custom-tabbar/custom-tabbar.js";
 const _sfc_main = {
   __name: "user",
   setup(__props) {
+    const token = common_vendor.index.getStorageSync("token");
     return (_ctx, _cache) => {
-      return {
+      return common_vendor.e({
         a: common_assets._imports_0$1,
-        b: common_vendor.p({
+        b: !common_vendor.unref(token)
+      }, !common_vendor.unref(token) ? {} : {}, {
+        c: common_vendor.unref(token)
+      }, common_vendor.unref(token) ? {} : {}, {
+        d: common_vendor.p({
           type: "person",
           size: "24",
           color: "#fff"
         }),
-        c: common_vendor.p({
+        e: common_vendor.p({
           type: "calendar",
           size: "20",
           color: "#fff"
         }),
-        d: common_vendor.p({
+        f: common_vendor.p({
           type: "notification",
           size: "20",
           color: "#fff"
         }),
-        e: common_vendor.p({
+        g: common_vendor.p({
           type: "star",
           size: "20",
           color: "#fff"
         }),
-        f: common_vendor.p({
+        h: common_vendor.p({
           type: "medal",
           size: "20",
           color: "#fff"
-        })
-      };
+        }),
+        i: common_vendor.unref(token)
+      }, common_vendor.unref(token) ? {} : {});
     };
   }
 };

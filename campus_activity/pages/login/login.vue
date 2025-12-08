@@ -6,27 +6,29 @@
 		</view>
 		
 		<view class="login-form">
-			<view class="input-group">
-				<text class="label">账号</text>
-				<input 
-					class="input" 
-					type="text" 
-					v-model="username" 
-					placeholder="请输入账号"
-					maxlength="20"
-				/>
-			</view>
-			
-			<view class="input-group">
-				<text class="label">密码</text>
-				<input 
-					class="input" 
-					type="password" 
-					v-model="password" 
-					placeholder="请输入密码"
-					maxlength="20"
-				/>
-			</view>
+			<uni-forms ref="form" :rules="rules" :modelValue="formData" label-position="top">
+				<uni-forms-item label="账号" name="username" required>
+					<input 
+						class="input" 
+						type="text" 
+						v-model="formData.username" 
+						placeholder="请输入账号"
+						maxlength="20"
+						@input="onInput('username', $event)"
+					/>
+				</uni-forms-item>
+				
+				<uni-forms-item label="密码" name="password" required>
+					<input 
+						class="input" 
+						type="password" 
+						v-model="formData.password" 
+						placeholder="请输入密码"
+						maxlength="20"
+						@input="onInput('password', $event)"
+					/>
+				</uni-forms-item>
+			</uni-forms>
 			
 			<button class="login-btn" @click="handleLogin">登录</button>
 			
@@ -38,46 +40,68 @@
 </template>
 
 <script setup>
-	import { ref } from 'vue'
+	import { ref, reactive } from 'vue'
 	
-	const username = ref('')
-	const password = ref('')
+	const form = ref(null)
+	const formData = reactive({
+		username: '',
+		password: ''
+	})
 	
-	const handleLogin = () => {
-		if (!username.value.trim()) {
-			uni.showToast({
-				title: '请输入账号',
-				icon: 'none'
-			})
-			return
+	const rules = {
+		username: {
+			rules: [
+				{ required: true, errorMessage: '请输入账号' }
+			]
+		},
+		password: {
+			rules: [
+				{ required: true, errorMessage: '请输入密码' },
+				{ minLength: 6, errorMessage: '密码至少6位' }
+			]
 		}
-		
-		if (!password.value.trim()) {
-			uni.showToast({
-				title: '请输入密码',
-				icon: 'none'
-			})
-			return
+	}
+	
+	const onInput = (name, e) => {
+		const value = e.detail ? e.detail.value : e.target.value
+		formData[name] = value
+		if (form.value) {
+			form.value.setValue(name, value)
 		}
-		
-		if (password.value.length < 6) {
+	}
+	
+	const handleLogin = async () => {
+		try {
+			await form.value.validate()
+			
+			// 这里可以调用登录接口
+			// 模拟登录成功，保存token（实际应该从接口获取）
+			const mockToken = 'token_' + Date.now()
+			uni.setStorageSync('token', mockToken)
+			
+			// 检查是否完善了个人信息
+			const profileCompleted = uni.getStorageSync('profileCompleted')
+			
 			uni.showToast({
-				title: '密码至少6位',
-				icon: 'none'
+				title: '登录成功',
+				icon: 'success'
 			})
-			return
+			
+			if (!profileCompleted) {
+				// 未完善个人信息，跳转到完善信息页面
+				uni.reLaunch({
+					url: '/pages/userInfo/userInfo'
+				})
+			} else {
+				// 已完善个人信息，跳转到首页
+				uni.reLaunch({
+					url: '/pages/index/index'
+				})
+			}
+			
+		} catch (e) {
+			console.log('表单校验失败', e)
 		}
-		
-		// 这里可以调用登录接口
-		uni.showToast({
-			title: '登录成功',
-			icon: 'success'
-		})
-		
-		// 登录成功后可以跳转到首页
-		// uni.switchTab({
-		// 	url: '/pages/index/index'
-		// })
 	}
 	
 	const goToRegister = () => {
@@ -123,31 +147,19 @@
 		box-shadow: 0 4rpx 20rpx rgba(24, 144, 255, 0.15);
 	}
 	
-	.input-group {
-		margin-bottom: 40rpx;
+	.input {
+		width: 100%;
+		height: 88rpx;
+		background: #fafafa;
+		border-radius: 8rpx;
+		padding: 0 24rpx;
+		font-size: 28rpx;
+		color: #333333;
+		box-sizing: border-box;
+		border: 1rpx solid #d9ecff;
 		
-		.label {
-			display: block;
-			font-size: 28rpx;
-			color: #333333;
-			margin-bottom: 20rpx;
-			font-weight: 500;
-		}
-		
-		.input {
-			width: 100%;
-			height: 88rpx;
-			background: #fafafa;
-			border-radius: 8rpx;
-			padding: 0 24rpx;
-			font-size: 28rpx;
-			color: #333333;
-			box-sizing: border-box;
-			border: 1rpx solid #d9ecff;
-			
-			&::placeholder {
-				color: #999999;
-			}
+		&::placeholder {
+			color: #999999;
 		}
 	}
 	
