@@ -81,14 +81,18 @@
 			"path" : "pages/login/login",
 			"style" : 
 			{
-				"navigationBarTitleText" : ""
+				"navigationBarTitleText" : "登录",
+				"navigationBarBackgroundColor": "#e6f4ff",
+				"navigationBarTextStyle": "black"
 			}
 		},
 		{
 			"path" : "pages/registration/registration",
 			"style" : 
 			{
-				"navigationBarTitleText" : ""
+				"navigationBarTitleText" : "注册",
+				"navigationBarBackgroundColor": "#e6f4ff",
+				"navigationBarTextStyle": "black"
 			}
 		}
 	],
