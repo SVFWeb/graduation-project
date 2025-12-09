@@ -62,6 +62,12 @@
   "permission": {
     "scope.userLocation": {
       "desc": "需要访问相机进行扫码"
+    },
+    "scope.writePhotosAlbum": {
+      "desc": "你的相册信息将用于小程序保存图片的效果展示"
+    },
+    "scope.chooseFile": {
+      "desc": "你的文件信息将用于小程序选择文件的效果展示"
     }
   },
   "usingComponents": {}

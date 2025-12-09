@@ -1,18 +1,28 @@
 "use strict";
 const common_vendor = require("../../../common/vendor.js");
+const common_assets = require("../../../common/assets.js");
 if (!Array) {
+  const _easycom_uni_file_picker2 = common_vendor.resolveComponent("uni-file-picker");
   const _easycom_uni_list_item2 = common_vendor.resolveComponent("uni-list-item");
   const _easycom_uni_list2 = common_vendor.resolveComponent("uni-list");
-  (_easycom_uni_list_item2 + _easycom_uni_list2)();
+  (_easycom_uni_file_picker2 + _easycom_uni_list_item2 + _easycom_uni_list2)();
 }
+const _easycom_uni_file_picker = () => "../../../uni_modules/uni-file-picker/components/uni-file-picker/uni-file-picker.js";
 const _easycom_uni_list_item = () => "../../../uni_modules/uni-list/components/uni-list-item/uni-list-item.js";
 const _easycom_uni_list = () => "../../../uni_modules/uni-list/components/uni-list/uni-list.js";
 if (!Math) {
-  (_easycom_uni_list_item + _easycom_uni_list)();
+  (_easycom_uni_file_picker + _easycom_uni_list_item + _easycom_uni_list)();
 }
 const _sfc_main = {
   __name: "userInfo",
   setup(__props) {
+    const imageStyles = common_vendor.ref({
+      width: 64,
+      height: 64,
+      border: {
+        radius: "50%"
+      }
+    });
     const userInfo = common_vendor.reactive({
       avatar: "/static/image/xin.jpg",
       // 可替换为用户上传的头像
@@ -26,37 +36,43 @@ const _sfc_main = {
     });
     return (_ctx, _cache) => {
       return {
-        a: common_vendor.p({
+        a: common_assets._imports_0$1,
+        b: common_vendor.p({
+          limit: "1",
+          ["disable-preview"]: true,
+          ["del-icon"]: false,
+          ["file-mediatype"]: "image",
+          imageStyles: imageStyles.value
+        }),
+        c: common_vendor.p({
           title: "头像",
-          thumb: userInfo.avatar,
-          ["thumb-size"]: "lg",
           clickable: true
         }),
-        b: common_vendor.p({
+        d: common_vendor.p({
           title: "姓名",
           ["right-text"]: userInfo.name
         }),
-        c: common_vendor.p({
+        e: common_vendor.p({
           title: "性别",
           ["right-text"]: userInfo.gender
         }),
-        d: common_vendor.p({
+        f: common_vendor.p({
           title: "学校",
           ["right-text"]: userInfo.school
         }),
-        e: common_vendor.p({
+        g: common_vendor.p({
           title: "学院",
           ["right-text"]: userInfo.college
         }),
-        f: common_vendor.p({
+        h: common_vendor.p({
           title: "班级",
           ["right-text"]: userInfo.className
         }),
-        g: common_vendor.p({
+        i: common_vendor.p({
           title: "手机号",
           ["right-text"]: userInfo.phone
         }),
-        h: common_vendor.p({
+        j: common_vendor.p({
           title: "邮箱",
           ["right-text"]: userInfo.email
         })

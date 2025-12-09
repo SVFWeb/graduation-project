@@ -7290,7 +7290,7 @@ function isConsoleWritable() {
 function initRuntimeSocketService() {
   const hosts = "26.245.181.160,192.168.1.106,127.0.0.1";
   const port = "8090";
-  const id = "mp-weixin_jotmJH";
+  const id = "mp-weixin_6M0Ki6";
   const lazy = typeof swan !== "undefined";
   let restoreError = lazy ? () => {
   } : initOnError();
@@ -11238,6 +11238,7 @@ let er = new class {
   } }), Ls(er), er.addInterceptor = F, er.removeInterceptor = K, er.interceptObject = B, "web" === P)
     ;
 })();
+var tr = er;
 const createLifeCycleHook = (lifecycle, flag = 0) => (hook, target = getCurrentInstance()) => {
   !isInSSRComponentSetup && injectHook(lifecycle, hook, target);
 };
@@ -11271,5 +11272,7 @@ exports.resolveComponent = resolveComponent;
 exports.s = s$1;
 exports.sr = sr;
 exports.t = t$1;
+exports.tr = tr;
 exports.unref = unref;
+exports.wx$1 = wx$1;
 //# sourceMappingURL=../../.sourcemap/mp-weixin/common/vendor.js.map

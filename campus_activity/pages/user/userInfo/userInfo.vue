@@ -1,7 +1,15 @@
 <template>
-	<view class="page">
+	<view class="page container">
 		<uni-list class="card">
-			<uni-list-item title="头像" :thumb="userInfo.avatar" thumb-size="lg" clickable />
+			<uni-list-item title="头像" clickable>
+				<template v-slot:footer>
+					<uni-file-picker limit="1" disable-preview :del-icon="false" file-mediatype="image"
+						:imageStyles="imageStyles">
+						<image src="/static/logo.png" mode="aspectFill"
+							style="width: 62rpx; height: 62rpx; border-radius:50% ;" />
+					</uni-file-picker>
+				</template>
+			</uni-list-item>
 			<uni-list-item title="姓名" :right-text="userInfo.name" />
 			<uni-list-item title="性别" :right-text="userInfo.gender" />
 			<uni-list-item title="学校" :right-text="userInfo.school" />
@@ -15,9 +23,16 @@
 
 <script setup>
 	import {
-		reactive
+		reactive,
+		ref
 	} from 'vue'
-
+	const imageStyles = ref({
+		width: 64,
+		height: 64,
+		border: {
+			radius: '50%'
+		}
+	})
 	const userInfo = reactive({
 		avatar: '/static/image/xin.jpg', // 可替换为用户上传的头像
 		name: '林嘉宇',
@@ -31,10 +46,6 @@
 </script>
 
 <style lang="scss" scoped>
-	.page {
-		min-height: 100vh;
-	}
-
 	.title {
 		font-size: 32rpx;
 		font-weight: 600;
