@@ -53,7 +53,9 @@
 				</view>
 
 				<!-- 我的活动 -->
-				<view class="service-item">
+				<view class="service-item" @click="()=>{uni.navigateTo({
+					url:'/pages/user/myActivity/myActivity'
+				})}">
 					<view class="service-icon purple">
 						<uni-icons type="star" size="20" color="#fff"></uni-icons>
 					</view>
@@ -61,7 +63,9 @@
 				</view>
 
 				<!-- 我的社团 -->
-				<view class="service-item">
+				<view class="service-item" @click="()=>{uni.navigateTo({
+					url:'/pages/user/myClub/myClub'
+				})}">
 					<view class="service-icon green">
 						<uni-icons type="medal" size="20" color="#fff"></uni-icons>
 					</view>

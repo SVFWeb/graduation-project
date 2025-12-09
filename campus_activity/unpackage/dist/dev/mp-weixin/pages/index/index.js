@@ -43,8 +43,8 @@ const _sfc_main = {
           text: "精彩热门活动，欢迎您来报名~~"
         }),
         e: common_vendor.o(() => {
-          common_vendor.index.navigateTo({
-            url: "/pages/index/tribeList/tribeList"
+          common_vendor.index.switchTab({
+            url: "/pages/clubList/clubList"
           });
         }),
         f: common_vendor.f(4, (item, k0, i0) => {
@@ -52,7 +52,7 @@ const _sfc_main = {
             a: common_vendor.t(item),
             b: item,
             c: common_vendor.o(($event) => common_vendor.index.navigateTo({
-              url: "/pages/clubDetails/clubDetails"
+              url: "/pages/clubList/clubDetails/clubDetails"
             }), item)
           };
         }),

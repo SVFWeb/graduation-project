@@ -3,6 +3,9 @@
 		<view :class="{'filter_tag':true,'active':isActive}" @click="goFilter">
 			{{ title }}
 		</view>
+		<uni-popup ref="popup" type="bottom" :is-mask-click="true">
+			<com-filter-tag-list :type="props.type" @close="closePopup"></com-filter-tag-list>
+		</uni-popup>
 	</view>
 </template>
 
@@ -12,15 +15,20 @@
 		onMounted,
 		onUnmounted
 	} from 'vue'
+	import comFilterTagList from '@/components/com-filter-tag-list/com-filter-tag-list.vue'
+
 	const props = defineProps(['title', 'type'])
 	const $emit=defineEmits(['update:title','update:type'])
 	const initTitle=ref(props.title)
 	const isActive = ref(false)
+	const popup = ref(null)
 
 	function goFilter() {
-		uni.navigateTo({
-			url: `/pages/filterTagList/filterTagList?type=${props.type}`
-		})
+		popup.value.open()
+	}
+
+	function closePopup() {
+		popup.value.close()
 	}
 
 	function onChangeTitle(e) {

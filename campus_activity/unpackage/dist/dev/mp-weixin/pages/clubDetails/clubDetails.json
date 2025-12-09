@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "",
-  "navigationBarBackgroundColor": "#fff",
-  "usingComponents": {
-    "com-activity-item": "../../components/com-activity-item/com-activity-item"
-  }
-}

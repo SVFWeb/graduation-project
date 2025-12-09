@@ -2,7 +2,6 @@
   "navigationBarTitleText": "",
   "navigationBarBackgroundColor": "#fff",
   "usingComponents": {
-    "uni-list-item": "../../uni_modules/uni-list/components/uni-list-item/uni-list-item",
-    "uni-list": "../../uni_modules/uni-list/components/uni-list/uni-list"
+    "com-filter-tag-list": "../../components/com-filter-tag-list/com-filter-tag-list"
   }
 }

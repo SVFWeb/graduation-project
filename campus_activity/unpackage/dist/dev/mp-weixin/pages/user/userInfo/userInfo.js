@@ -1,6 +1,5 @@
 "use strict";
 const common_vendor = require("../../../common/vendor.js");
-const common_assets = require("../../../common/assets.js");
 if (!Array) {
   const _easycom_uni_file_picker2 = common_vendor.resolveComponent("uni-file-picker");
   const _easycom_uni_list_item2 = common_vendor.resolveComponent("uni-list-item");
@@ -17,10 +16,9 @@ const _sfc_main = {
   __name: "userInfo",
   setup(__props) {
     const imageStyles = common_vendor.ref({
-      width: 64,
-      height: 64,
       border: {
-        radius: "50%"
+        radius: "50%",
+        width: "0"
       }
     });
     const userInfo = common_vendor.reactive({
@@ -36,7 +34,7 @@ const _sfc_main = {
     });
     return (_ctx, _cache) => {
       return {
-        a: common_assets._imports_0$1,
+        a: userInfo.avatar,
         b: common_vendor.p({
           limit: "1",
           ["disable-preview"]: true,
@@ -45,34 +43,30 @@ const _sfc_main = {
           imageStyles: imageStyles.value
         }),
         c: common_vendor.p({
-          title: "头像",
-          clickable: true
-        }),
-        d: common_vendor.p({
           title: "姓名",
           ["right-text"]: userInfo.name
         }),
-        e: common_vendor.p({
+        d: common_vendor.p({
           title: "性别",
           ["right-text"]: userInfo.gender
         }),
-        f: common_vendor.p({
+        e: common_vendor.p({
           title: "学校",
           ["right-text"]: userInfo.school
         }),
-        g: common_vendor.p({
+        f: common_vendor.p({
           title: "学院",
           ["right-text"]: userInfo.college
         }),
-        h: common_vendor.p({
+        g: common_vendor.p({
           title: "班级",
           ["right-text"]: userInfo.className
         }),
-        i: common_vendor.p({
+        h: common_vendor.p({
           title: "手机号",
           ["right-text"]: userInfo.phone
         }),
-        j: common_vendor.p({
+        i: common_vendor.p({
           title: "邮箱",
           ["right-text"]: userInfo.email
         })

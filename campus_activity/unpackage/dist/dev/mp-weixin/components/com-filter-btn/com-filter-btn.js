@@ -1,5 +1,14 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
+if (!Array) {
+  const _easycom_uni_popup2 = common_vendor.resolveComponent("uni-popup");
+  _easycom_uni_popup2();
+}
+const _easycom_uni_popup = () => "../../uni_modules/uni-popup/components/uni-popup/uni-popup.js";
+if (!Math) {
+  (comFilterTagList + _easycom_uni_popup)();
+}
+const comFilterTagList = () => "../com-filter-tag-list/com-filter-tag-list.js";
 const _sfc_main = {
   __name: "com-filter-btn",
   props: ["title", "type"],
@@ -9,10 +18,12 @@ const _sfc_main = {
     const $emit = __emit;
     const initTitle = common_vendor.ref(props.title);
     const isActive = common_vendor.ref(false);
+    const popup = common_vendor.ref(null);
     function goFilter() {
-      common_vendor.index.navigateTo({
-        url: `/pages/filterTagList/filterTagList?type=${props.type}`
-      });
+      popup.value.open();
+    }
+    function closePopup() {
+      popup.value.close();
     }
     function onChangeTitle(e) {
       if (e.value === "全部") {
@@ -29,7 +40,18 @@ const _sfc_main = {
       return {
         a: common_vendor.t(__props.title),
         b: isActive.value ? 1 : "",
-        c: common_vendor.o(goFilter)
+        c: common_vendor.o(goFilter),
+        d: common_vendor.o(closePopup),
+        e: common_vendor.p({
+          type: props.type
+        }),
+        f: common_vendor.sr(popup, "2ed28089-0", {
+          "k": "popup"
+        }),
+        g: common_vendor.p({
+          type: "bottom",
+          ["is-mask-click"]: true
+        })
       };
     };
   }

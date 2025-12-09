@@ -12,7 +12,7 @@
 			}
 		},
 		{
-			"path": "pages/myActivity/myActivity",
+			"path": "pages/user/myActivity/myActivity",
 			"style": {
 				"navigationBarTitleText": "我的活动"
 			}
@@ -32,7 +32,7 @@
 			}
 		},
 		{
-			"path" : "pages/clubDetails/clubDetails",
+			"path" : "pages/clubList/clubDetails/clubDetails",
 			"style" : 
 			{
 				"navigationBarTitleText" : "",
@@ -40,22 +40,14 @@
 			}
 		},
 		{
-			"path" : "pages/activityDetail/activityDetail",
+			"path" : "pages/activity/activityDetail/activityDetail",
 			"style" : 
 			{
 				"navigationBarTitleText" : "活动详情"
 			}
 		},
 		{
-			"path" : "pages/filterTagList/filterTagList",
-			"style" : 
-			{
-				"navigationBarTitleText" : "",
-				"navigationBarBackgroundColor": "#fff"
-			}
-		},
-		{
-			"path" : "pages/myActivity/participationDetails/participationDetails",
+			"path" : "pages/user/myActivity/participationDetails/participationDetails",
 			"style" : 
 			{
 				"navigationBarTitleText" : "参与详情",
@@ -63,7 +55,7 @@
 			}
 		},
 		{
-			"path" : "pages/index/tribeList/tribeList",
+			"path" : "pages/clubList/clubList",
 			"style" : 
 			{
 				"navigationBarTitleText" : "",
@@ -108,8 +100,15 @@
 			"path" : "pages/user/userInfo/userInfo",
 			"style" : 
 			{
-				"navigationBarTitleText" : "",
+				"navigationBarTitleText" : "基本信息",
 				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/user/myClub/myClub",
+			"style" : 
+			{
+				"navigationBarTitleText" : "我的社团"
 			}
 		}
 	],
@@ -138,10 +137,10 @@
 				"selectedIconPath": "/static/image/iconfonts/扫码 (1).png"
 			},
 			{
-				"text": "我的活动",
-				"pagePath": "pages/myActivity/myActivity",
-				"iconPath": "/static/image/iconfonts/活动报名.png",
-				"selectedIconPath": "/static/image/iconfonts/活动报名 (1).png"
+				"text": "社团",
+				"pagePath": "pages/clubList/clubList",
+				"iconPath": "/static/image/iconfonts/社团_s.png",
+				"selectedIconPath": "/static/image/iconfonts/社团_s (1).png"
 			},
 			{
 				"text": "个人",

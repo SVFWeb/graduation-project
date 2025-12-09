@@ -44,10 +44,10 @@
 			requireAuth: true // 需要登录
 		},
 		{
-			text: "我的活动",
-			pagePath: "/pages/myActivity/myActivity",
-			iconPath: "/static/image/iconfonts/活动报名.png",
-			selectedIconPath: "/static/image/iconfonts/活动报名 (1).png",
+			"text": "社团",
+			"pagePath": "/pages/clubList/clubList",
+			"iconPath": "/static/image/iconfonts/社团_s.png",
+			"selectedIconPath": "/static/image/iconfonts/社团_s (1).png",
 			requireAuth: true // 需要登录
 		},
 		{

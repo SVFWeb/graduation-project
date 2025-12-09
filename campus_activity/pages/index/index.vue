@@ -30,8 +30,8 @@
 				<com-title>
 					<template #left>社团</template>
 					<template #right>
-						<view @click="()=>{uni.navigateTo({
-						url:'/pages/index/tribeList/tribeList'
+						<view @click="()=>{uni.switchTab({
+						url:'/pages/clubList/clubList'
 					})}">
 							More+
 						</view>
@@ -42,7 +42,7 @@
 			<view class="tribe_list">
 				<scroll-view class="tribe_scroll" scroll-x :show-scrollbar="false">
 					<view class="scroll_item_container" v-for="item in 4" :key="item" @click="uni.navigateTo({
-						url:'/pages/clubDetails/clubDetails'
+						url:'/pages/clubList/clubDetails/clubDetails'
 					})">
 						<view class="tribe_card">
 							<view class="tribe_avatar">

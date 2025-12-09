@@ -6,7 +6,7 @@ const _sfc_main = {
   setup(__props) {
     function onToActivitDetail() {
       common_vendor.index.navigateTo({
-        url: "/pages/activityDetail/activityDetail"
+        url: "/pages/activity/activityDetail/activityDetail"
       });
     }
     return (_ctx, _cache) => {

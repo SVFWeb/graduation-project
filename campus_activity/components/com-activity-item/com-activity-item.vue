@@ -13,7 +13,7 @@
 <script setup>
 	function onToActivitDetail(){
 		uni.navigateTo({
-			url:'/pages/activityDetail/activityDetail'
+			url:'/pages/activity/activityDetail/activityDetail'
 		})
 	}
 </script>
