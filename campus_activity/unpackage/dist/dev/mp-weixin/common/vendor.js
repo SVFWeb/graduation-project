@@ -5457,12 +5457,41 @@ function vFor(source, renderItem) {
   }
   return ret;
 }
+function renderSlot(name, props = {}, key) {
+  const instance = getCurrentInstance();
+  const { parent, isMounted, ctx: { $scope } } = instance;
+  const vueIds = ($scope.properties || $scope.props).uI;
+  if (!vueIds) {
+    return;
+  }
+  if (!parent && !isMounted) {
+    onMounted(() => {
+      renderSlot(name, props, key);
+    }, instance);
+    return;
+  }
+  const invoker = findScopedSlotInvoker(vueIds, instance);
+  if (invoker) {
+    invoker(name, props, key);
+  }
+}
+function findScopedSlotInvoker(vueId, instance) {
+  let parent = instance.parent;
+  while (parent) {
+    const invokers = parent.$ssi;
+    if (invokers && invokers[vueId]) {
+      return invokers[vueId];
+    }
+    parent = parent.parent;
+  }
+}
 function setRef(ref2, id, opts = {}) {
   const { $templateRefs } = getCurrentInstance();
   $templateRefs.push({ i: id, r: ref2, k: opts.k, f: opts.f });
 }
 const o$1 = (value, key) => vOn(value, key);
 const f$1 = (source, renderItem) => vFor(source, renderItem);
+const r$1 = (name, props, key) => renderSlot(name, props, key);
 const s$1 = (value) => stringifyStyle(value);
 const e$1 = (target, ...sources) => extend(target, ...sources);
 const n$1 = (value) => normalizeClass(value);
@@ -7290,7 +7319,7 @@ function isConsoleWritable() {
 function initRuntimeSocketService() {
   const hosts = "26.245.181.160,192.168.1.106,127.0.0.1";
   const port = "8090";
-  const id = "mp-weixin_lQxNGQ";
+  const id = "mp-weixin_7Jujjl";
   const lazy = typeof swan !== "undefined";
   let restoreError = lazy ? () => {
   } : initOnError();
@@ -8336,6 +8365,13 @@ const pages = [
     path: "pages/user/myClub/myClub",
     style: {
       navigationBarTitleText: "我的社团",
+      navigationBarBackgroundColor: "#fff"
+    }
+  },
+  {
+    path: "pages/user/publishActivity/publishActivity",
+    style: {
+      navigationBarTitleText: "发布活动",
       navigationBarBackgroundColor: "#fff"
     }
   }
@@ -11266,6 +11302,7 @@ exports.onMounted = onMounted;
 exports.onShow = onShow;
 exports.onUnmounted = onUnmounted;
 exports.p = p$1;
+exports.r = r$1;
 exports.reactive = reactive;
 exports.ref = ref;
 exports.resolveComponent = resolveComponent;

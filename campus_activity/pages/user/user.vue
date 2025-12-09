@@ -30,7 +30,9 @@
 					<text class="quick-label">基本信息</text>
 				</view>
 				<!-- 发布活动 -->
-				<view class="quick-item">
+				<view class="quick-item" @click="()=>uni.navigateTo({
+						url:'/pages/user/publishActivity/publishActivity'
+					})">
 					<view class="quick-icon purple">
 						<uni-icons type="plusempty" size="24" color="#fff"></uni-icons>
 					</view>

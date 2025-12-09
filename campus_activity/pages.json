@@ -111,6 +111,14 @@
 				"navigationBarTitleText" : "我的社团",
 				"navigationBarBackgroundColor": "#fff"
 			}
+		},
+		{
+			"path" : "pages/user/publishActivity/publishActivity",
+			"style" : 
+			{
+				"navigationBarTitleText" : "发布活动",
+				"navigationBarBackgroundColor": "#fff"
+			}
 		}
 	],
 	"tabBar": {

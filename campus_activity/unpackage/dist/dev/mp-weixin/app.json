@@ -14,7 +14,8 @@
     "pages/system/registration/registration",
     "pages/system/userInfo/userInfo",
     "pages/user/userInfo/userInfo",
-    "pages/user/myClub/myClub"
+    "pages/user/myClub/myClub",
+    "pages/user/publishActivity/publishActivity"
   ],
   "window": {
     "navigationBarTextStyle": "black",
