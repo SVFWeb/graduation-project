@@ -7290,7 +7290,7 @@ function isConsoleWritable() {
 function initRuntimeSocketService() {
   const hosts = "26.245.181.160,192.168.1.106,127.0.0.1";
   const port = "8090";
-  const id = "mp-weixin_UlKPmp";
+  const id = "mp-weixin_lQxNGQ";
   const lazy = typeof swan !== "undefined";
   let restoreError = lazy ? () => {
   } : initOnError();
@@ -8335,7 +8335,8 @@ const pages = [
   {
     path: "pages/user/myClub/myClub",
     style: {
-      navigationBarTitleText: "我的社团"
+      navigationBarTitleText: "我的社团",
+      navigationBarBackgroundColor: "#fff"
     }
   }
 ];
@@ -11246,6 +11247,11 @@ const onShow = /* @__PURE__ */ createLifeCycleHook(
   1 | 2
   /* HookFlags.PAGE */
 );
+const onLoad = /* @__PURE__ */ createLifeCycleHook(
+  ON_LOAD,
+  2
+  /* HookFlags.PAGE */
+);
 exports._export_sfc = _export_sfc;
 exports.computed = computed;
 exports.createSSRApp = createSSRApp;
@@ -11255,6 +11261,7 @@ exports.index = index;
 exports.initVueI18n = initVueI18n;
 exports.n = n$1;
 exports.o = o$1;
+exports.onLoad = onLoad;
 exports.onMounted = onMounted;
 exports.onShow = onShow;
 exports.onUnmounted = onUnmounted;

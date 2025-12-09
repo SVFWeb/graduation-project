@@ -27,17 +27,29 @@
   position: relative;
   padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
 }
-.user .user-outLogin.data-v-0f7520f0 {
-  position: absolute;
-  left: 220rpx;
-  bottom: calc(130rpx + env(safe-area-inset-bottom));
-  width: 300rpx;
-  height: 100rpx;
-  text-align: center;
-  line-height: 100rpx;
-  border-radius: 50rpx;
-  background-color: #fff;
+.user .logout-container.data-v-0f7520f0 {
+  margin: 100rpx 24rpx;
+  display: flex;
+  justify-content: center;
+}
+.user .logout-container .logout-btn.data-v-0f7520f0 {
+  width: 100%;
+  max-width: 400rpx;
+  height: 88rpx;
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+  border: 2rpx solid #fff;
+  border-radius: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.2);
+}
+.user .logout-container .logout-btn .logout-text.data-v-0f7520f0 {
+  font-size: 30rpx;
+  font-weight: 500;
+  letter-spacing: 0.5rpx;
 }
 .user-info.data-v-0f7520f0 {
   height: 280rpx;
@@ -112,10 +124,6 @@
   margin-bottom: 16rpx;
   transition: all 0.2s ease;
 }
-.quick-section .quick-grid .quick-item .quick-icon.data-v-0f7520f0:active {
-  transform: scale(0.95);
-  opacity: 0.9;
-}
 .quick-section .quick-grid .quick-item .quick-icon.purple.data-v-0f7520f0 {
   background: #8b5cf6;
 }
@@ -157,7 +165,7 @@
   transform: translateY(-50%);
   width: 6rpx;
   height: 28rpx;
-  background: #3b82f6;
+  background: #FCB857;
   border-radius: 3rpx;
 }
 .services-section .services-grid.data-v-0f7520f0 {
@@ -179,10 +187,6 @@
   justify-content: center;
   margin-bottom: 16rpx;
   transition: all 0.2s ease;
-}
-.services-section .services-grid .service-item .service-icon.data-v-0f7520f0:active {
-  transform: scale(0.95);
-  opacity: 0.9;
 }
 .services-section .services-grid .service-item .service-icon.blue.data-v-0f7520f0 {
   background: #3b82f6;

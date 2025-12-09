@@ -29,6 +29,13 @@
 					</view>
 					<text class="quick-label">基本信息</text>
 				</view>
+				<!-- 发布活动 -->
+				<view class="quick-item">
+					<view class="quick-icon purple">
+						<uni-icons type="plusempty" size="24" color="#fff"></uni-icons>
+					</view>
+					<text class="quick-label">发布活动</text>
+				</view>
 			</view>
 		</view>
 
@@ -37,20 +44,20 @@
 			<text class="section-title">我的服务</text>
 			<view class="services-grid">
 				<!-- 待办事项 -->
-				<view class="service-item">
+	<!-- 			<view class="service-item">
 					<view class="service-icon blue">
 						<uni-icons type="calendar" size="20" color="#fff"></uni-icons>
 					</view>
 					<text class="service-label">待办事项</text>
-				</view>
+				</view> -->
 
 				<!-- 我的消息 -->
-				<view class="service-item">
+<!-- 				<view class="service-item">
 					<view class="service-icon red">
 						<uni-icons type="notification" size="20" color="#fff"></uni-icons>
 					</view>
 					<text class="service-label">我的消息</text>
-				</view>
+				</view> -->
 
 				<!-- 我的活动 -->
 				<view class="service-item" @click="()=>{uni.navigateTo({
@@ -74,8 +81,10 @@
 			</view>
 		</view>
 
-		<view v-if="token" class="user-outLogin" @click="onOutLogin">
-			退出登录
+		<view v-if="token" class="logout-container">
+			<view class="logout-btn" @click="onOutLogin">
+				<text class="logout-text">退出登录</text>
+			</view>
 		</view>
 	</view>
 	<uni-popup ref="logoutPopup" type="dialog" background-color="#fff">
@@ -113,23 +122,32 @@
 		position: relative;
 		padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
 
-		.user-outLogin {
-			position: absolute;
-			left: 220rpx;
-			/* #ifdef H5 */
-			bottom: calc(200rpx + 120rpx + env(safe-area-inset-bottom));
-			/* #endif */
-			/* #ifndef H5*/
-			bottom: calc(10rpx + 120rpx + env(safe-area-inset-bottom));
-			/* #endif */
+		.logout-container {
+			margin: 100rpx 24rpx;
+			display: flex;
+			justify-content: center;
 
-			width: 300rpx;
-			height: 100rpx;
-			text-align: center;
-			line-height: 100rpx;
-			border-radius: 50rpx;
-			background-color: #fff;
-			box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.2);
+			.logout-btn {
+				width: 100%;
+				max-width: 400rpx;
+				height: 88rpx;
+				background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+				border: 2rpx solid #fff;
+				border-radius: 44rpx;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 12rpx;
+				transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+				box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.2);
+
+				.logout-text {
+					font-size: 30rpx;
+					font-weight: 500;
+					letter-spacing: 0.5rpx;
+				}
+
+			}
 		}
 	}
 
@@ -137,7 +155,6 @@
 	.user-info {
 		height: 280rpx;
 		background: linear-gradient(135deg, #FCB857 0%, #FF9800 100%);
-		// border-radius: 0 0 32rpx 32rpx;
 		padding: 60rpx 30rpx 40rpx;
 		margin: 0 -24rpx 30rpx -24rpx;
 		display: flex;
@@ -217,11 +234,6 @@
 					margin-bottom: 16rpx;
 					transition: all 0.2s ease;
 
-					&:active {
-						transform: scale(0.95);
-						opacity: 0.9;
-					}
-
 					&.purple {
 						background: #8b5cf6;
 					}
@@ -273,7 +285,7 @@
 				transform: translateY(-50%);
 				width: 6rpx;
 				height: 28rpx;
-				background: #3b82f6;
+				background: $uni-topic-color;
 				border-radius: 3rpx;
 			}
 		}
@@ -298,10 +310,6 @@
 					margin-bottom: 16rpx;
 					transition: all 0.2s ease;
 
-					&:active {
-						transform: scale(0.95);
-						opacity: 0.9;
-					}
 
 					&.blue {
 						background: #3b82f6;

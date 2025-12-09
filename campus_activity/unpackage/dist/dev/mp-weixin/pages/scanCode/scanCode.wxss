@@ -23,7 +23,70 @@
 /* 垂直间距 */
 /* 透明度 */
 /* 文章场景相关 */
-.scan-code-container.data-v-011a5f44 {
-  padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
+.scan-code.container.data-v-011a5f44 {
   min-height: 100vh;
+  padding: 32rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+.scan-btn.data-v-011a5f44 {
+  margin-bottom: 24rpx;
+  width: 300rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  background: linear-gradient(135deg, #0bb4f0, #4ad1f9);
+  color: #fff;
+  border: none;
+  border-radius: 16rpx;
+}
+.scan-box.data-v-011a5f44 {
+  width: 520rpx;
+  height: 520rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32rpx;
+  box-sizing: border-box;
+}
+.scan-frame.data-v-011a5f44 {
+  width: 100%;
+  height: 100%;
+  border: 4rpx dashed #0bb4f0;
+  border-radius: 24rpx;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.camera-placeholder.data-v-011a5f44 {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 26rpx;
+  background: #f6f6f6;
+}
+.camera-view.data-v-011a5f44 {
+  width: 100%;
+  height: 100%;
+}
+.scan-hint.data-v-011a5f44 {
+  margin-top: 24rpx;
+  font-size: 28rpx;
+  color: #666;
+}
+.album-btn.data-v-011a5f44 {
+  margin-top: 40rpx;
+  width: 240rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  background: linear-gradient(135deg, #FCB857 0%, #FF9800 100%);
+  color: #fff;
+  border: none;
+  border-radius: 16rpx;
 }

@@ -108,7 +108,8 @@
 			"path" : "pages/user/myClub/myClub",
 			"style" : 
 			{
-				"navigationBarTitleText" : "我的社团"
+				"navigationBarTitleText" : "我的社团",
+				"navigationBarBackgroundColor": "#fff"
 			}
 		}
 	],

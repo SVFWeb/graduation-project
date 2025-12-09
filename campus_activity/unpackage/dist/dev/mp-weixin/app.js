@@ -36,7 +36,7 @@ function createApp() {
   };
 }
 const routeTypes = ["navigateTo", "redirectTo", "switchTab", "reLaunch", "navigateBack"];
-const routeNoControl = ["/pages/index/index", "/pages/system/login/login", "/pages/system/registration/registration", "/pages/activity/activity", "/pages/user/user", "/pages/system/userInfo/userInfo"];
+const routeNoControl = ["/pages/index/index", "/pages/system/login/login", "/pages/system/registration/registration", "/pages/activity/activity", "/pages/user/user"];
 routeTypes.forEach((item) => {
   common_vendor.index.addInterceptor(item, {
     invoke(option) {
