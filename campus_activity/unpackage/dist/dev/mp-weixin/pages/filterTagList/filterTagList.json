@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "",
-  "navigationBarBackgroundColor": "#fff",
-  "usingComponents": {
-    "com-filter-tag-list": "../../components/com-filter-tag-list/com-filter-tag-list"
-  }
-}
