@@ -4,34 +4,22 @@
 			<text class="title">欢迎回来</text>
 			<text class="subtitle">登录您的账号</text>
 		</view>
-		
+
 		<view class="login-form">
 			<uni-forms ref="form" :rules="rules" :modelValue="formData" label-position="top">
 				<uni-forms-item label="账号" name="username" required>
-					<input 
-						class="input" 
-						type="text" 
-						v-model="formData.username" 
-						placeholder="请输入账号"
-						maxlength="20"
-						@input="onInput('username', $event)"
-					/>
+					<input class="input" type="text" v-model="formData.username" placeholder="请输入账号" maxlength="20"
+						@input="onInput('username', $event)" />
 				</uni-forms-item>
-				
+
 				<uni-forms-item label="密码" name="password" required>
-					<input 
-						class="input" 
-						type="password" 
-						v-model="formData.password" 
-						placeholder="请输入密码"
-						maxlength="20"
-						@input="onInput('password', $event)"
-					/>
+					<input class="input" type="password" v-model="formData.password" placeholder="请输入密码" maxlength="20"
+						@input="onInput('password', $event)" />
 				</uni-forms-item>
 			</uni-forms>
-			
+
 			<button class="login-btn" @click="handleLogin">登录</button>
-			
+
 			<view class="link-section">
 				<text class="link-text" @click="goToRegister">还没有账号？立即注册</text>
 			</view>
@@ -40,28 +28,40 @@
 </template>
 
 <script setup>
-	import { ref, reactive } from 'vue'
-	
+	import {
+		ref,
+		reactive
+	} from 'vue'
+	import {
+		apiUserLogin
+	} from '@/api/user/index.js'
+
 	const form = ref(null)
 	const formData = reactive({
 		username: '',
 		password: ''
 	})
-	
+
 	const rules = {
 		username: {
-			rules: [
-				{ required: true, errorMessage: '请输入账号' }
-			]
+			rules: [{
+				required: true,
+				errorMessage: '请输入账号'
+			}]
 		},
 		password: {
-			rules: [
-				{ required: true, errorMessage: '请输入密码' },
-				{ minLength: 6, errorMessage: '密码至少6位' }
+			rules: [{
+					required: true,
+					errorMessage: '请输入密码'
+				},
+				{
+					minLength: 6,
+					errorMessage: '密码至少6位'
+				}
 			]
 		}
 	}
-	
+
 	const onInput = (name, e) => {
 		const value = e.detail ? e.detail.value : e.target.value
 		formData[name] = value
@@ -69,41 +69,41 @@
 			form.value.setValue(name, value)
 		}
 	}
-	
+
 	const handleLogin = async () => {
 		try {
 			await form.value.validate()
-			
-			// 这里可以调用登录接口
-			// 模拟登录成功，保存token（实际应该从接口获取）
-			const mockToken = 'token_' + Date.now()
-			uni.setStorageSync('token', mockToken)
-			
-			// 检查是否完善了个人信息
-			const profileCompleted = uni.getStorageSync('profileCompleted')
-			
-			uni.showToast({
-				title: '登录成功',
-				icon: 'success'
-			})
-			
-			if (!profileCompleted) {
-				// 未完善个人信息，跳转到完善信息页面
-				uni.reLaunch({
-					url: '/pages/system/userInfo/userInfo'
+
+			let res = await apiUserLogin(formData)
+			let {
+				user,
+				token
+			} = res.data
+
+			if (user.isCompleted) {
+				uni.setStorageSync('token', token)
+				uni.setStorageSync('userInfo',user)
+				uni.showToast({
+					title: '登录成功',
+					icon: 'success'
 				})
-			} else {
-				// 已完善个人信息，跳转到首页
-				uni.reLaunch({
+				uni.switchTab({
 					url: '/pages/index/index'
 				})
+			} else {
+				uni.navigateTo({
+					url: `/pages/system/userInfo/userInfo?id=${user.id}`,
+					success() {
+						uni.showToast({
+							title: '请先完善个人信息',
+							icon: 'none'
+						})
+					}
+				})
 			}
-			
-		} catch (e) {
-			console.log('表单校验失败', e)
-		}
+		} catch (e) {}
 	}
-	
+
 	const goToRegister = () => {
 		uni.navigateTo({
 			url: '/pages/system/registration/registration'
@@ -119,12 +119,12 @@
 		display: flex;
 		flex-direction: column;
 	}
-	
+
 	.login-header {
 		text-align: center;
 		margin-top: 100rpx;
 		margin-bottom: 100rpx;
-		
+
 		.title {
 			display: block;
 			font-size: 56rpx;
@@ -132,21 +132,21 @@
 			color: #1890ff;
 			margin-bottom: 20rpx;
 		}
-		
+
 		.subtitle {
 			display: block;
 			font-size: 28rpx;
 			color: #409eff;
 		}
 	}
-	
+
 	.login-form {
 		background: #ffffff;
 		border-radius: 16rpx;
 		padding: 60rpx 40rpx;
 		box-shadow: 0 4rpx 20rpx rgba(24, 144, 255, 0.15);
 	}
-	
+
 	.input {
 		width: 100%;
 		height: 88rpx;
@@ -157,12 +157,12 @@
 		color: #333333;
 		box-sizing: border-box;
 		border: 1rpx solid #d9ecff;
-		
+
 		&::placeholder {
 			color: #999999;
 		}
 	}
-	
+
 	.login-btn {
 		width: 100%;
 		height: 88rpx;
@@ -176,29 +176,24 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		
+
 		&::after {
 			border: none;
 		}
-		
+
 		&:active {
 			opacity: 0.8;
 			background: #40a9ff;
 		}
 	}
-	
+
 	.link-section {
 		text-align: center;
 		margin-top: 40rpx;
-		
+
 		.link-text {
 			font-size: 26rpx;
 			color: #1890ff;
 		}
 	}
 </style>
-
-
-
-
-

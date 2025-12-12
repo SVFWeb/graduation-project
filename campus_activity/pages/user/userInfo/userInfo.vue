@@ -34,6 +34,8 @@
 		reactive,
 		ref
 	} from 'vue'
+	
+	
 	const imageStyles = ref({
 		border: {
 			radius: '50%',

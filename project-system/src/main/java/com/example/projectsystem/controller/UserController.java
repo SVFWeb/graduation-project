@@ -34,7 +34,6 @@ public class UserController {
     public Results login(@RequestBody LoginRequest request) {
         try {
             User user = userService.login(request.getUsername(), request.getPassword());
-            user.setPassword(null);
             return Results.success()
                     .message("登录成功")
                     .data("token", user.getToken())

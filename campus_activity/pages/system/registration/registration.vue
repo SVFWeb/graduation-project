@@ -39,6 +39,9 @@
 		ref,
 		reactive
 	} from 'vue'
+	import {
+		apiUserRegistration
+	} from '@/api/user/index.js'
 
 	const form = ref(null)
 	const formData = reactive({
@@ -99,23 +102,22 @@
 		try {
 			await form.value.validate()
 
-			// 标记为未完善个人信息
-			uni.setStorageSync('profileCompleted', false)
+			let res = await apiUserRegistration(formData)
 
-			uni.showToast({
-				title: '注册成功',
-				icon: 'success'
-			})
-
-			// 注册成功后跳转到个人信息完善页面
-			setTimeout(() => {
-				uni.redirectTo({
-					url: '/pages/system/userInfo/userInfo'
+			if (res.code === 200) {
+				uni.showToast({
+					title: '注册成功',
+					icon: 'success'
 				})
-			}, 1500)
-		} catch (e) {
-			console.log('表单校验失败', e)
-		}
+
+				// 注册成功后跳转到个人信息完善页面
+				setTimeout(() => {
+					uni.redirectTo({
+						url: '/pages/system/login/login'
+					})
+				}, 1500)
+			}
+		} catch (e) {}
 	}
 </script>
 
@@ -204,8 +206,3 @@
 		}
 	}
 </style>
-
-
-
-
-

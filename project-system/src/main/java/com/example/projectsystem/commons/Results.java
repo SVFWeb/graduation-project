@@ -68,7 +68,7 @@ public class Results implements Serializable {
 
     public static Results fail() {
         Results mess = new Results();
-        mess.setCode(500);
+        mess.setCode(400);
         mess.setMessage("响应失败");
         mess.setSuccess(false);
         return mess;
