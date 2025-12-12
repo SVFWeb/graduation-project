@@ -31,6 +31,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setUsername(username);
         user.setPassword(password);
         user.setIsCompleted(false);
+        user.setIsManager(false);
+        user.setAvatarUrl("https://env-00jxuc2o76k9.normal.cloudstatic.cn/avatar/admin.jpg");
         save(user);
         return user;
     }

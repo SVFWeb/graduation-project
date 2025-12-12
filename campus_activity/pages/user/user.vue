@@ -4,15 +4,15 @@
 		<!-- 用户信息 -->
 		<view class="user-info">
 			<view class="avatar-section">
-				<image class="avatar" src="/static/logo.png" mode="aspectFill"></image>
+				<image class="avatar" :src="userInfo.avatarUrl" mode="aspectFill"></image>
 				<view class="user-detail">
 					<view class="name-row">
 						<view class="name" v-if="!token">
 							<navigator url="/pages/system/login/login">立即登录</navigator>
 						</view>
-						<text class="name" v-else>林嘉宇</text>
+						<text class="name" v-else>{{ userInfo.realName }}</text>
 					</view>
-					<text class="student-id" v-if="token">学号：2023123456</text>
+					<text class="student-id" v-if="token">学号：{{ userInfo.studentNo }}</text>
 				</view>
 			</view>
 		</view>
@@ -104,6 +104,7 @@
 	import customTabbar from '@/components/custom-tabbar/custom-tabbar.vue';
 
 	const token = uni.getStorageSync('token')
+	const userInfo=uni.getStorageSync('userInfo')
 
 	const logoutPopup = ref(null)
 

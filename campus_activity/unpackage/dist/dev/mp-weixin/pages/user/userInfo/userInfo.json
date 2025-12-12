@@ -2,7 +2,6 @@
   "navigationBarTitleText": "基本信息",
   "navigationBarBackgroundColor": "#fff",
   "usingComponents": {
-    "uni-file-picker": "../../../uni_modules/uni-file-picker/components/uni-file-picker/uni-file-picker",
     "uni-list-item": "../../../uni_modules/uni-list/components/uni-list-item/uni-list-item",
     "uni-list": "../../../uni_modules/uni-list/components/uni-list/uni-list"
   }

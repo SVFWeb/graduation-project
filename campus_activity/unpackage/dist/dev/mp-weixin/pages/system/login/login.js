@@ -1,5 +1,6 @@
 "use strict";
 const common_vendor = require("../../../common/vendor.js");
+const api_user_index = require("../../../api/user/index.js");
 if (!Array) {
   const _easycom_uni_forms_item2 = common_vendor.resolveComponent("uni-forms-item");
   const _easycom_uni_forms2 = common_vendor.resolveComponent("uni-forms");
@@ -20,14 +21,21 @@ const _sfc_main = {
     });
     const rules = {
       username: {
-        rules: [
-          { required: true, errorMessage: "请输入账号" }
-        ]
+        rules: [{
+          required: true,
+          errorMessage: "请输入账号"
+        }]
       },
       password: {
         rules: [
-          { required: true, errorMessage: "请输入密码" },
-          { minLength: 6, errorMessage: "密码至少6位" }
+          {
+            required: true,
+            errorMessage: "请输入密码"
+          },
+          {
+            minLength: 6,
+            errorMessage: "密码至少6位"
+          }
         ]
       }
     };
@@ -39,26 +47,32 @@ const _sfc_main = {
       }
     };
     const handleLogin = async () => {
-      try {
-        await form.value.validate();
-        const mockToken = "token_" + Date.now();
-        common_vendor.index.setStorageSync("token", mockToken);
-        const profileCompleted = common_vendor.index.getStorageSync("profileCompleted");
-        common_vendor.index.showToast({
-          title: "登录成功",
-          icon: "success"
-        });
-        if (!profileCompleted) {
-          common_vendor.index.reLaunch({
-            url: "/pages/system/userInfo/userInfo"
+      await form.value.validate();
+      let res = await api_user_index.apiUserLogin(formData);
+      if (res.code === 200) {
+        const user = res.data.user;
+        const token = res.data.user.token;
+        if (user.isCompleted) {
+          common_vendor.index.setStorageSync("token", token);
+          common_vendor.index.setStorageSync("userInfo", user);
+          common_vendor.index.showToast({
+            title: "登录成功",
+            icon: "success"
           });
-        } else {
-          common_vendor.index.reLaunch({
+          common_vendor.index.switchTab({
             url: "/pages/index/index"
           });
+        } else {
+          common_vendor.index.navigateTo({
+            url: `/pages/system/userInfo/userInfo?id=${user.id}`,
+            success() {
+              common_vendor.index.showToast({
+                title: "请先完善个人信息",
+                icon: "none"
+              });
+            }
+          });
         }
-      } catch (e) {
-        common_vendor.index.__f__("log", "at pages/system/login/login.vue:103", "表单校验失败", e);
       }
     };
     const goToRegister = () => {

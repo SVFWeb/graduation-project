@@ -16,15 +16,6 @@ const customTabbar = () => "../../components/custom-tabbar/custom-tabbar.js";
 const _sfc_main = {
   __name: "index",
   setup(__props) {
-    common_vendor.onShow(() => {
-      const token = common_vendor.index.getStorageSync("token");
-      const profileCompleted = common_vendor.index.getStorageSync("profileCompleted");
-      if (token && !profileCompleted) {
-        common_vendor.index.redirectTo({
-          url: "/pages/system/userInfo/userInfo"
-        });
-      }
-    });
     return (_ctx, _cache) => {
       return {
         a: common_vendor.o(($event) => common_vendor.index.navigateTo({

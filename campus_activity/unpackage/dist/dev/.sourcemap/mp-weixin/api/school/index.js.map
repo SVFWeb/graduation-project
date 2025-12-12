@@ -1,0 +1,1 @@
+{"version":3,"file":"index.js","sources":["api/school/index.js"],"sourcesContent":["import requset from '@/utils/request.js'\r\n\r\nexport const apiGetSchoolInfoTree = () => requset({\r\n\turl: '/campus/tree'\r\n})"],"names":["requset"],"mappings":";;AAEY,MAAC,uBAAuB,MAAMA,cAAAA,QAAQ;AAAA,EACjD,KAAK;AACN,CAAC;;"}

@@ -71,18 +71,18 @@
 	}
 
 	const handleLogin = async () => {
-		try {
-			await form.value.validate()
 
-			let res = await apiUserLogin(formData)
-			let {
-				user,
-				token
-			} = res.data
+		await form.value.validate()
+
+		let res = await apiUserLogin(formData)
+
+		if (res.code === 200) {
+			const user = res.data.user
+			const token = res.data.user.token
 
 			if (user.isCompleted) {
 				uni.setStorageSync('token', token)
-				uni.setStorageSync('userInfo',user)
+				uni.setStorageSync('userInfo', user)
 				uni.showToast({
 					title: '登录成功',
 					icon: 'success'
@@ -101,7 +101,8 @@
 					}
 				})
 			}
-		} catch (e) {}
+		}
+
 	}
 
 	const goToRegister = () => {

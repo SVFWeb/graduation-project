@@ -1,5 +1,6 @@
 "use strict";
 const common_vendor = require("../../../common/vendor.js");
+const api_user_index = require("../../../api/user/index.js");
 if (!Array) {
   const _easycom_uni_forms_item2 = common_vendor.resolveComponent("uni-forms-item");
   const _easycom_uni_forms2 = common_vendor.resolveComponent("uni-forms");
@@ -71,18 +72,19 @@ const _sfc_main = {
     const handleRegister = async () => {
       try {
         await form.value.validate();
-        common_vendor.index.setStorageSync("profileCompleted", false);
-        common_vendor.index.showToast({
-          title: "注册成功",
-          icon: "success"
-        });
-        setTimeout(() => {
-          common_vendor.index.redirectTo({
-            url: "/pages/system/userInfo/userInfo"
+        let res = await api_user_index.apiUserRegistration(formData);
+        if (res.code === 200) {
+          common_vendor.index.showToast({
+            title: "注册成功",
+            icon: "success"
           });
-        }, 1500);
+          setTimeout(() => {
+            common_vendor.index.redirectTo({
+              url: "/pages/system/login/login"
+            });
+          }, 1500);
+        }
       } catch (e) {
-        common_vendor.index.__f__("log", "at pages/system/registration/registration.vue:117", "表单校验失败", e);
       }
     };
     return (_ctx, _cache) => {

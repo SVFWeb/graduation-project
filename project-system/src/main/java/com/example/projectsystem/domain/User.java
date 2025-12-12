@@ -49,6 +49,12 @@ public class User implements Serializable {
 
     private LocalDateTime completeTime;
 
+    @TableField("is_manager")
+    private Boolean isManager;
+
+    @TableField("avatar_url")
+    private String avatarUrl;
+
     private String token;
 
     private LocalDateTime createTime;
@@ -160,6 +166,22 @@ public class User implements Serializable {
 
     public void setCompleteTime(LocalDateTime completeTime) {
         this.completeTime = completeTime;
+    }
+
+    public Boolean getIsManager() {
+        return isManager;
+    }
+
+    public void setIsManager(Boolean manager) {
+        isManager = manager;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
     public String getToken() {

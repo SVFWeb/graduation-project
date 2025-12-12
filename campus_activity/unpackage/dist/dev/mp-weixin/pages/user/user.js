@@ -1,6 +1,5 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
-const common_assets = require("../../common/assets.js");
 if (!Array) {
   const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
   const _easycom_uni_popup_dialog2 = common_vendor.resolveComponent("uni-popup-dialog");
@@ -18,6 +17,7 @@ const _sfc_main = {
   __name: "user",
   setup(__props) {
     const token = common_vendor.index.getStorageSync("token");
+    const userInfo = common_vendor.index.getStorageSync("userInfo");
     const logoutPopup = common_vendor.ref(null);
     function onOutLogin() {
       var _a;
@@ -31,63 +31,67 @@ const _sfc_main = {
     }
     return (_ctx, _cache) => {
       return common_vendor.e({
-        a: common_assets._imports_0$1,
+        a: common_vendor.unref(userInfo).avatarUrl,
         b: !common_vendor.unref(token)
-      }, !common_vendor.unref(token) ? {} : {}, {
-        c: common_vendor.unref(token)
-      }, common_vendor.unref(token) ? {} : {}, {
-        d: common_vendor.p({
+      }, !common_vendor.unref(token) ? {} : {
+        c: common_vendor.t(common_vendor.unref(userInfo).realName)
+      }, {
+        d: common_vendor.unref(token)
+      }, common_vendor.unref(token) ? {
+        e: common_vendor.t(common_vendor.unref(userInfo).studentNo)
+      } : {}, {
+        f: common_vendor.p({
           type: "person",
           size: "24",
           color: "#fff"
         }),
-        e: common_vendor.o(() => common_vendor.index.navigateTo({
+        g: common_vendor.o(() => common_vendor.index.navigateTo({
           url: "/pages/user/userInfo/userInfo"
         })),
-        f: common_vendor.p({
+        h: common_vendor.p({
           type: "plusempty",
           size: "24",
           color: "#fff"
         }),
-        g: common_vendor.o(() => common_vendor.index.navigateTo({
+        i: common_vendor.o(() => common_vendor.index.navigateTo({
           url: "/pages/user/publishActivity/publishActivity"
         })),
-        h: common_vendor.p({
-          type: "star",
-          size: "20",
-          color: "#fff"
-        }),
-        i: common_vendor.o(() => {
-          common_vendor.index.navigateTo({
-            url: "/pages/user/myActivity/myActivity"
-          });
-        }),
         j: common_vendor.p({
-          type: "medal",
+          type: "star",
           size: "20",
           color: "#fff"
         }),
         k: common_vendor.o(() => {
           common_vendor.index.navigateTo({
+            url: "/pages/user/myActivity/myActivity"
+          });
+        }),
+        l: common_vendor.p({
+          type: "medal",
+          size: "20",
+          color: "#fff"
+        }),
+        m: common_vendor.o(() => {
+          common_vendor.index.navigateTo({
             url: "/pages/user/myClub/myClub"
           });
         }),
-        l: common_vendor.unref(token)
+        n: common_vendor.unref(token)
       }, common_vendor.unref(token) ? {
-        m: common_vendor.o(onOutLogin)
+        o: common_vendor.o(onOutLogin)
       } : {}, {
-        n: common_vendor.o(confirmLogout),
-        o: common_vendor.p({
+        p: common_vendor.o(confirmLogout),
+        q: common_vendor.p({
           type: "info",
           title: "退出登录",
           content: "确认退出当前账号？",
           confirmText: "退出",
           cancelText: "取消"
         }),
-        p: common_vendor.sr(logoutPopup, "0f7520f0-4", {
+        r: common_vendor.sr(logoutPopup, "0f7520f0-4", {
           "k": "logoutPopup"
         }),
-        q: common_vendor.p({
+        s: common_vendor.p({
           type: "dialog",
           ["background-color"]: "#fff"
         })

@@ -1,75 +1,78 @@
 "use strict";
 const common_vendor = require("../../../common/vendor.js");
+const utils_convertCloudPath = require("../../../utils/convertCloudPath.js");
 if (!Array) {
-  const _easycom_uni_file_picker2 = common_vendor.resolveComponent("uni-file-picker");
   const _easycom_uni_list_item2 = common_vendor.resolveComponent("uni-list-item");
   const _easycom_uni_list2 = common_vendor.resolveComponent("uni-list");
-  (_easycom_uni_file_picker2 + _easycom_uni_list_item2 + _easycom_uni_list2)();
+  (_easycom_uni_list_item2 + _easycom_uni_list2)();
 }
-const _easycom_uni_file_picker = () => "../../../uni_modules/uni-file-picker/components/uni-file-picker/uni-file-picker.js";
 const _easycom_uni_list_item = () => "../../../uni_modules/uni-list/components/uni-list-item/uni-list-item.js";
 const _easycom_uni_list = () => "../../../uni_modules/uni-list/components/uni-list/uni-list.js";
 if (!Math) {
-  (_easycom_uni_file_picker + _easycom_uni_list_item + _easycom_uni_list)();
+  (_easycom_uni_list_item + _easycom_uni_list)();
 }
 const _sfc_main = {
   __name: "userInfo",
   setup(__props) {
-    const imageStyles = common_vendor.ref({
-      border: {
-        radius: "50%",
-        width: "0"
-      }
-    });
-    const userInfo = common_vendor.reactive({
-      avatar: "/static/image/xin.jpg",
-      // 可替换为用户上传的头像
-      name: "林嘉宇",
-      gender: "男",
-      school: "广西民族大学",
-      college: "应用技术学院",
-      className: "24级计算机科学与技术（专升本）04班",
-      phone: "138****8888",
-      email: "linjiayu@example.com"
-    });
+    const userInfo = common_vendor.index.getStorageSync("userInfo");
+    const userAvatar = common_vendor.ref(userInfo.avatarUrl);
+    const filesName = common_vendor.ref();
+    function upload() {
+      common_vendor.index.chooseImage({
+        count: 1,
+        success(e) {
+          userAvatar.value = e.tempFilePaths[0];
+          filesName.value = e.tempFiles[0].name;
+        }
+      });
+    }
+    async function saveChanges() {
+      common_vendor.index.showToast({
+        title: "保存成功",
+        icon: "success"
+      });
+      common_vendor.tr.uploadFile({
+        filePath: userAvatar.value,
+        cloudPath: `avatar/${(/* @__PURE__ */ new Date()).getTime()}_${filesName.value}`,
+        fileType: "image",
+        success(e) {
+          utils_convertCloudPath.convertCloudPath(e.fileID);
+        }
+      });
+    }
     return (_ctx, _cache) => {
       return {
-        a: userInfo.avatar,
-        b: common_vendor.p({
-          limit: "1",
-          ["disable-preview"]: true,
-          ["del-icon"]: false,
-          ["file-mediatype"]: "image",
-          imageStyles: imageStyles.value
-        }),
+        a: userAvatar.value,
+        b: common_vendor.o(upload),
         c: common_vendor.p({
           title: "姓名",
-          ["right-text"]: userInfo.name
+          ["right-text"]: common_vendor.unref(userInfo).realName
         }),
         d: common_vendor.p({
           title: "性别",
-          ["right-text"]: userInfo.gender
+          ["right-text"]: common_vendor.unref(userInfo).gender === 1 ? "男" : "女"
         }),
         e: common_vendor.p({
           title: "学校",
-          ["right-text"]: userInfo.school
+          ["right-text"]: common_vendor.unref(userInfo).schoolName
         }),
         f: common_vendor.p({
           title: "学院",
-          ["right-text"]: userInfo.college
+          ["right-text"]: common_vendor.unref(userInfo).collegeName
         }),
         g: common_vendor.p({
           title: "班级",
-          ["right-text"]: userInfo.className
+          ["right-text"]: common_vendor.unref(userInfo).className
         }),
         h: common_vendor.p({
           title: "手机号",
-          ["right-text"]: userInfo.phone
+          ["right-text"]: common_vendor.unref(userInfo).phone
         }),
         i: common_vendor.p({
           title: "邮箱",
-          ["right-text"]: userInfo.email
-        })
+          ["right-text"]: common_vendor.unref(userInfo).email
+        }),
+        j: common_vendor.o(saveChanges)
       };
     };
   }

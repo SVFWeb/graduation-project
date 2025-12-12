@@ -1,6 +1,7 @@
 <template>
 	<view class="publish-activity container">
-		<uni-forms ref="formRef" :modelValue="form" :rules="rules" label-position="top" label-width="120" validate-trigger="bind">
+		<uni-forms ref="formRef" :modelValue="form" :rules="rules" label-position="top" label-width="120"
+			validate-trigger="bind">
 			<uni-forms-item label="活动名称" name="title" required>
 				<uni-easyinput v-model="form.title" placeholder="请输入活动名称" />
 			</uni-forms-item>
@@ -17,7 +18,7 @@
 				<uni-data-select v-model="form.location" :localdata="locationOptions" placeholder="请选择活动地点" />
 			</uni-forms-item>
 
-			<uni-forms-item label="活动主办方" name="organizer" required  >
+			<uni-forms-item label="活动主办方" name="organizer" required>
 				<uni-data-select v-model="form.organizer" :localdata="organizerOptions" placeholder="请选择主办方" />
 			</uni-forms-item>
 
@@ -25,36 +26,18 @@
 				<uni-easyinput v-model="form.notice" type="textarea" placeholder="请填写参与须知" :auto-height="true" />
 			</uni-forms-item>
 
-			<uni-forms-item label="活动报名时间" name="signupRange" required >
-				<uni-datetime-picker
-					v-model="form.signupRange"
-					type="datetimerange"
-					range-separator="至"
-					start-placeholder="报名开始时间"
-					end-placeholder="报名结束时间"
-					:end="signupEndLimit"
-				/>
+			<uni-forms-item label="活动报名时间" name="signupRange" required>
+				<uni-datetime-picker v-model="form.signupRange" type="datetimerange" range-separator="至"
+					start-placeholder="报名开始时间" end-placeholder="报名结束时间" :end="signupEndLimit" />
 			</uni-forms-item>
 
 			<uni-forms-item label="活动开始时间" name="activityRange" required>
-				<uni-datetime-picker
-					v-model="form.activityRange"
-					type="datetimerange"
-					range-separator="至"
-					start-placeholder="活动开始时间"
-					end-placeholder="活动结束时间"
-					:start="activityStartLimit"
-				/>
+				<uni-datetime-picker v-model="form.activityRange" type="datetimerange" range-separator="至"
+					start-placeholder="活动开始时间" end-placeholder="活动结束时间" :start="activityStartLimit" />
 			</uni-forms-item>
 
 			<uni-forms-item label="最大报名人数" name="maxParticipants" required>
-				<uni-number-box
-					v-model="form.maxParticipants"
-					:min="1"
-					:max="9999"
-					:step="1"
-					background="#f5f5f5"
-				/>
+				<uni-number-box v-model="form.maxParticipants" :min="1" :max="9999" :step="1" background="#f5f5f5" />
 			</uni-forms-item>
 
 			<uni-forms-item label="人员是否要审核" name="needReview" required>
@@ -73,11 +56,11 @@
 </template>
 
 <script setup>
-import {
-	computed,
-	reactive,
-	ref
-} from 'vue'
+	import {
+		computed,
+		reactive,
+		ref
+	} from 'vue'
 
 	const formRef = ref(null)
 	const form = reactive({
@@ -94,9 +77,9 @@ import {
 		materials: []
 	})
 
-// 报名结束不可晚于活动开始；活动开始不可早于报名结束
-const signupEndLimit = computed(() => form.activityRange?.[0] || '')
-const activityStartLimit = computed(() => form.signupRange?.[1] || '')
+	// 报名结束不可晚于活动开始；活动开始不可早于报名结束
+	const signupEndLimit = computed(() => form.activityRange?.[0] || '')
+	const activityStartLimit = computed(() => form.signupRange?.[1] || '')
 
 
 	const typeOptions = [{

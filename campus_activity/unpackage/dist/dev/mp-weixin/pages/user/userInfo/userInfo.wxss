@@ -55,28 +55,8 @@
   width: 180rpx;
   height: 180rpx;
   border-radius: 50%;
-  border: 8rpx solid rgba(255, 255, 255, 0.8);
   box-shadow: 0 12rpx 40rpx rgba(0, 0, 0, 0.15);
-  background: #FFFFFF;
   transition: all 0.3s ease;
-}
-.avatar-section .avatar-wrapper .avatar-edit.data-v-0b0fe2f0 {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 60rpx;
-  height: 60rpx;
-  border-radius: 50%;
-  background: #FCB857;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 4rpx solid #FFFFFF;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
-}
-.avatar-section .avatar-wrapper .avatar-edit .iconfont.data-v-0b0fe2f0 {
-  color: #FFFFFF;
-  font-size: 28rpx;
 }
 .avatar-section .user-name.data-v-0b0fe2f0 {
   font-size: 40rpx;
@@ -94,10 +74,6 @@
   box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.04);
   border: 1rpx solid #F0F0F0;
   transition: all 0.25s ease;
-}
-.info-card.data-v-0b0fe2f0:active {
-  transform: translateY(2rpx);
-  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.08);
 }
 .info-card.data-v-0b0fe2f0 .uni-list-item {
   padding: 30rpx 32rpx;
@@ -132,18 +108,38 @@
   white-space: nowrap;
   font-weight: 400;
 }
-.info-card.data-v-0b0fe2f0 .uni-list-item::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 8rpx;
-  height: 8rpx;
-  border-radius: 50%;
-  background: #FFE6B7;
-  opacity: 0.8;
-}
 .contact-card.data-v-0b0fe2f0 {
   margin-bottom: 60rpx;
+}
+.save-button-container.data-v-0b0fe2f0 {
+  padding: 20rpx 30rpx 60rpx;
+  background: linear-gradient(to top, #F8F9FA 70%, transparent);
+  position: -webkit-sticky;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}
+.save-btn.data-v-0b0fe2f0 {
+  background: linear-gradient(135deg, #FCB857 0%, #E6A33D 100%);
+  border: none;
+  border-radius: 50rpx;
+  height: 100rpx;
+  line-height: 100rpx;
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8rpx 30rpx rgba(252, 184, 87, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+}
+.save-btn .btn-text.data-v-0b0fe2f0 {
+  position: relative;
+  z-index: 1;
+  letter-spacing: 2rpx;
+  transition: transform 0.3s ease;
 }

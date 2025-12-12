@@ -195,7 +195,7 @@ const _sfc_main = {
           icon: "success"
         });
       }).catch((err) => {
-        common_vendor.index.__f__("warn", "at pages/user/publishActivity/publishActivity.vue:255", "表单校验未通过", err);
+        common_vendor.index.__f__("warn", "at pages/user/publishActivity/publishActivity.vue:238", "表单校验未通过", err);
       });
     };
     return (_ctx, _cache) => {

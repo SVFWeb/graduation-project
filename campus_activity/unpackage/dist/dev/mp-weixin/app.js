@@ -37,29 +37,18 @@ function createApp() {
   };
 }
 const routeTypes = ["navigateTo", "redirectTo", "switchTab", "reLaunch", "navigateBack"];
-const routeNoControl = ["/pages/index/index", "/pages/system/login/login", "/pages/system/registration/registration", "/pages/activity/activity", "/pages/user/user"];
+const routeNoControl = ["/pages/index/index", "/pages/system/login/login", "/pages/system/registration/registration", "/pages/system/userInfo/userInfo", "/pages/activity/activity", "/pages/user/user"];
+const normalizePath = (url = "") => url.split("?")[0] || "";
 routeTypes.forEach((item) => {
   common_vendor.index.addInterceptor(item, {
     invoke(option) {
       const token = common_vendor.index.getStorageSync("token");
-      const profileCompleted = common_vendor.index.getStorageSync("profileCompleted");
-      if (!token && !routeNoControl.includes(option.url)) {
+      const targetPath = normalizePath(option.url);
+      if (!token && !routeNoControl.includes(targetPath)) {
         common_vendor.index.reLaunch({
           url: "/pages/system/login/login"
         });
         return false;
-      }
-      if (token && !profileCompleted) {
-        const allowedPages = ["/pages/system/login/login", "/pages/system/registration/registration", "/pages/system/userInfo/userInfo"];
-        if (item === "switchTab" && option.url === "/pages/index/index") {
-          return true;
-        }
-        if (!allowedPages.includes(option.url)) {
-          common_vendor.index.redirectTo({
-            url: "/pages/system/userInfo/userInfo"
-          });
-          return false;
-        }
       }
     }
   });
