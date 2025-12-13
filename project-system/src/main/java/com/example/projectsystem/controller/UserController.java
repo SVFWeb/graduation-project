@@ -6,6 +6,7 @@ import com.example.projectsystem.dto.LoginRequest;
 import com.example.projectsystem.dto.ProfileUpdateRequest;
 import com.example.projectsystem.dto.RegisterRequest;
 import com.example.projectsystem.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -44,7 +45,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}/profile")
-    public Results completeProfile(@PathVariable("id") Long id, @RequestBody ProfileUpdateRequest request) {
+    public Results completeProfile(@PathVariable("id") Long id, @Valid @RequestBody ProfileUpdateRequest request) {
         try {
             User user = userService.completeProfile(id, request);
 

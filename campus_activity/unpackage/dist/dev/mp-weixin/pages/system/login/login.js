@@ -59,7 +59,7 @@ const _sfc_main = {
             title: "登录成功",
             icon: "success"
           });
-          common_vendor.index.switchTab({
+          common_vendor.index.reLaunch({
             url: "/pages/index/index"
           });
         } else {

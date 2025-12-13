@@ -28,7 +28,7 @@
   padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
 }
 .user .logout-container.data-v-0f7520f0 {
-  margin: 100rpx 24rpx;
+  margin: 350rpx 24rpx;
   display: flex;
   justify-content: center;
 }

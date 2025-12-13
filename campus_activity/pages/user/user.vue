@@ -4,7 +4,8 @@
 		<!-- 用户信息 -->
 		<view class="user-info">
 			<view class="avatar-section">
-				<image class="avatar" :src="userInfo.avatarUrl" mode="aspectFill"></image>
+				<image v-if="!userInfo.avatarUrl" class="avatar"  src="/static/logo.png" mode=""></image>
+				<image v-else class="avatar" :src="userInfo.avatarUrl" mode="aspectFill"></image>
 				<view class="user-detail">
 					<view class="name-row">
 						<view class="name" v-if="!token">
@@ -126,7 +127,7 @@
 		padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
 
 		.logout-container {
-			margin: 100rpx 24rpx;
+			margin: 350rpx 24rpx;
 			display: flex;
 			justify-content: center;
 

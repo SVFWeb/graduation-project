@@ -1,6 +1,7 @@
 "use strict";
 const common_vendor = require("../../../common/vendor.js");
 const utils_convertCloudPath = require("../../../utils/convertCloudPath.js");
+const api_user_index = require("../../../api/user/index.js");
 if (!Array) {
   const _easycom_uni_list_item2 = common_vendor.resolveComponent("uni-list-item");
   const _easycom_uni_list2 = common_vendor.resolveComponent("uni-list");
@@ -35,8 +36,16 @@ const _sfc_main = {
         filePath: userAvatar.value,
         cloudPath: `avatar/${(/* @__PURE__ */ new Date()).getTime()}_${filesName.value}`,
         fileType: "image",
-        success(e) {
-          utils_convertCloudPath.convertCloudPath(e.fileID);
+        success: async (e) => {
+          let filePath = utils_convertCloudPath.convertCloudPath(e.fileID);
+          userInfo.avatarUrl = filePath;
+          let res = await api_user_index.apiImproveUserInfo(userInfo.id, userInfo);
+          if (res.code === 200) {
+            common_vendor.index.setStorageSync("userInfo", res.data.user);
+            common_vendor.index.reLaunch({
+              url: "/pages/user/user"
+            });
+          }
         }
       });
     }

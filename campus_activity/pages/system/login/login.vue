@@ -13,7 +13,7 @@
 				</uni-forms-item>
 
 				<uni-forms-item label="密码" name="password" required>
-					<input class="input" type="password" v-model="formData.password" placeholder="请输入密码" maxlength="20"
+					<input class="input" password  v-model="formData.password" placeholder="请输入密码" maxlength="20"
 						@input="onInput('password', $event)" />
 				</uni-forms-item>
 			</uni-forms>
@@ -87,7 +87,7 @@
 					title: '登录成功',
 					icon: 'success'
 				})
-				uni.switchTab({
+				uni.reLaunch({
 					url: '/pages/index/index'
 				})
 			} else {

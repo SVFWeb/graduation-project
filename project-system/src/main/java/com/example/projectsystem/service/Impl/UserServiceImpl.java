@@ -57,14 +57,29 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (user == null) {
             throw new NoSuchElementException("用户不存在");
         }
+        
+        // 设置必填字段（已通过@Valid验证）
         user.setRealName(request.getRealName());
         user.setStudentNo(request.getStudentNo());
         user.setGender(request.getGender());
-        user.setPhone(request.getPhone());
-        user.setEmail(request.getEmail());
         user.setSchoolName(request.getSchoolName());
         user.setCollegeName(request.getCollegeName());
         user.setClassName(request.getClassName());
+        
+        // 可选字段：只有提供时才更新
+        if (StringUtils.hasText(request.getPhone())) {
+            user.setPhone(request.getPhone());
+        }
+        if (StringUtils.hasText(request.getEmail())) {
+            user.setEmail(request.getEmail());
+        }
+        if (StringUtils.hasText(request.getAvatarUrl())) {
+            user.setAvatarUrl(request.getAvatarUrl());
+        }
+        if (request.getIsManager() != null) {
+            user.setIsManager(request.getIsManager());
+        }
+        
         user.setIsCompleted(true);
         user.setCompleteTime(LocalDateTime.now());
         updateById(user);

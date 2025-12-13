@@ -35,6 +35,9 @@
 		ref
 	} from 'vue'
 	import convertCloudPath from '@/utils/convertCloudPath'
+	import {
+		apiImproveUserInfo
+	} from '@/api/user/index.js'
 
 	const userInfo = uni.getStorageSync('userInfo')
 	const userAvatar = ref(userInfo.avatarUrl)
@@ -60,8 +63,17 @@
 			filePath: userAvatar.value,
 			cloudPath: `avatar/${new Date().getTime()}_${filesName.value}`,
 			fileType: 'image',
-			success(e) {
+			success: async (e) => {
 				let filePath = convertCloudPath(e.fileID)
+				userInfo.avatarUrl = filePath
+				let res = await apiImproveUserInfo(userInfo.id, userInfo)
+				if (res.code === 200) {
+					uni.setStorageSync('userInfo', res.data.user)
+					uni.reLaunch({
+						url: '/pages/user/user'
+					})
+				}
+
 			}
 		});
 	}
