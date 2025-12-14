@@ -35,7 +35,7 @@ const _sfc_main = {
       notice: "",
       signupRange: [],
       activityRange: [],
-      maxParticipants: "",
+      maxParticipants: "1",
       needReview: "1",
       materials: []
     });

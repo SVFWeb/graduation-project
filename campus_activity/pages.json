@@ -119,6 +119,30 @@
 				"navigationBarTitleText" : "发布活动",
 				"navigationBarBackgroundColor": "#fff"
 			}
+		},
+		{
+			"path": "pages/user/createClass/createClass",
+			"style" :
+			{
+				"navigationBarTitleText" : "添加班级",
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path": "pages/user/classList/classList",
+			"style" :
+			{
+				"navigationBarTitleText" : "班级列表",
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/user/createClub/createClub",
+			"style" : 
+			{
+				"navigationBarTitleText" : "新键社团",
+				"navigationBarBackgroundColor": "#fff"
+			}
 		}
 	],
 	"tabBar": {

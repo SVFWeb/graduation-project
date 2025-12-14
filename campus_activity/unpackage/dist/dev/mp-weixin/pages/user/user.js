@@ -63,41 +63,51 @@ const _sfc_main = {
           url: "/pages/user/publishActivity/publishActivity"
         })),
         l: common_vendor.p({
-          type: "star",
-          size: "20",
+          type: "plusempty",
+          size: "24",
           color: "#fff"
         }),
-        m: common_vendor.o(() => {
-          common_vendor.index.navigateTo({
-            url: "/pages/user/myActivity/myActivity"
-          });
+        m: common_vendor.p({
+          type: "calendar",
+          size: "24",
+          color: "#fff"
         }),
         n: common_vendor.p({
-          type: "medal",
-          size: "20",
+          type: "star",
+          size: "24",
           color: "#fff"
         }),
         o: common_vendor.o(() => {
           common_vendor.index.navigateTo({
+            url: "/pages/user/myActivity/myActivity"
+          });
+        }),
+        p: common_vendor.p({
+          type: "medal",
+          size: "24",
+          color: "#fff"
+        }),
+        q: common_vendor.o(() => {
+          common_vendor.index.navigateTo({
             url: "/pages/user/myClub/myClub"
           });
         }),
-        p: common_vendor.unref(token)
+        r: common_vendor.unref(token)
       }, common_vendor.unref(token) ? {
-        q: common_vendor.o(onOutLogin)
+        s: common_vendor.o(onOutLogin)
       } : {}, {
-        r: common_vendor.o(confirmLogout),
-        s: common_vendor.p({
+        t: common_vendor.o(confirmLogout),
+        v: common_vendor.p({
           type: "info",
           title: "退出登录",
           content: "确认退出当前账号？",
           confirmText: "退出",
           cancelText: "取消"
         }),
-        t: common_vendor.sr(logoutPopup, "0f7520f0-4", {
+        w: common_vendor.sr(logoutPopup, "0f7520f0-6", {
           "k": "logoutPopup"
         }),
-        v: common_vendor.p({
+        x: common_vendor.p({
           type: "dialog",
           ["background-color"]: "#fff"
         })

@@ -52,6 +52,9 @@ public class User implements Serializable {
     @TableField("is_manager")
     private Boolean isManager;
 
+    @TableField("is_boss")
+    private Boolean isBoss;
+
     @TableField("avatar_url")
     private String avatarUrl;
 
@@ -174,6 +177,14 @@ public class User implements Serializable {
 
     public void setIsManager(Boolean manager) {
         isManager = manager;
+    }
+
+    public Boolean getIsBoss() {
+        return isBoss;
+    }
+
+    public void setIsBoss(Boolean boss) {
+        isBoss = boss;
     }
 
     public String getAvatarUrl() {

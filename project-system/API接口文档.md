@@ -71,28 +71,133 @@
 
 ---
 
-### 3. 完善个人信息
+### 3. 获取用户列表
+
+**接口**: `GET /api/users`
+
+**请求参数** (查询参数):
+- `currentPage`: 当前页码，默认值为 1
+- `pageSize`: 每页显示条数，默认值为 10
+
+**请求示例**:
+```
+GET /api/users?currentPage=1&pageSize=10
+```
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "查询成功",
+  "success": true,
+  "data": {
+    "page": {
+      "total": 100,
+      "currentPage": 1,
+      "pageSize": 10,
+      "totalPage": 10,
+      "records": []
+    }
+  }
+}
+```
+
+---
+
+### 4. 模糊查询用户
+
+**接口**: `GET /api/users/search`
+
+**请求参数** (查询参数):
+- `keyword`: 搜索关键词（可选），支持根据用户名、姓名或学号模糊查询
+- `currentPage`: 当前页码，默认值为 1
+- `pageSize`: 每页显示条数，默认值为 10
+
+**请求示例**:
+```
+GET /api/users/search?keyword=张三&currentPage=1&pageSize=10
+```
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "查询成功",
+  "success": true,
+  "data": {
+    "page": {
+      "total": 5,
+      "currentPage": 1,
+      "pageSize": 10,
+      "totalPage": 1,
+      "records": []
+    }
+  }
+}
+```
+
+---
+
+### 5. 删除用户
+
+**接口**: `DELETE /api/users/{id}`
+
+**路径参数**:
+- `id`: 用户ID
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "删除成功",
+  "success": true,
+  "data": {}
+}
+```
+
+---
+
+### 6. 批量删除用户
+
+**接口**: `DELETE /api/users`
+
+**请求参数**:
+```json
+[1, 2, 3]
+```
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "批量删除成功",
+  "success": true,
+  "data": {}
+}
+```
+
+---
+
+### 7. 完善个人信息
 
 **接口**: `PUT /api/users/{id}/profile`
 
 **路径参数**:
 - `id`: 用户ID
 
-**请求参数**:
-
-必填字段:
+**请求参数** (所有字段均为可选):
 - `realName`: 姓名
 - `studentNo`: 学号
 - `gender`: 性别(0-女,1-男)
+- `phone`: 手机号
+- `email`: 邮箱
 - `schoolName`: 学校名称
 - `collegeName`: 学院名称
 - `className`: 班级名称
-
-可选字段:
-- `phone`: 手机号
-- `email`: 邮箱
 - `avatarUrl`: 用户头像URL
 - `isManager`: 是否为管理者(true/false)
+- `isBoss`: 是否为超级管理者(true/false)
+- `password`: 密码
 
 **请求示例**:
 ```json
@@ -106,7 +211,9 @@
   "phone": "13800138000",
   "email": "zhangsan@example.com",
   "avatarUrl": "https://example.com/avatar.jpg",
-  "isManager": false
+  "isManager": false,
+  "isBoss": false,
+  "password": "newPassword123"
 }
 ```
 
@@ -144,7 +251,48 @@
 
 ---
 
-### 2. 新增学校
+### 2. 创建校园信息
+
+**接口**: `POST /api/campus`
+
+**请求参数**:
+- `schoolName`: 学校名称（必填）
+- `collegeName`: 学院名称（可选）
+- `className`: 班级名称（可选）
+- `sort`: 排序（可选，默认0）
+- `status`: 状态（可选，默认1）
+
+**请求示例**:
+```json
+{
+  "schoolName": "清华大学",
+  "collegeName": "电子信息学院",
+  "className": "计科04班"
+}
+```
+
+**说明**:
+- 如果三个字段都不存在，会创建三条数据：学校、学院、班级
+- 如果学校已存在，其他不存在，则只创建学院和班级
+- 如果学校和学院都已存在，班级不存在，则只创建班级
+- 如果都已存在，则不创建任何数据
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "创建成功",
+  "success": true,
+  "data": {
+    "createdIds": [1, 2, 3],
+    "count": 3
+  }
+}
+```
+
+---
+
+### 3. 新增学校
 
 **接口**: `POST /api/campus/schools`
 
@@ -171,7 +319,7 @@
 
 ---
 
-### 3. 查询学校列表
+### 4. 查询学校列表
 
 **接口**: `GET /api/campus/schools`
 
@@ -188,7 +336,7 @@
 
 ---
 
-### 4. 更新学校
+### 5. 更新学校
 
 **接口**: `PUT /api/campus/schools/{id}`
 
@@ -206,7 +354,7 @@
 
 ---
 
-### 5. 删除学校
+### 6. 删除学校
 
 **接口**: `DELETE /api/campus/schools/{id}`
 
@@ -215,7 +363,7 @@
 
 ---
 
-### 6. 新增学院
+### 7. 新增学院
 
 **接口**: `POST /api/campus/schools/{schoolId}/colleges`
 
@@ -233,7 +381,7 @@
 
 ---
 
-### 7. 查询学院列表
+### 8. 查询学院列表
 
 **接口**: `GET /api/campus/schools/{schoolId}/colleges`
 
@@ -242,7 +390,7 @@
 
 ---
 
-### 8. 更新学院
+### 9. 更新学院
 
 **接口**: `PUT /api/campus/schools/{schoolId}/colleges/{id}`
 
@@ -261,7 +409,7 @@
 
 ---
 
-### 9. 删除学院
+### 10. 删除学院
 
 **接口**: `DELETE /api/campus/schools/{schoolId}/colleges/{id}`
 
@@ -271,7 +419,7 @@
 
 ---
 
-### 10. 新增班级
+### 11. 新增班级
 
 **接口**: `POST /api/campus/colleges/{collegeId}/classes`
 
@@ -289,7 +437,7 @@
 
 ---
 
-### 11. 查询班级列表
+### 12. 查询班级列表
 
 **接口**: `GET /api/campus/colleges/{collegeId}/classes`
 
@@ -298,7 +446,7 @@
 
 ---
 
-### 12. 更新班级
+### 13. 更新班级
 
 **接口**: `PUT /api/campus/colleges/{collegeId}/classes/{id}`
 
@@ -317,7 +465,7 @@
 
 ---
 
-### 13. 删除班级
+### 14. 删除班级
 
 **接口**: `DELETE /api/campus/colleges/{collegeId}/classes/{id}`
 

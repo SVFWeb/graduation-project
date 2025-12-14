@@ -1,31 +1,22 @@
 package com.example.projectsystem.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-
 public class ProfileUpdateRequest {
-    @NotBlank(message = "姓名不能为空")
     private String realName;
     
-    @NotBlank(message = "学号不能为空")
     private String studentNo;
     
     /**
      * 性别(0-女,1-男)
      */
-    @NotNull(message = "性别不能为空")
     private Integer gender;
     
     private String phone;
     private String email;
     
-    @NotBlank(message = "学校名称不能为空")
     private String schoolName;
     
-    @NotBlank(message = "学院名称不能为空")
     private String collegeName;
     
-    @NotBlank(message = "班级名称不能为空")
     private String className;
     
     private String avatarUrl;
@@ -34,6 +25,13 @@ public class ProfileUpdateRequest {
      * 是否为管理者(0-否,1-是)
      */
     private Boolean isManager;
+    
+    /**
+     * 是否为超级管理者(0-否,1-是)
+     */
+    private Boolean isBoss;
+    
+    private String password;
 
     public String getRealName() {
         return realName;
@@ -113,6 +111,22 @@ public class ProfileUpdateRequest {
 
     public void setIsManager(Boolean isManager) {
         this.isManager = isManager;
+    }
+
+    public Boolean getIsBoss() {
+        return isBoss;
+    }
+
+    public void setIsBoss(Boolean isBoss) {
+        this.isBoss = isBoss;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
 

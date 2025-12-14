@@ -72,7 +72,7 @@
 		notice: '',
 		signupRange: [],
 		activityRange: [],
-		maxParticipants: '',
+		maxParticipants: '1',
 		needReview: '1',
 		materials: []
 	})
@@ -242,7 +242,6 @@
 
 <style lang="scss" scoped>
 	.publish-activity {
-		padding: 24rpx;
 		background: #f7f8fa;
 		min-height: 100vh;
 	}

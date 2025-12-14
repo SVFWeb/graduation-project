@@ -32,6 +32,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setPassword(password);
         user.setIsCompleted(false);
         user.setIsManager(false);
+        user.setIsBoss(false);
         user.setAvatarUrl("https://env-00jxuc2o76k9.normal.cloudstatic.cn/avatar/admin.jpg");
         save(user);
         return user;
@@ -58,26 +59,42 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new NoSuchElementException("用户不存在");
         }
         
-        // 设置必填字段（已通过@Valid验证）
-        user.setRealName(request.getRealName());
-        user.setStudentNo(request.getStudentNo());
-        user.setGender(request.getGender());
-        user.setSchoolName(request.getSchoolName());
-        user.setCollegeName(request.getCollegeName());
-        user.setClassName(request.getClassName());
-        
-        // 可选字段：只有提供时才更新
+        // 所有字段都是可选的，只有提供时才更新
+        if (StringUtils.hasText(request.getRealName())) {
+            user.setRealName(request.getRealName());
+        }
+        if (StringUtils.hasText(request.getStudentNo())) {
+            user.setStudentNo(request.getStudentNo());
+        }
+        if (request.getGender() != null) {
+            user.setGender(request.getGender());
+        }
         if (StringUtils.hasText(request.getPhone())) {
             user.setPhone(request.getPhone());
         }
         if (StringUtils.hasText(request.getEmail())) {
             user.setEmail(request.getEmail());
         }
+        if (StringUtils.hasText(request.getSchoolName())) {
+            user.setSchoolName(request.getSchoolName());
+        }
+        if (StringUtils.hasText(request.getCollegeName())) {
+            user.setCollegeName(request.getCollegeName());
+        }
+        if (StringUtils.hasText(request.getClassName())) {
+            user.setClassName(request.getClassName());
+        }
         if (StringUtils.hasText(request.getAvatarUrl())) {
             user.setAvatarUrl(request.getAvatarUrl());
         }
         if (request.getIsManager() != null) {
             user.setIsManager(request.getIsManager());
+        }
+        if (request.getIsBoss() != null) {
+            user.setIsBoss(request.getIsBoss());
+        }
+        if (StringUtils.hasText(request.getPassword())) {
+            user.setPassword(request.getPassword());
         }
         
         user.setIsCompleted(true);
