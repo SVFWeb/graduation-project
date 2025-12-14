@@ -134,7 +134,7 @@
   background: #10b981;
 }
 .quick-section .quick-grid .quick-item .quick-icon.grey.data-v-0f7520f0 {
-  background: #f1f5f9;
+  background: #f5e63b;
 }
 .quick-section .quick-grid .quick-item .quick-label.data-v-0f7520f0 {
   font-size: 26rpx;

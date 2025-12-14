@@ -24,7 +24,6 @@
 /* 透明度 */
 /* 文章场景相关 */
 .publish-activity.data-v-755b73c9 {
-  padding: 24rpx;
   background: #f7f8fa;
   min-height: 100vh;
 }

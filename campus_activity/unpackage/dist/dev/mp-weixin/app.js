@@ -18,6 +18,9 @@ if (!Math) {
   "./pages/user/userInfo/userInfo.js";
   "./pages/user/myClub/myClub.js";
   "./pages/user/publishActivity/publishActivity.js";
+  "./pages/user/createClass/createClass.js";
+  "./pages/user/classList/classList.js";
+  "./pages/user/createClub/createClub.js";
 }
 const _sfc_main = {
   onLaunch: function() {

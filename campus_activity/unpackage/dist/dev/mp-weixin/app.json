@@ -15,7 +15,10 @@
     "pages/system/userInfo/userInfo",
     "pages/user/userInfo/userInfo",
     "pages/user/myClub/myClub",
-    "pages/user/publishActivity/publishActivity"
+    "pages/user/publishActivity/publishActivity",
+    "pages/user/createClass/createClass",
+    "pages/user/classList/classList",
+    "pages/user/createClub/createClub"
   ],
   "window": {
     "navigationBarTextStyle": "black",

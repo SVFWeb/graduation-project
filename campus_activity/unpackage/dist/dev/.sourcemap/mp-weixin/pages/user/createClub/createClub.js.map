@@ -1,0 +1,1 @@
+{"version":3,"file":"createClub.js","sources":["D:/HBuilderX/plugins/uniapp-cli-vite/uniPage:/cGFnZXMvdXNlci9jcmVhdGVDbHViL2NyZWF0ZUNsdWIudnVl"],"sourcesContent":["import MiniProgramPage from 'C:/Users/House/Desktop/graduation-project/campus_activity/pages/user/createClub/createClub.vue'\nwx.createPage(MiniProgramPage)"],"names":[],"mappings":";;;;;;;AACA,GAAG,WAAW,eAAe;"}

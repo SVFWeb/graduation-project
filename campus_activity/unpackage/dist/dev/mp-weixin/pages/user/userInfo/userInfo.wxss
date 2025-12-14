@@ -141,3 +141,18 @@
   letter-spacing: 2rpx;
   transition: transform 0.3s ease;
 }
+.info-item-wrapper.data-v-0b0fe2f0 {
+  position: relative;
+}
+.info-item-wrapper .overlay-picker.data-v-0b0fe2f0 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+}
+.info-item-wrapper .overlay-picker .picker-overlay.data-v-0b0fe2f0 {
+  width: 100%;
+  height: 100%;
+}
