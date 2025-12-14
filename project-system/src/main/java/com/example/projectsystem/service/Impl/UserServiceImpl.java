@@ -4,8 +4,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.projectsystem.domain.User;
 import com.example.projectsystem.dto.ProfileUpdateRequest;
 import com.example.projectsystem.mapper.UserMapper;
+import com.example.projectsystem.service.ClubMemberService;
 import com.example.projectsystem.service.UserService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -15,8 +16,13 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
+
+    private final ClubMemberService clubMemberService;
+
+    public UserServiceImpl(@Lazy ClubMemberService clubMemberService) {
+        this.clubMemberService = clubMemberService;
+    }
 
     @Override
     public User register(String username, String password) {
@@ -60,8 +66,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         
         // 所有字段都是可选的，只有提供时才更新
+        boolean realNameChanged = false;
         if (StringUtils.hasText(request.getRealName())) {
+            String oldRealName = user.getRealName();
             user.setRealName(request.getRealName());
+            // 如果姓名发生变化，同步更新club_member表中的user_name
+            if (!Objects.equals(oldRealName, request.getRealName())) {
+                realNameChanged = true;
+            }
         }
         if (StringUtils.hasText(request.getStudentNo())) {
             user.setStudentNo(request.getStudentNo());
@@ -100,6 +112,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setIsCompleted(true);
         user.setCompleteTime(LocalDateTime.now());
         updateById(user);
+        
+        // 如果姓名发生变化，同步更新club_member表中的user_name
+        if (realNameChanged) {
+            String userName = StringUtils.hasText(user.getRealName()) ? user.getRealName() : user.getUsername();
+            clubMemberService.updateUserName(userId, userName);
+        }
+        
         return user;
     }
 }

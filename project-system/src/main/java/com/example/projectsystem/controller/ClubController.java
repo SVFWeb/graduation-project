@@ -1,0 +1,192 @@
+package com.example.projectsystem.controller;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.projectsystem.commons.PageResult;
+import com.example.projectsystem.commons.Results;
+import com.example.projectsystem.domain.Club;
+import com.example.projectsystem.domain.ClubMember;
+import com.example.projectsystem.dto.ClubRequest;
+import com.example.projectsystem.dto.JoinClubRequest;
+import com.example.projectsystem.service.ClubMemberService;
+import com.example.projectsystem.service.ClubService;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping("/api/clubs")
+public class ClubController {
+
+    private final ClubService clubService;
+    private final ClubMemberService clubMemberService;
+
+    public ClubController(ClubService clubService, ClubMemberService clubMemberService) {
+        this.clubService = clubService;
+        this.clubMemberService = clubMemberService;
+    }
+
+    /**
+     * 添加社团
+     */
+    @PostMapping
+    public Results createClub(@RequestBody ClubRequest request) {
+        try {
+            if (!StringUtils.hasText(request.getName())) {
+                return Results.fail().message("社团名称不能为空");
+            }
+
+            Club club = new Club();
+            club.setIconUrl(request.getIconUrl());
+            club.setName(request.getName());
+            club.setTags(request.getTags());
+            club.setDescription(request.getDescription());
+            club.setStatus(1); // 默认启用
+
+            Club createdClub = clubService.createClub(club);
+            return Results.success()
+                    .message("创建社团成功")
+                    .data("club", createdClub)
+                    .data("clubId", createdClub.getId());
+        } catch (Exception e) {
+            return Results.fail().message("创建社团失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 模糊查询社团列表
+     */
+    @GetMapping
+    public Results searchClubs(@RequestParam(required = false) String keyword,
+                                @RequestParam(defaultValue = "1") Integer currentPage,
+                                @RequestParam(defaultValue = "10") Integer pageSize) {
+        Page<Club> page = new Page<>(currentPage, pageSize);
+        LambdaQueryWrapper<Club> queryWrapper = new LambdaQueryWrapper<>();
+
+        if (StringUtils.hasText(keyword)) {
+            queryWrapper.and(wrapper -> wrapper
+                    .like(Club::getName, keyword)
+                    .or()
+                    .like(Club::getTags, keyword)
+                    .or()
+                    .like(Club::getDescription, keyword)
+            );
+        }
+
+        // 只查询启用的社团
+        queryWrapper.eq(Club::getStatus, 1);
+        queryWrapper.orderByDesc(Club::getCreateTime);
+
+        IPage<Club> pageResult = clubService.page(page, queryWrapper);
+
+        PageResult<Club> pageData = new PageResult<>(
+                pageResult.getTotal(),
+                (int) pageResult.getCurrent(),
+                (int) pageResult.getSize(),
+                pageResult.getRecords()
+        );
+
+        return Results.success()
+                .message("查询成功")
+                .data("page", pageData);
+    }
+
+    /**
+     * 加入社团
+     */
+    @PostMapping("/join")
+    public Results joinClub(@RequestBody JoinClubRequest request) {
+        try {
+            if (request.getClubId() == null) {
+                return Results.fail().message("社团ID不能为空");
+            }
+            if (request.getUserId() == null) {
+                return Results.fail().message("用户ID不能为空");
+            }
+
+            // 检查社团是否存在
+            Club club = clubService.getById(request.getClubId());
+            if (club == null) {
+                return Results.fail().message("社团不存在");
+            }
+            if (club.getStatus() == null || club.getStatus() != 1) {
+                return Results.fail().message("该社团已禁用");
+            }
+
+            ClubMember clubMember = clubMemberService.joinClub(request.getClubId(), request.getUserId());
+            return Results.success()
+                    .message("加入社团成功")
+                    .data("clubMember", clubMember);
+        } catch (IllegalArgumentException e) {
+            return Results.fail().message(e.getMessage());
+        } catch (Exception e) {
+            return Results.fail().message("加入社团失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 模糊查询已加入的社团列表
+     */
+    @GetMapping("/joined")
+    public Results getJoinedClubs(@RequestParam Long userId,
+                                  @RequestParam(required = false) String keyword,
+                                  @RequestParam(defaultValue = "1") Integer currentPage,
+                                  @RequestParam(defaultValue = "10") Integer pageSize) {
+        try {
+            // 先查询用户加入的社团成员记录
+            LambdaQueryWrapper<ClubMember> memberWrapper = new LambdaQueryWrapper<>();
+            memberWrapper.eq(ClubMember::getUserId, userId);
+            List<ClubMember> members = clubMemberService.list(memberWrapper);
+
+            if (members.isEmpty()) {
+                PageResult<Club> emptyPage = new PageResult<>(0L, currentPage, pageSize, List.of());
+                return Results.success()
+                        .message("查询成功")
+                        .data("page", emptyPage);
+            }
+
+            // 获取所有加入的社团ID
+            List<Long> clubIds = members.stream()
+                    .map(ClubMember::getClubId)
+                    .collect(Collectors.toList());
+
+            // 查询社团信息
+            Page<Club> page = new Page<>(currentPage, pageSize);
+            LambdaQueryWrapper<Club> clubWrapper = new LambdaQueryWrapper<>();
+            clubWrapper.in(Club::getId, clubIds);
+
+            // 模糊查询条件
+            if (StringUtils.hasText(keyword)) {
+                clubWrapper.and(wrapper -> wrapper
+                        .like(Club::getName, keyword)
+                        .or()
+                        .like(Club::getTags, keyword)
+                        .or()
+                        .like(Club::getDescription, keyword)
+                );
+            }
+
+            clubWrapper.eq(Club::getStatus, 1);
+            clubWrapper.orderByDesc(Club::getCreateTime);
+
+            IPage<Club> pageResult = clubService.page(page, clubWrapper);
+
+            PageResult<Club> pageData = new PageResult<>(
+                    pageResult.getTotal(),
+                    (int) pageResult.getCurrent(),
+                    (int) pageResult.getSize(),
+                    pageResult.getRecords()
+            );
+
+            return Results.success()
+                    .message("查询成功")
+                    .data("page", pageData);
+        } catch (Exception e) {
+            return Results.fail().message("查询失败: " + e.getMessage());
+        }
+    }
+}
+

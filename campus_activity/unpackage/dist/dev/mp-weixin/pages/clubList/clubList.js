@@ -27,7 +27,7 @@ const _sfc_main = {
         b: common_vendor.p({
           title: "25级汉语言学写作班",
           note: "文学院，院系级，班级团支部，班级部落",
-          thumb: "https://qiniu-web-assets.dcloud.net.cn/unidoc/zh/unicloudlogo.png",
+          thumb: "/static/image/buluo.png",
           ["thumb-size"]: "lg",
           rightText: "12"
         })

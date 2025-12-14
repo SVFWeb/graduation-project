@@ -475,6 +475,149 @@ GET /api/users/search?keyword=张三&currentPage=1&pageSize=10
 
 ---
 
+---
+
+## 三、社团相关接口
+
+### 1. 添加社团
+
+**接口**: `POST /api/clubs`
+
+**请求参数**:
+- `iconUrl`: 社团图标URL（可选）
+- `name`: 社团名称（必填）
+- `tags`: 社团标签（可选，多个标签用逗号分隔）
+- `description`: 社团简介（可选）
+
+**请求示例**:
+```json
+{
+  "iconUrl": "https://example.com/club-icon.jpg",
+  "name": "计算机协会",
+  "tags": "技术,编程,计算机",
+  "description": "致力于计算机技术交流与学习的社团"
+}
+```
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "创建社团成功",
+  "success": true,
+  "data": {
+    "club": {},
+    "clubId": 1
+  }
+}
+```
+
+---
+
+### 2. 模糊查询社团列表
+
+**接口**: `GET /api/clubs`
+
+**请求参数** (查询参数):
+- `keyword`: 搜索关键词（可选），支持根据社团名称、标签或简介模糊查询
+- `currentPage`: 当前页码，默认值为 1
+- `pageSize`: 每页显示条数，默认值为 10
+
+**请求示例**:
+```
+GET /api/clubs?keyword=计算机&currentPage=1&pageSize=10
+```
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "查询成功",
+  "success": true,
+  "data": {
+    "page": {
+      "total": 10,
+      "currentPage": 1,
+      "pageSize": 10,
+      "totalPage": 1,
+      "records": []
+    }
+  }
+}
+```
+
+---
+
+### 3. 加入社团
+
+**接口**: `POST /api/clubs/join`
+
+**请求参数**:
+- `clubId`: 社团ID（必填）
+- `userId`: 用户ID（必填）
+
+**请求示例**:
+```json
+{
+  "clubId": 1,
+  "userId": 1
+}
+```
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "加入社团成功",
+  "success": true,
+  "data": {
+    "clubMember": {}
+  }
+}
+```
+
+**错误响应**:
+- 如果已经加入该社团，返回："您已经加入该社团"
+- 如果社团不存在，返回："社团不存在"
+- 如果社团已禁用，返回："该社团已禁用"
+
+---
+
+### 4. 模糊查询已加入的社团列表
+
+**接口**: `GET /api/clubs/joined`
+
+**请求参数** (查询参数):
+- `userId`: 用户ID（必填）
+- `keyword`: 搜索关键词（可选），支持根据社团名称、标签或简介模糊查询
+- `currentPage`: 当前页码，默认值为 1
+- `pageSize`: 每页显示条数，默认值为 10
+
+**请求示例**:
+```
+GET /api/clubs/joined?userId=1&keyword=计算机&currentPage=1&pageSize=10
+```
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "查询成功",
+  "success": true,
+  "data": {
+    "page": {
+      "total": 5,
+      "currentPage": 1,
+      "pageSize": 10,
+      "totalPage": 1,
+      "records": []
+    }
+  }
+}
+```
+
+---
+
 ## 错误码说明
 
 | 错误码 | 说明 |
