@@ -300,7 +300,7 @@
 							userInfo.value.avatarUrl = filePath
 							resolve()
 						},
-						fail: reject
+						fail: reject()
 					})
 				})
 			}

@@ -195,7 +195,7 @@ const _sfc_main = {
                 userInfo.value.avatarUrl = filePath;
                 resolve();
               },
-              fail: reject
+              fail: reject()
             });
           });
         }

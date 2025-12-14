@@ -1,0 +1,1 @@
+{"version":3,"file":"index.js","sources":["api/club/index.js"],"sourcesContent":["import request from '@/utils/request.js'\r\n\r\n// 创建社团\r\nexport const apiCreateClub = (data) => request({\r\n\turl: '/clubs',\r\n\tmethod: 'POST',\r\n\tdata\r\n})\r\n\r\n"],"names":["request"],"mappings":";;AAGY,MAAC,gBAAgB,CAAC,SAASA,sBAAQ;AAAA,EAC9C,KAAK;AAAA,EACL,QAAQ;AAAA,EACR;AACD,CAAC;;"}
