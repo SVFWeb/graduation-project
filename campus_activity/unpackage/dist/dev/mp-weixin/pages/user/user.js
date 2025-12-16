@@ -100,7 +100,7 @@ const _sfc_main = {
         }),
         t: common_vendor.o(() => {
           common_vendor.index.navigateTo({
-            url: "/pages/user/myClub/myClub"
+            url: `/pages/user/myClub/myClub?id=${common_vendor.unref(userInfo).id}`
           });
         }),
         v: common_vendor.p({

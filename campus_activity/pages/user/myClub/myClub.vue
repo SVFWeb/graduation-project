@@ -1,22 +1,23 @@
 <template>
 	<view class="my-club container">
 		<view class="my-club_seach">
-			<com-search></com-search>
+			<com-search v-model:value="searchData.keyword" @click="onSearch"></com-search>
+
 		</view>
 		<view class="my-club_btn">
-			<view class="btn" :class="{ active: item.value===activeValue}" v-for="item in btnList" :key="item.value"
-			@click="onChangeActive(item)">
-				{{ item.name }}</view>
+			<view class="btn" :class="{ active: item.value===searchData.type}" v-for="item in btnList" :key="item.value"
+				@click="onChangeActive(item)">
+				{{ item.name }}
+			</view>
 		</view>
 		<view class="my-club_container">
 			<uni-list>
-				<uni-list-item style="height: 170rpx;" v-for="item in 6" :key="item" title="25级汉语言学写作班"
-					note="文学院，院系级，班级团支部，班级部落" thumb="https://qiniu-web-assets.dcloud.net.cn/unidoc/zh/unicloudlogo.png"
-					thumb-size="lg" rightText="12" clickable @click="()=>uni.navigateTo({
-						url:'/pages/clubList/clubDetails/clubDetails'
-					})"></uni-list-item>
+				<uni-list-item clickable @click="uni.navigateTo({
+					url:`/pages/clubList/clubDetails/clubDetails?info=${encodeURIComponent(JSON.stringify(item))}`
+				})" style="height: 170rpx;" v-for="item in clubList" :key="item.id" :title="item.name" :note="item.tags"
+					:thumb="item.iconUrl" thumb-size="lg" :rightText="String(item.memberCount)">
+				</uni-list-item>
 			</uni-list>
-
 		</view>
 	</view>
 </template>
@@ -25,7 +26,13 @@
 	import {
 		ref
 	} from 'vue';
+	import {
+		onLoad
+	} from '@dcloudio/uni-app'
 	import comSearchVue from '@/components/com-search/com-search.vue';
+	import {
+		apiQueryJoinClubList
+	} from '@/api/club/index.js'
 
 	const btnList = [{
 			name: '加入的',
@@ -36,11 +43,42 @@
 			value: 'management'
 		}
 	]
-	const activeValue = ref('join')
-	
-	function onChangeActive(item){
-		activeValue.value=item.value
+	const userId = ref('')
+	const clubList = ref([])
+	const searchData = ref({
+		keyword: '',
+		type: 'join',
+		currentPage: '1',
+		pageSize: '10'
+	})
+
+	function onChangeActive(item) {
+		searchData.value.type = item.value
+		getClubList()
 	}
+
+	async function getClubList() {
+		let {
+			data
+		} = await apiQueryJoinClubList({
+			userId: userId.value,
+			...searchData.value
+		})
+		if (searchData.value.currentPage == data.page.currentPage && searchData.value.pageSize == data.page.pageSize) {
+			clubList.value = data.page.records
+		} else {
+			clubList.value = [...clubList.value, ...data.page.records]
+		}
+	}
+
+	function onSearch() {
+		getClubList()
+	}
+
+	onLoad(async (e) => {
+		userId.value = e.id
+		getClubList()
+	})
 </script>
 
 <style lang="scss" scoped>

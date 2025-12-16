@@ -5,15 +5,16 @@ const api_club_index = require("../../../api/club/index.js");
 if (!Array) {
   const _easycom_uni_file_picker2 = common_vendor.resolveComponent("uni-file-picker");
   const _easycom_uni_forms_item2 = common_vendor.resolveComponent("uni-forms-item");
-  const _component_uni_tag = common_vendor.resolveComponent("uni-tag");
+  const _easycom_uni_tag2 = common_vendor.resolveComponent("uni-tag");
   const _easycom_uni_forms2 = common_vendor.resolveComponent("uni-forms");
-  (_easycom_uni_file_picker2 + _easycom_uni_forms_item2 + _component_uni_tag + _easycom_uni_forms2)();
+  (_easycom_uni_file_picker2 + _easycom_uni_forms_item2 + _easycom_uni_tag2 + _easycom_uni_forms2)();
 }
 const _easycom_uni_file_picker = () => "../../../uni_modules/uni-file-picker/components/uni-file-picker/uni-file-picker.js";
 const _easycom_uni_forms_item = () => "../../../uni_modules/uni-forms/components/uni-forms-item/uni-forms-item.js";
+const _easycom_uni_tag = () => "../../../uni_modules/uni-tag/components/uni-tag/uni-tag.js";
 const _easycom_uni_forms = () => "../../../uni_modules/uni-forms/components/uni-forms/uni-forms.js";
 if (!Math) {
-  (_easycom_uni_file_picker + _easycom_uni_forms_item + _easycom_uni_forms)();
+  (_easycom_uni_file_picker + _easycom_uni_forms_item + _easycom_uni_tag + _easycom_uni_forms)();
 }
 const _sfc_main = {
   __name: "createClub",

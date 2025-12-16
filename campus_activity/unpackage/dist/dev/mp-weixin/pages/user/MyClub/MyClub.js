@@ -1,5 +1,6 @@
 "use strict";
 const common_vendor = require("../../../common/vendor.js");
+const api_club_index = require("../../../api/club/index.js");
 if (!Array) {
   const _easycom_com_search2 = common_vendor.resolveComponent("com-search");
   const _easycom_uni_list_item2 = common_vendor.resolveComponent("uni-list-item");
@@ -25,36 +26,69 @@ const _sfc_main = {
         value: "management"
       }
     ];
-    const activeValue = common_vendor.ref("join");
+    const userId = common_vendor.ref("");
+    const clubList = common_vendor.ref([]);
+    const searchData = common_vendor.ref({
+      keyword: "",
+      type: "join",
+      currentPage: "1",
+      pageSize: "10"
+    });
     function onChangeActive(item) {
-      activeValue.value = item.value;
+      searchData.value.type = item.value;
+      getClubList();
     }
+    async function getClubList() {
+      let {
+        data
+      } = await api_club_index.apiQueryJoinClubList({
+        userId: userId.value,
+        ...searchData.value
+      });
+      if (searchData.value.currentPage == data.page.currentPage && searchData.value.pageSize == data.page.pageSize) {
+        clubList.value = data.page.records;
+      } else {
+        clubList.value = [...clubList.value, ...data.page.records];
+      }
+    }
+    function onSearch() {
+      getClubList();
+    }
+    common_vendor.onLoad(async (e) => {
+      userId.value = e.id;
+      getClubList();
+    });
     return (_ctx, _cache) => {
       return {
-        a: common_vendor.f(btnList, (item, k0, i0) => {
+        a: common_vendor.o(onSearch),
+        b: common_vendor.o(($event) => searchData.value.keyword = $event),
+        c: common_vendor.p({
+          value: searchData.value.keyword
+        }),
+        d: common_vendor.f(btnList, (item, k0, i0) => {
           return {
             a: common_vendor.t(item.name),
-            b: item.value === activeValue.value ? 1 : "",
+            b: item.value === searchData.value.type ? 1 : "",
             c: item.value,
             d: common_vendor.o(($event) => onChangeActive(item), item.value)
           };
         }),
-        b: common_vendor.f(6, (item, k0, i0) => {
+        e: common_vendor.f(clubList.value, (item, k0, i0) => {
           return {
-            a: item,
-            b: common_vendor.o(() => common_vendor.index.navigateTo({
-              url: "/pages/clubList/clubDetails/clubDetails"
-            }), item),
-            c: "5a924e72-2-" + i0 + ",5a924e72-1"
+            a: common_vendor.o(($event) => common_vendor.index.navigateTo({
+              url: `/pages/clubList/clubDetails/clubDetails?info=${encodeURIComponent(JSON.stringify(item))}`
+            }), item.id),
+            b: item.id,
+            c: "5a924e72-2-" + i0 + ",5a924e72-1",
+            d: common_vendor.p({
+              clickable: true,
+              title: item.name,
+              note: item.tags,
+              thumb: item.iconUrl,
+              ["thumb-size"]: "lg",
+              rightText: String(item.memberCount)
+            })
           };
-        }),
-        c: common_vendor.p({
-          title: "25级汉语言学写作班",
-          note: "文学院，院系级，班级团支部，班级部落",
-          thumb: "https://qiniu-web-assets.dcloud.net.cn/unidoc/zh/unicloudlogo.png",
-          ["thumb-size"]: "lg",
-          rightText: "12",
-          clickable: true
         })
       };
     };

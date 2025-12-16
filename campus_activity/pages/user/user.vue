@@ -87,7 +87,7 @@
 				<!-- 我的社团 -->
 				<view class="service-item" @click="() => {
 					uni.navigateTo({
-						url: '/pages/user/myClub/myClub'
+						url: `/pages/user/myClub/myClub?id=${userInfo.id}`
 					})
 				}">
 					<view class="service-icon green">

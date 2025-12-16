@@ -32,6 +32,9 @@ public class Club implements Serializable {
 
     private LocalDateTime updateTime;
 
+    @TableField(exist = false)
+    private Long memberCount;
+
     public Club() {
     }
 
@@ -97,6 +100,14 @@ public class Club implements Serializable {
 
     public void setUpdateTime(LocalDateTime updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Long getMemberCount() {
+        return memberCount;
+    }
+
+    public void setMemberCount(Long memberCount) {
+        this.memberCount = memberCount;
     }
 }
 

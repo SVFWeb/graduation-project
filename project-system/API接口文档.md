@@ -130,7 +130,13 @@ GET /api/users/search?keyword=张三&currentPage=1&pageSize=10
       "currentPage": 1,
       "pageSize": 10,
       "totalPage": 1,
-      "records": []
+      "records": [
+        {
+          "id": 1,
+          "name": "计算机协会",
+          "memberCount": 35
+        }
+      ]
     }
   }
 }
@@ -516,16 +522,20 @@ GET /api/users/search?keyword=张三&currentPage=1&pageSize=10
 
 ### 2. 模糊查询社团列表
 
-**接口**: `GET /api/clubs`
+**接口**: `POST /api/clubs/search`
 
-**请求参数** (查询参数):
+**请求参数**:
 - `keyword`: 搜索关键词（可选），支持根据社团名称、标签或简介模糊查询
 - `currentPage`: 当前页码，默认值为 1
 - `pageSize`: 每页显示条数，默认值为 10
 
 **请求示例**:
-```
-GET /api/clubs?keyword=计算机&currentPage=1&pageSize=10
+```json
+{
+  "keyword": "计算机",
+  "currentPage": 1,
+  "pageSize": 10
+}
 ```
 
 **响应示例**:
@@ -540,7 +550,15 @@ GET /api/clubs?keyword=计算机&currentPage=1&pageSize=10
       "currentPage": 1,
       "pageSize": 10,
       "totalPage": 1,
-      "records": []
+      "records": [
+        {
+          "id": 1,
+          "name": "计算机协会",
+          "tags": "技术,编程,计算机",
+          "description": "...",
+          "memberCount": 35
+        }
+      ]
     }
   }
 }
@@ -585,17 +603,23 @@ GET /api/clubs?keyword=计算机&currentPage=1&pageSize=10
 
 ### 4. 模糊查询已加入的社团列表
 
-**接口**: `GET /api/clubs/joined`
+**接口**: `POST /api/clubs/joined`
 
-**请求参数** (查询参数):
+**请求参数**:
 - `userId`: 用户ID（必填）
 - `keyword`: 搜索关键词（可选），支持根据社团名称、标签或简介模糊查询
 - `currentPage`: 当前页码，默认值为 1
 - `pageSize`: 每页显示条数，默认值为 10
 
 **请求示例**:
-```
-GET /api/clubs/joined?userId=1&keyword=计算机&currentPage=1&pageSize=10
+```json
+{
+  "userId": 1,
+  "keyword": "计算机",
+  "type": "join",        // join：我加入的；management：我管理的
+  "currentPage": 1,
+  "pageSize": 10
+}
 ```
 
 **响应示例**:
@@ -610,7 +634,13 @@ GET /api/clubs/joined?userId=1&keyword=计算机&currentPage=1&pageSize=10
       "currentPage": 1,
       "pageSize": 10,
       "totalPage": 1,
-      "records": []
+      "records": [
+        {
+          "id": 1,
+          "name": "计算机协会",
+          "memberCount": 35
+        }
+      ]
     }
   }
 }
