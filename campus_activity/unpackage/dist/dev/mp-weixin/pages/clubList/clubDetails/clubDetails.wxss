@@ -68,6 +68,9 @@
   border-bottom: 1rpx solid #f0f0f0;
 }
 .clubDetails .clubDetails_member .text.data-v-e409fb66 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 45rpx;
   font-size: 30rpx;
   color: #333;
@@ -80,7 +83,6 @@
   padding: 8rpx 16rpx;
   border-radius: 8rpx;
   background-color: rgba(0, 131, 244, 0.1);
-  transition: all 0.3s ease;
 }
 .clubDetails .clubDetails_member .details.data-v-e409fb66:active {
   background-color: rgba(0, 131, 244, 0.2);
@@ -129,4 +131,26 @@
   height: 32rpx;
   background: linear-gradient(135deg, #0083F4, #00A3FF);
   border-radius: 4rpx;
+}
+.scroll-view.data-v-e409fb66 {
+  width: 100%;
+  height: 100%;
+  flex: 1;
+}
+.scroll-view-box.data-v-e409fb66 {
+  flex: 1;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+.scroll-view-box .info-content.data-v-e409fb66 {
+  padding: 5px 15px;
+}
+.tag.data-v-e409fb66 {
+  margin-top: 40rpx;
+  height: 30rpx;
+  text-align: center;
+  line-height: 30rpx;
 }

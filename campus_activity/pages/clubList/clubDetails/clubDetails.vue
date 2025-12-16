@@ -10,13 +10,16 @@
 		<!-- 社团成员 -->
 		<view class="clubDetails_member">
 			<view class="title">社团成员</view>
-			<view class="text">当前社团共有{{ clubInfo.memberCount }}位成员</view>
+			<view class="text">当前社团共有{{ clubInfo.memberCount }}位成员 <view class="details" @click="onCheckUserList">查看
+				</view>
+			</view>
+
 		</view>
 
 		<!-- 社团简介 -->
 		<view class="clubDatails_info">
 			<view class="title">社团简介</view>
-			<view class="text">{{ clubInfo.name }}</view>
+			<view class="text">{{ clubInfo.description }}</view>
 		</view>
 
 		<!-- 社团活动 -->
@@ -30,26 +33,65 @@
 
 	<!-- 提示窗示例 -->
 	<uni-popup ref="alertDialog" type="dialog">
-		<uni-popup-dialog type="info" confirmText="加入" cancelText="取消" content="是否确认加入该社团"
-			@confirm="onJoinClub"></uni-popup-dialog>
+		<uni-popup-dialog type="info" confirmText="加入" cancelText="取消" content="是否确认加入该社团" @confirm="onJoinClub" />
 	</uni-popup>
+
+
+	<uni-drawer ref="showRight" mode="right" :width="300">
+		<view class="scroll-view">
+			<scroll-view class="scroll-view-box" scroll-y>
+				<uni-list>
+					<uni-list-item clickable style="height: 170rpx;" v-for="item in userList" :key="item.userId"
+						:title="item.user.realName"
+						:note="item.user.schoolName+item.user.collegeName+item.user.className"
+						:thumb="item.user.avatarUrl" thumb-size="lg" @click="onShowSettingManagerDialog(item.userId)">
+						<!-- 自定义 footer-->
+						<template v-slot:footer>
+							<uni-tag class="tag" v-if="item.isManager" text="管理" type="error" />
+							<uni-tag class="tag" v-else text="成员" type="primary" />
+						</template>
+					</uni-list-item>
+				</uni-list>
+			</scroll-view>
+		</view>
+	</uni-drawer>
+
+	<uni-popup  ref="settingManagerDialog" type="dialog">
+		<uni-popup-dialog type="info" confirmText="设置" cancelText="取消" content="是否设置该成员为管理员"
+			@confirm="settingManager" />
+	</uni-popup>
+
 </template>
 
 <script setup>
 	import {
 		onLoad
 	} from '@dcloudio/uni-app'
-	import comActivityItem from '../../../components/com-activity-item/com-activity-item.vue';
+	import comActivityItem from '@/components/com-activity-item/com-activity-item.vue';
 	import {
-		ref
+		ref,
+		defineProps
 	} from 'vue';
 	import {
-		apiJoinClub
+		apiJoinClub,
+		apiGetJoinClubUserList,
+		apiSettingClubManager
 	} from '@/api/club/index.js'
 
+	const props = defineProps({
+		info: {
+			type: String,
+			default: ''
+		}
+	})
+
 	const alertDialog = ref(null)
+	const settingManagerDialog = ref(null)
+	const showRight = ref(null)
 	const clubInfo = ref([])
+	const userList = ref([])
 	const userInfo = ref(uni.getStorageSync('userInfo'))
+	const settingManagerUserid = ref('')
 
 	function onShowDialog() {
 		alertDialog.value?.open()
@@ -69,8 +111,45 @@
 		}
 	}
 
+	async function getJoinClubUserList() {
+		let res = await apiGetJoinClubUserList(clubInfo.value.id)
+		if (res.code == 200) {
+			userList.value = res.data.items
+		}
+	}
+
+	function onShowSettingManagerDialog(id) {
+		settingManagerUserid.value = id
+		settingManagerDialog.value?.open()
+		showRight.value?.close()
+	}
+
+	async function settingManager() {
+		let res = await apiSettingClubManager({
+			clubId: clubInfo.value.id,
+			userId: settingManagerUserid.value,
+			isManager: true
+		})
+
+		if (res.code == 200) {
+			uni.showToast({
+				icon: 'success',
+				title: res.message
+			})
+		}
+	}
+
+	function onCheckUserList() {
+		showRight.value?.open()
+		getJoinClubUserList()
+	}
+
 	onLoad((e) => {
-		clubInfo.value = JSON.parse(decodeURIComponent(e.info))
+		// 兼容：优先使用路由参数，其次使用组件 props 传入的 info，避免 H5 模式下出现多余属性警告
+		const rawInfo = (e && e.info) || props.info
+		if (rawInfo) {
+			clubInfo.value = JSON.parse(decodeURIComponent(rawInfo))
+		}
 	})
 </script>
 
@@ -132,6 +211,9 @@
 			border-bottom: 1rpx solid #f0f0f0;
 
 			.text {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
 				margin-bottom: 45rpx;
 				font-size: 30rpx;
 				color: #333;
@@ -145,12 +227,13 @@
 				padding: 8rpx 16rpx;
 				border-radius: 8rpx;
 				background-color: rgba(0, 131, 244, 0.1);
-				transition: all 0.3s ease;
 
 				&:active {
 					background-color: rgba(0, 131, 244, 0.2);
 				}
 			}
+
+
 		}
 
 		// 社团简介区块
@@ -210,5 +293,35 @@
 				}
 			}
 		}
+
+	}
+
+	.scroll-view {
+		/* #ifndef APP-NVUE */
+		width: 100%;
+		height: 100%;
+		/* #endif */
+		flex: 1
+	}
+
+	// 处理抽屉内容滚动
+	.scroll-view-box {
+		flex: 1;
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+
+		.info-content {
+			padding: 5px 15px;
+		}
+	}
+
+	.tag {
+		margin-top: 40rpx;
+		height: 30rpx;
+		text-align: center;
+		line-height: 30rpx;
 	}
 </style>

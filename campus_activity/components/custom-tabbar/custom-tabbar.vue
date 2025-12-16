@@ -1,4 +1,5 @@
 <template>
+	<view class="area"></view>
 	<view class="custom-tabbar">
 		<view class="tabbar-container">
 			<view v-for="(item, index) in tabList" :key="index" class="tabbar-item"
@@ -153,6 +154,12 @@
 	.safety-area {
 		width: 100%;
 		height: env(safe-area-inset-bottom);
+		background-color: #ffffff;
+	}
+	
+	.area {
+		width: 100%;
+		height: calc(env(safe-area-inset-bottom) + 100rpx);
 		background-color: #ffffff;
 	}
 </style>

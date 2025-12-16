@@ -648,6 +648,90 @@ GET /api/users/search?keyword=张三&currentPage=1&pageSize=10
 
 ---
 
+### 5. 获取社团成员列表
+
+**接口**: `GET /api/clubs/{clubId}/members`
+
+**路径参数**:
+- `clubId`: 社团ID（必填）
+
+**响应示例**（已调整为返回完整的用户信息）:
+```json
+{
+  "code": 200,
+  "message": "查询成功",
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": 1,
+        "clubId": 1,
+        "userId": 1,
+        "isManager": true,
+        "joinTime": "2025-01-01T10:00:00",
+        "user": {
+          "id": 1,
+          "username": "zhangsan",
+          "realName": "张三",
+          "studentNo": "20250001",
+          "gender": 1,
+          "phone": "13800000000",
+          "email": "zhangsan@example.com",
+          "schoolName": "XX大学",
+          "collegeName": "计算机学院",
+          "className": "计科1班",
+          "avatarUrl": "https://example.com/avatar.jpg",
+          "isCompleted": true,
+          "isManager": false,
+          "isBoss": false,
+          "createTime": "2025-01-01T09:00:00",
+          "updateTime": "2025-01-02T09:00:00"
+        }
+      }
+    ]
+  }
+}
+```
+
+---
+
+### 6. 设置社团人员为管理员 / 取消管理员
+
+**接口**: `POST /api/clubs/{clubId}/members/{userId}/manager`
+
+**路径参数**:
+- `clubId`: 社团ID（必填）
+- `userId`: 用户ID（必填）
+
+**请求参数** (查询参数):
+- `isManager`: 是否设置为管理员（true：设置为管理员，false：取消管理员），默认 true
+
+**请求示例**:
+```
+POST /api/clubs/1/members/1/manager?isManager=true
+```
+
+**成功响应示例**:
+```json
+{
+  "code": 200,
+  "message": "设置管理员成功",
+  "success": true,
+  "data": {}
+}
+```
+
+**失败场景说明**:
+- 当该用户未加入该社团时，返回：`"该用户未加入该社团"`
+- 当将某成员设置为管理员且其已是该社团管理员时，返回：`"该成员已是该社团的管理员"`
+
+**说明**:
+- 当 `isManager=true` 时：将该用户在该社团中的 `isManager` 标记为 true
+- 当 `isManager=false` 时：将该用户在该社团中的 `isManager` 标记为 false
+- 如果该用户未加入该社团，将返回错误提示
+
+---
+
 ## 错误码说明
 
 | 错误码 | 说明 |

@@ -36,7 +36,7 @@ const _sfc_main = {
     function onSearch() {
       getClubList();
     }
-    common_vendor.onMounted(() => {
+    common_vendor.onShow(() => {
       getClubList();
     });
     return (_ctx, _cache) => {

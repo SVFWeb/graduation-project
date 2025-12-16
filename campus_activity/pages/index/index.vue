@@ -41,16 +41,16 @@
 
 			<view class="tribe_list">
 				<scroll-view class="tribe_scroll" scroll-x :show-scrollbar="false">
-					<view class="scroll_item_container" v-for="item in 4" :key="item" @click="uni.navigateTo({
-						url:'/pages/clubList/clubDetails/clubDetails'
+					<view class="scroll_item_container" v-for="item in clubList" :key="item.id" @click="uni.navigateTo({
+					url:`/pages/clubList/clubDetails/clubDetails?info=${encodeURIComponent(JSON.stringify(item))}`
 					})">
 						<view class="tribe_card">
 							<view class="tribe_avatar">
-								<image src="/static/logo.png" mode="aspectFill"></image>
+								<image :src="item.iconUrl" mode="aspectFill"></image>
 							</view>
 							<view class="tribe_info">
-								<view class="tribe_name">广西民族大学社团{{item}}</view>
-								<view class="tribe_desc">广西民族大学是一个广西最好的学校，提供丰富的社团活动</view>
+								<view class="tribe_name">{{item.name}}</view>
+								<view class="tribe_desc">{{ item.description }}</view>
 							</view>
 						</view>
 					</view>
@@ -98,12 +98,34 @@
 </template>
 
 <script setup>
-	import { onShow } from '@dcloudio/uni-app'
+	import {
+		onShow
+	} from '@dcloudio/uni-app'
 	import comTitle from './component/com-title.vue';
 	import comSearch from '../../components/com-search/com-search.vue';
 	import comActivityItem from '../../components/com-activity-item/com-activity-item.vue';
 	import customTabbar from '../../components/custom-tabbar/custom-tabbar.vue';
-	
+	import {
+		apiGetClubNewList
+	} from '@/api/club/index.js'
+	import {
+		onMounted,
+		ref
+	} from 'vue';
+
+	const clubList = ref([])
+
+
+	async function getClubNewList() {
+		let res = await apiGetClubNewList()
+		if (res.code == 200) {
+			clubList.value = res.data.items
+		}
+	}
+
+	onShow(() => {
+		getClubNewList()
+	})
 </script>
 
 <style lang="scss" scoped>
@@ -173,7 +195,7 @@
 				}
 			}
 		}
-		
+
 		// 社团区域
 		.home_tribe {
 			margin-bottom: 40rpx;

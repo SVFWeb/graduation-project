@@ -20,6 +20,7 @@
 	.safety_area{
 		width: 100vw;
 		height: env(safe-area-inset-bottom);
+		background-color: #ffffff;
 	}
 	
 	.container{

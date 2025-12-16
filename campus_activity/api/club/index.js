@@ -21,8 +21,25 @@ export const apiQueryJoinClubList = (data) => request({
 	data
 })
 
+// 加入社团
 export const apiJoinClub = (data) => request({
 	url: '/clubs/join',
 	method: 'POST',
 	data
+})
+
+// 查看加入社团的人员列表
+export const apiGetJoinClubUserList=(id)=>request({
+	url:`/clubs/${id}/members`
+})
+
+// 设置社团管理员
+export const apiSettingClubManager=(data)=>request({
+	url:`/clubs/${data.clubId}/members/${data.userId}/manager?isManager=${data.isManager}`,
+	method: 'POST'
+})
+
+// 获取最新社团列表
+export const apiGetClubNewList=()=>request({
+	url:'/clubs/latest',
 })

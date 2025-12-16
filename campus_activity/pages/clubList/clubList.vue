@@ -26,6 +26,7 @@
 		onMounted,
 		ref
 	} from 'vue';
+	import { onShow } from '@dcloudio/uni-app'
 	import comSearchVue from '../../components/com-search/com-search.vue';
 	import customTabbar from '../../components/custom-tabbar/custom-tabbar.vue';
 	import {
@@ -54,7 +55,7 @@
 		getClubList()
 	}
 
-	onMounted(() => {
+	onShow(() => {
 		getClubList()
 	})
 </script>
