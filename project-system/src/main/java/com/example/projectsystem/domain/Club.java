@@ -32,6 +32,12 @@ public class Club implements Serializable {
 
     private LocalDateTime updateTime;
 
+    /**
+     * 社团类型（对应表字段 level_tag）
+     */
+    @TableField("level_tag")
+    private String levelTag;
+
     @TableField(exist = false)
     private Long memberCount;
 
@@ -100,6 +106,14 @@ public class Club implements Serializable {
 
     public void setUpdateTime(LocalDateTime updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getLevelTag() {
+        return levelTag;
+    }
+
+    public void setLevelTag(String levelTag) {
+        this.levelTag = levelTag;
     }
 
     public Long getMemberCount() {

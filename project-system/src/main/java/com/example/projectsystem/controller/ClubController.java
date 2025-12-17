@@ -47,6 +47,8 @@ public class ClubController {
             club.setName(request.getName());
             club.setTags(request.getTags());
             club.setDescription(request.getDescription());
+            // 设置社团类型
+            club.setLevelTag(request.getLevelTag());
             club.setStatus(1); // 默认启用
 
             Club createdClub = clubService.createClub(club);

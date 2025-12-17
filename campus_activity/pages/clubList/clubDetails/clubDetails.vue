@@ -108,6 +108,13 @@
 				icon: 'success',
 				title: res.message
 			})
+			
+			
+			setTimeout(()=>{
+				uni.reLaunch({
+					url:'/pages/clubList/clubList'
+				})
+			},1500)
 		}
 	}
 

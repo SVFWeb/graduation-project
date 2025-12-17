@@ -41,5 +41,5 @@ export const apiSettingClubManager=(data)=>request({
 
 // 获取最新社团列表
 export const apiGetClubNewList=()=>request({
-	url:'/clubs/latest',
+	url:'/clubs/latest?limit=6',
 })

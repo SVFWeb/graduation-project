@@ -5,6 +5,10 @@ public class ClubRequest {
     private String name;
     private String tags;
     private String description;
+    /**
+     * 社团类型，对应表字段 level_tag
+     */
+    private String levelTag;
 
     public String getIconUrl() {
         return iconUrl;
@@ -36,6 +40,14 @@ public class ClubRequest {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getLevelTag() {
+        return levelTag;
+    }
+
+    public void setLevelTag(String levelTag) {
+        this.levelTag = levelTag;
     }
 }
 

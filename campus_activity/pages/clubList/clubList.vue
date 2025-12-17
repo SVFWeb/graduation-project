@@ -10,7 +10,7 @@
 			<uni-list>
 				<uni-list-item clickable @click="uni.navigateTo({
 					url:`/pages/clubList/clubDetails/clubDetails?info=${encodeURIComponent(JSON.stringify(item))}`
-				})" style="height: 170rpx;" v-for="item in clubList" :key="item.id" :title="item.name" :note="item.tags"
+				})" style="height: 170rpx;" v-for="item in clubList" :key="item.id" :title="item.name" :note="item.levelTag+'#'+item.tags"
 					:thumb="item.iconUrl" thumb-size="lg" :rightText="String(item.memberCount)">
 				</uni-list-item>
 			</uni-list>

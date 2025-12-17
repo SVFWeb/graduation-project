@@ -22,13 +22,22 @@
 				</uni-forms-item>
 
 				<!-- 社团标签 -->
+				<uni-forms-item label="社团级别" name="tags" required>
+					<view class="tags-container">
+						<uni-tag v-for="(tag, index) in levelTags" :key="index" :text="tag"
+							:type="tag===form.levelTag? 'primary' : 'default'" :inverted="!(tag===form.levelTag)"
+							@click="toggleLevelTag(tag)" class="tag-item" />
+					</view>
+					<view class="tip-text">请至少选择1个标签</view>
+				</uni-forms-item>
+
+				<!-- 社团标签 -->
 				<uni-forms-item label="社团标签" name="tags" required>
 					<view class="tags-container">
 						<uni-tag v-for="(tag, index) in availableTags" :key="index" :text="tag"
 							:type="isTagSelected(tag) ? 'primary' : 'default'" :inverted="!isTagSelected(tag)"
 							@click="toggleTag(tag)" class="tag-item" />
 					</view>
-					<view class="tip-text">请至少选择1个标签</view>
 				</uni-forms-item>
 			</uni-forms>
 
@@ -48,13 +57,15 @@
 		apiCreateClub
 	} from '@/api/club/index.js'
 
+	const levelTags = ['班级', '院级', '校级']
 	// 可用的标签列表
-	const availableTags = ['班级', '学院', '班级团支部', '音乐', '文艺', '传媒', '社团与协会', '公益志愿']
+	const availableTags = ['团支部', '音乐', '文艺', '传媒', '社团与协会', '公益志愿']
 	const formRef = ref(null)
 	const form = reactive({
 		iconUrl: [],
 		name: '',
 		description: '',
+		levelTag: '',
 		tags: []
 	})
 	const coverImageUrl = ref('')
@@ -76,6 +87,10 @@
 			// 选中
 			form.tags.push(tagValue)
 		}
+	}
+
+	function toggleLevelTag(value) {
+		form.levelTag = value
 	}
 
 	// 表单验证规则
@@ -158,6 +173,7 @@
 					const formData = {
 						name: form.name,
 						description: form.description || undefined,
+						levelTag:form.levelTag,
 						tags: form.tags.length > 0 ? form.tags.join(',') : undefined
 					}
 
@@ -175,10 +191,12 @@
 							title: '创建成功',
 							icon: 'success'
 						})
-						
+
 						// 延迟返回上一页
 						setTimeout(() => {
-							uni.navigateBack()
+							uni.reLaunch({
+								url:'/pages/user/user'
+							})
 						}, 1500)
 					} else {
 						uni.showToast({
