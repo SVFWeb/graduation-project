@@ -7,6 +7,7 @@ import com.example.projectsystem.commons.PageResult;
 import com.example.projectsystem.commons.Results;
 import com.example.projectsystem.domain.Club;
 import com.example.projectsystem.domain.ClubMember;
+import com.example.projectsystem.dto.ClubOptionDTO;
 import com.example.projectsystem.dto.ClubMemberWithUserDTO;
 import com.example.projectsystem.dto.ClubRequest;
 import com.example.projectsystem.dto.ClubSearchRequest;
@@ -226,6 +227,23 @@ public class ClubController {
             return Results.fail().message("查询失败: " + e.getMessage());
         }
     } // 这里添加了缺失的右大括号
+
+    /**
+     * 获取当前用户管理的社团下拉列表
+     */
+    @GetMapping("/managed")
+    public Results getManagedClubs(@RequestParam Long userId) {
+        try {
+            List<ClubOptionDTO> items = clubMemberService.getManagedClubOptionsByUserId(userId);
+            return Results.success()
+                    .message("查询成功")
+                    .data("items", items);
+        } catch (IllegalArgumentException e) {
+            return Results.fail().message(e.getMessage());
+        } catch (Exception e) {
+            return Results.fail().message("查询失败: " + e.getMessage());
+        }
+    }
 
     /**
      * 获取加入该社团的人员列表

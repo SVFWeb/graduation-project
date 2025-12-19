@@ -40,10 +40,6 @@
 		{
 			label: '管理',
 			value: 'manage'
-		},
-		{
-			label: '收藏',
-			value: 'collect'
 		}
 	]
 

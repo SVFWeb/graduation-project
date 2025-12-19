@@ -1,9 +1,9 @@
 <template>
 	<view class="com-filter-btn">
 		<view :class="{'filter_tag':true,'active':isActive}" @click="goFilter">
-			{{ title }}
+			{{ title?title:text }}
 		</view>
-		<uni-popup ref="popup" type="bottom" :is-mask-click="true">
+		<uni-popup ref="popup" type="top" is-mask-click>
 			<com-filter-tag-list :type="props.type" @close="closePopup"></com-filter-tag-list>
 		</uni-popup>
 	</view>
@@ -17,9 +17,9 @@
 	} from 'vue'
 	import comFilterTagList from '@/components/com-filter-tag-list/com-filter-tag-list.vue'
 
-	const props = defineProps(['title', 'type'])
-	const $emit=defineEmits(['update:title','update:type'])
-	const initTitle=ref(props.title)
+	const props = defineProps(['title', 'type', 'text'])
+	const $emit = defineEmits(['update:title', 'update:type'])
+	const initTitle = ref(props.title)
 	const isActive = ref(false)
 	const popup = ref(null)
 
@@ -34,10 +34,10 @@
 	function onChangeTitle(e) {
 		if (e.value === '全部') {
 			isActive.value = false
-			$emit('update:title',initTitle.value)
+			$emit('update:title', '')
 		} else {
 			isActive.value = true
-			$emit('update:title',e.value)
+			$emit('update:title', e.value)
 		}
 	}
 
@@ -47,7 +47,7 @@
 
 <style lang="scss" scoped>
 	.com-filter-btn {
-		
+
 		.filter_tag {
 			margin-right: 20rpx;
 			padding: 0 20rpx;

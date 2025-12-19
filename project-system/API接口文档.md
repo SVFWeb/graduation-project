@@ -1,6 +1,6 @@
-# API 接口文档
+## API 接口文档
 
-## 基础信息
+### 基础信息
 
 - **基础URL**: `http://localhost:8080/api`
 - **响应格式**: JSON
@@ -648,7 +648,33 @@ GET /api/users/search?keyword=张三&currentPage=1&pageSize=10
 
 ---
 
-### 5. 获取社团成员列表
+### 5. 获取用户管理的社团下拉列表
+
+**接口**: `GET /api/clubs/managed`
+
+**请求参数** (查询参数):
+- `userId`: 用户ID（必填）
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "查询成功",
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "text": "社团名称",
+        "value": 1
+      }
+    ]
+  }
+}
+```
+
+---
+
+### 6. 获取社团成员列表
 
 **接口**: `GET /api/clubs/{clubId}/members`
 
@@ -695,7 +721,7 @@ GET /api/users/search?keyword=张三&currentPage=1&pageSize=10
 
 ---
 
-### 6. 设置社团人员为管理员 / 取消管理员
+### 7. 设置社团人员为管理员 / 取消管理员
 
 **接口**: `POST /api/clubs/{clubId}/members/{userId}/manager`
 
@@ -729,6 +755,333 @@ POST /api/clubs/1/members/1/manager?isManager=true
 - 当 `isManager=true` 时：将该用户在该社团中的 `isManager` 标记为 true
 - 当 `isManager=false` 时：将该用户在该社团中的 `isManager` 标记为 false
 - 如果该用户未加入该社团，将返回错误提示
+
+---
+
+## 四、活动相关接口
+
+### 1. 创建活动
+
+**接口**: `POST /api/activities`
+
+**说明**: 活动状态默认设置为 **审核中**，活动等级由主办方社团的 `levelTag` 决定。
+
+**请求参数**:
+```json
+{
+  "name": "活动名称",
+  "description": "活动介绍",
+  "activityType": "活动类型",
+  "location": "活动地点",
+  "clubId": 1,
+  "notice": "参与须知",
+  "registrationStartTime": "2025-12-20T09:00:00",
+  "registrationEndTime": "2025-12-25T18:00:00",
+  "startTime": "2025-12-26T09:00:00",
+  "endTime": "2025-12-26T18:00:00",
+  "maxParticipants": 100,
+  "needAudit": true,
+  "imageUrls": [
+    "http://123.com/a.jpg",
+    "http://123.com/b.jpg"
+  ]
+}
+```
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "创建活动成功",
+  "success": true,
+  "data": {
+    "activity": {}
+  }
+}
+```
+
+---
+
+### 2. 获取待审核活动列表（由 isBoss = true 的用户审核）
+
+**接口**: `GET /api/activities/pending`
+
+**请求参数** (查询参数):
+- `bossUserId`: 审核人用户ID（必填，需要 `isBoss = true`）
+- `currentPage`: 当前页码（可选，默认 1）
+- `pageSize`: 每页条数（可选，默认 10）
+
+**请求示例**:
+```
+GET /api/activities/pending?bossUserId=1&currentPage=1&pageSize=10
+```
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "查询成功",
+  "success": true,
+  "data": {
+    "page": {
+      "total": 5,
+      "currentPage": 1,
+      "pageSize": 10,
+      "totalPage": 1,
+      "records": []
+    }
+  }
+}
+```
+
+---
+
+### 3. 审核活动
+
+**接口**: `POST /api/activities/review`
+
+**说明**: 由 `user.isBoss = true` 的用户对活动进行通过/拒绝审核。
+
+**请求参数**:
+```json
+{
+  "activityId": 1,
+  "auditUserId": 1,
+  "pass": true,
+  "remark": "审核通过"
+}
+```
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "审核成功",
+  "success": true,
+  "data": {}
+}
+```
+
+---
+
+### 4. 获取待审核人员列表（由主办方管理者审核）
+
+**接口**: `GET /api/activities/{activityId}/registrations/pending`
+
+**路径参数**:
+- `activityId`: 活动ID（必填）
+
+**请求参数** (查询参数):
+- `managerUserId`: 管理员用户ID（必填，需要是该活动主办社团的管理员）
+
+**请求示例**:
+```
+GET /api/activities/1/registrations/pending?managerUserId=2
+```
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "查询成功",
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": 1,
+        "activityId": 1,
+        "userId": 3,
+        "status": "待审核",
+        "registrationTime": "2025-12-20T10:00:00"
+      }
+    ]
+  }
+}
+```
+
+---
+
+### 5. 审核报名人员
+
+**接口**: `POST /api/activities/registrations/review`
+
+**说明**: 由活动主办方社团的管理员对报名人员进行通过/拒绝审核。
+
+**请求参数**:
+```json
+{
+  "registrationId": 1,
+  "activityId": 1,
+  "managerUserId": 2,
+  "pass": true,
+  "remark": "通过审核"
+}
+```
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "审核成功",
+  "success": true,
+  "data": {}
+}
+```
+
+---
+
+### 6. 模糊查询活动列表
+
+**接口**: `POST /api/activities/search`
+
+**说明**: 所有参数均为可选，如果都为空则返回所有活动列表。
+
+**请求参数**:
+```json
+{
+  "keyword": "关键字",
+  "status": "审核中",
+  "category": "活动分类",
+  "level": "活动级别",
+  "currentPage": 1,
+  "pageSize": 10
+}
+```
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "查询成功",
+  "success": true,
+  "data": {
+    "page": {
+      "total": 10,
+      "currentPage": 1,
+      "pageSize": 10,
+      "totalPage": 1,
+      "records": []
+    }
+  }
+}
+```
+
+---
+
+### 7. 根据活动ID查看活动详情
+
+**接口**: `GET /api/activities/{id}`
+
+**路径参数**:
+- `id`: 活动ID
+
+**说明**: 返回活动实体信息，并额外返回解析好的图片URL数组。
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "查询成功",
+  "success": true,
+  "data": {
+    "activity": {},
+    "imageUrls": [
+      "http://123.com/a.jpg",
+      "http://123.com/b.jpg"
+    ]
+  }
+}
+```
+
+---
+
+### 8. 人员活动报名
+
+**接口**: `POST /api/activities/{activityId}/register`
+
+**路径参数**:
+- `activityId`: 活动ID（必填）
+
+**请求参数**:
+```json
+{
+  "userId": 3
+}
+```
+
+**说明**:
+- 活动必须已通过审核才能报名；
+- 报名时间必须在设置的报名时间范围内；
+- 如果活动设置需要审核（`needAudit = true`），报名状态为 `"待审核"`，否则为 `"已通过"`。
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "报名成功",
+  "success": true,
+  "data": {
+    "registration": {}
+  }
+}
+```
+
+---
+
+### 9. 人员评价活动
+
+**接口**: `POST /api/activities/comment`
+
+**说明**: 当前仅支持评分（0-100），如需文字评价需在数据库中新增字段。
+
+**请求参数**:
+```json
+{
+  "activityId": 1,
+  "userId": 3,
+  "score": 95
+}
+```
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "评价成功",
+  "success": true,
+  "data": {}
+}
+```
+
+---
+
+### 10. 查看人员报名详情（是否通过审核）
+
+**接口**: `GET /api/activities/{activityId}/registrations/status`
+
+**路径参数**:
+- `activityId`: 活动ID
+
+**请求参数** (查询参数):
+- `userId`: 用户ID
+
+**请求示例**:
+```
+GET /api/activities/1/registrations/status?userId=3
+```
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "查询成功",
+  "success": true,
+  "data": {
+    "status": "已通过",
+    "registration": {}
+  }
+}
+```
 
 ---
 

@@ -70,28 +70,11 @@
 			</com-title>
 
 			<view class="activity_list">
-				<com-activity-item v-for="item in 6" :key="item">
-				</com-activity-item>
+			<!-- 	<com-activity-item v-for="item in 6" :key="item">
+				</com-activity-item> -->
 			</view>
 		</view>
-
-		<!-- 班级活动 -->
-		<view class="home_activity">
-			<com-title>
-				<template #left>班级活动</template>
-				<template #right>
-					<navigator open-type="reLaunch" url="/pages/activity/activity">
-						More+
-					</navigator>
-				</template>
-			</com-title>
-
-			<view class="activity_list">
-				<com-activity-item v-for="item in 6" :key="item">
-
-				</com-activity-item>
-			</view>
-		</view>
+		
 	</view>
 	<!-- 自定义tabBar -->
 	<custom-tabbar></custom-tabbar>

@@ -5,13 +5,13 @@
 		</view>
 
 		<view class="activity_filter_tag_list">
-			<com-filter-btn v-model:title="filterRes.status" type="status"></com-filter-btn>
-			<com-filter-btn v-model:title="filterRes.cate" type="cate"></com-filter-btn>
-			<com-filter-btn v-model:title="filterRes.level" type="level"></com-filter-btn>
+			<com-filter-btn v-model:title="filterRes.status" text='状态' type="status"></com-filter-btn>
+			<com-filter-btn v-model:title="filterRes.category" text='分类' type="category"></com-filter-btn>
+			<com-filter-btn v-model:title="filterRes.level" text='等级' type="level"></com-filter-btn>
 		</view>
 
 		<view class="activity_list">
-			<com-activity-item v-for="item in 6"></com-activity-item>
+			<com-activity-item v-for="item in activityList" :activiyInfo="item"></com-activity-item>
 		</view>
 	</view>
 	<!-- 自定义tabBar -->
@@ -19,28 +19,52 @@
 </template>
 
 <script setup>
-	import { ref } from 'vue'
+	import {
+		onShow
+	} from '@dcloudio/uni-app'
+	import {
+		reactive,
+		ref
+	} from 'vue'
 	import comSearch from '@/components/com-search/com-search.vue';
 	import comActivityItem from '@/components/com-activity-item/com-activity-item.vue';
 	import comFilterBtn from '@/components/com-filter-btn/com-filter-btn.vue';
 	import customTabbar from '@/components/custom-tabbar/custom-tabbar.vue';
-	
-	const searchValue=ref('')
-	const filterRes=ref({
-		status:'状态',
-		cate:'分类',
-		level:'级别'
+	import {
+		apiGetActivityList
+	} from '@/api/activity/index.js'
+
+	const searchValue = ref('')
+	const activityList = ref()
+	const filterRes = reactive({
+		status: '',
+		category: '',
+		level: ''
 	})
-	
-	function onSearch(){
-		console.log(filterRes.value);
+
+	function onSearch() {
+		getActivityList()
 	}
+
+	async function getActivityList() {
+		let res = await apiGetActivityList({
+			...filterRes,
+			keyword: searchValue.value
+		})
+		if (res.code == 200) {
+			activityList.value = res.data.page.records
+		}
+	}
+
+	onShow(() => {
+		getActivityList()
+	})
 </script>
 
 <style lang="scss" scoped>
 	.activity {
 		padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
-		
+
 		.activity_search {
 			margin-bottom: 30rpx;
 		}

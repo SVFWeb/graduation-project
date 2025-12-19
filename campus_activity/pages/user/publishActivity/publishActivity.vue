@@ -1,25 +1,24 @@
 <template>
 	<view class="publish-activity container">
-		<uni-forms ref="formRef" :modelValue="form" :rules="rules" label-position="top" label-width="120"
-			validate-trigger="bind">
-			<uni-forms-item label="活动名称" name="title" required>
-				<uni-easyinput v-model="form.title" placeholder="请输入活动名称" />
+		<uni-forms ref="formRef" :modelValue="form" :rules="rules" label-position="top" label-width="120">
+			<uni-forms-item label="活动名称" name="name" required>
+				<uni-easyinput v-model="form.name" placeholder="请输入活动名称" />
 			</uni-forms-item>
 
-			<uni-forms-item label="活动介绍" name="intro" required>
-				<uni-easyinput v-model="form.intro" type="textarea" placeholder="请填写活动介绍" :auto-height="true" />
+			<uni-forms-item label="活动介绍" name="description" required>
+				<uni-easyinput v-model="form.description" type="textarea" placeholder="请填写活动介绍" :auto-height="true" />
 			</uni-forms-item>
 
-			<uni-forms-item label="活动类型" name="type" required>
-				<uni-data-select v-model="form.type" :localdata="typeOptions" placeholder="请选择活动类型" />
+			<uni-forms-item label="活动类型" name="activityType" required>
+				<uni-data-select v-model="form.activityType" :localdata="typeOptions" placeholder="请选择活动类型" />
 			</uni-forms-item>
 
 			<uni-forms-item label="活动地点" name="location" required>
 				<uni-data-select v-model="form.location" :localdata="locationOptions" placeholder="请选择活动地点" />
 			</uni-forms-item>
 
-			<uni-forms-item label="活动主办方" name="organizer" required>
-				<uni-data-select v-model="form.organizer" :localdata="organizerOptions" placeholder="请选择主办方" />
+			<uni-forms-item label="活动主办方" name="clubId" required>
+				<uni-data-select v-model="form.clubId" :localdata="organizerOptions" placeholder="请选择主办方" />
 			</uni-forms-item>
 
 			<uni-forms-item label="参与须知" name="notice" required>
@@ -28,12 +27,13 @@
 
 			<uni-forms-item label="活动报名时间" name="signupRange" required>
 				<uni-datetime-picker v-model="form.signupRange" type="datetimerange" range-separator="至"
-					start-placeholder="报名开始时间" end-placeholder="报名结束时间" :end="signupEndLimit" />
+					start-placeholder="报名开始时间" end-placeholder="报名结束时间" :start="nowLimit" :end="signupEndLimit" />
 			</uni-forms-item>
 
 			<uni-forms-item label="活动开始时间" name="activityRange" required>
-				<uni-datetime-picker v-model="form.activityRange" type="datetimerange" range-separator="至"
-					start-placeholder="活动开始时间" end-placeholder="活动结束时间" :start="activityStartLimit" />
+				<uni-datetime-picker v-model="form.activityRange" type="datetimerange" :disabled="form.signupRange==''"
+					range-separator="至" start-placeholder="活动开始时间" end-placeholder="活动结束时间"
+					:start="activityStartLimit" />
 			</uni-forms-item>
 
 			<uni-forms-item label="最大报名人数" name="maxParticipants" required>
@@ -44,9 +44,9 @@
 				<uni-data-checkbox v-model="form.needReview" :localdata="reviewOptions" mode="button" />
 			</uni-forms-item>
 
-			<uni-forms-item label="材料上传" name="materials" required>
-				<uni-file-picker v-model="form.materials" fileMediatype="image" limit="5" :auto-upload="false"
-					mode="list" />
+			<uni-forms-item label="材料图片上传" name="imageUrls" required>
+				<uni-file-picker ref="filePicker" v-model="form.imageUrls" fileMediatype="image" limit="5"
+					:auto-upload="false" @select="selectImageFile" @success="successImageFile" />
 				<view class="tip-text">至少上传 1 张，最多 5 张图片</view>
 			</uni-forms-item>
 
@@ -58,93 +58,81 @@
 <script setup>
 	import {
 		computed,
+		onMounted,
 		reactive,
 		ref
 	} from 'vue'
+	import {
+		apiGetClubManageList
+	} from '@/api/club/index.js'
+	import {
+		apiCreateActivity
+	} from '@/api/activity/index.js'
 
+	const userId = uni.getStorageSync('userInfo').id
 	const formRef = ref(null)
+	const filePicker = ref(null)
 	const form = reactive({
-		title: '',
-		intro: '',
-		type: '',
+		name: '',
+		description: '',
+		activityType: '',
 		location: '',
-		organizer: '',
+		clubId: '',
 		notice: '',
 		signupRange: [],
 		activityRange: [],
 		maxParticipants: '1',
 		needReview: '1',
-		materials: []
+		imageUrls: [] // 上传材料
 	})
 
+	const nowLimit = Date.now()
 	// 报名结束不可晚于活动开始；活动开始不可早于报名结束
 	const signupEndLimit = computed(() => form.activityRange?.[0] || '')
 	const activityStartLimit = computed(() => form.signupRange?.[1] || '')
-
+	const organizerOptions = ref([])
 
 	const typeOptions = [{
-			text: '学术讲座',
-			value: 'lecture'
+			text: '思想成长',
+			value: '思想成长'
 		},
 		{
-			text: '文体活动',
-			value: 'sports'
+			text: '实践实习',
+			value: '实践实习'
 		},
 		{
-			text: '志愿服务',
-			value: 'volunteer'
+			text: '公益志愿',
+			value: '公益志愿'
 		},
 		{
-			text: '竞赛赛事',
-			value: 'competition'
+			text: '创新创业',
+			value: '创新创业'
 		},
 		{
-			text: '其他',
-			value: 'other'
+			text: '文化艺体',
+			value: '文化艺体'
 		}
 	]
 
 	const locationOptions = [{
 			text: '主楼报告厅',
-			value: 'hall'
+			value: '主楼报告厅'
 		},
 		{
 			text: '体育馆',
-			value: 'gym'
+			value: '体育馆'
 		},
 		{
 			text: '教学楼',
-			value: 'classroom'
+			value: '教学楼'
 		},
 		{
 			text: '图书馆',
-			value: 'library'
+			value: '图书馆'
 		},
 		{
 			text: '户外场地',
-			value: 'outdoor'
-		}
-	]
-
-	const organizerOptions = [{
-			text: '学生会',
-			value: 'student_union'
-		},
-		{
-			text: '社团联合会',
-			value: 'association_union'
-		},
-		{
-			text: '研究生会',
-			value: 'postgraduate_union'
-		},
-		{
-			text: '学院',
-			value: 'college'
-		},
-		{
-			text: '其他',
-			value: 'other'
+			value: '户外场地'
 		}
 	]
 
@@ -159,85 +147,163 @@
 	]
 
 	const rules = {
-		title: {
-			required: true,
-			errorMessage: '请填写活动名称'
+		name: {
+			rules: [{
+				required: true,
+				errorMessage: '请填写活动名称'
+			}]
 		},
-		intro: {
-			required: true,
-			errorMessage: '请填写活动介绍'
+		description: {
+			rules: [{
+				required: true,
+				errorMessage: '请填写活动介绍'
+			}]
 		},
-		type: {
-			required: true,
-			errorMessage: '请选择活动类型'
+		activityType: {
+			rules: [{
+				required: true,
+				errorMessage: '请选择活动类型'
+			}]
 		},
 		location: {
-			required: true,
-			errorMessage: '请选择活动地点'
+			rules: [{
+				required: true,
+				errorMessage: '请选择活动地点'
+			}]
 		},
-		organizer: {
-			required: true,
-			errorMessage: '请选择主办方'
+		clubId: {
+			rules: [{
+				required: true,
+				errorMessage: '请选择主办方'
+			}]
 		},
 		notice: {
-			required: true,
-			errorMessage: '请填写参与须知'
+			rules: [{
+				required: true,
+				errorMessage: '请填写参与须知'
+			}]
 		},
 		signupRange: {
-			required: true,
-			errorMessage: '请选择报名时间'
+			rules: [{
+				required: true,
+				errorMessage: '请选择报名时间'
+			}]
 		},
 		activityRange: {
-			required: true,
-			errorMessage: '请选择活动时间'
+			rules: [{
+				required: true,
+				errorMessage: '请选择活动时间'
+			}]
 		},
 		maxParticipants: {
-			required: true,
-			errorMessage: '请输入最大报名人数',
-			validator: (rule, value, callback) => {
-				const num = Number(value)
-				if (Number.isNaN(num) || num <= 0 || !Number.isInteger(num)) {
-					callback('请输入正整数')
-					return
+			rules: [{
+					required: true,
+					errorMessage: '请输入最大报名人数'
+				},
+				{
+					validateFunction: (rule, value, data, callback) => {
+						const num = Number(value)
+						if (Number.isNaN(num) || num <= 0 || !Number.isInteger(num)) {
+							callback('请输入正整数')
+							return
+						}
+						return true
+					}
 				}
-				callback()
-			}
+			]
 		},
 		needReview: {
-			required: true,
-			errorMessage: '请选择是否需要审核'
+			rules: [{
+				required: true,
+				errorMessage: '请选择是否需要审核'
+			}]
 		},
-		materials: {
-			required: true,
-			errorMessage: '请至少上传 1 张图片',
-			validator: (rule, value, callback) => {
-				if (!Array.isArray(value) || value.length < 1) {
-					callback('请至少上传 1 张图片')
-					return
+		imageUrls: {
+			rules: [{
+					required: true,
+					errorMessage: '请至少上传 1 张图片'
+				},
+				{
+					validateFunction: (rule, value, data, callback) => {
+						if (!Array.isArray(value) || value.length < 1) {
+							callback('请至少上传 1 张图片')
+							return
+						}
+						if (value.length > 5) {
+							callback('最多上传 5 张图片')
+							return
+						}
+						return true
+					}
 				}
-				if (value.length > 5) {
-					callback('最多上传 5 张图片')
-					return
-				}
-				callback()
-			}
+			]
 		}
 	}
 
-	const handleSubmit = () => {
-		formRef.value
-			.validate()
-			.then(() => {
+	function selectImageFile(e) {
+		form.imageUrls = e.tempFiles
+	}
+
+	async function successImageFile(e) {
+		let imageUrls = e.tempFiles.map(item => item.url)
+		let fomData = {
+			...form,
+			imageUrls,
+			registrationStartTime: form.signupRange[0],
+			registrationEndTime: form.signupRange[1],
+			startTime: form.activityRange[0],
+			endTime: form.activityRange[1]
+		}
+
+		let res = await apiCreateActivity(fomData)
+
+		if (res.code == 200) {
+			uni.hideLoading()
+
+			setTimeout(() => {
+				uni.navigateTo({
+					url: '/pages/user/user'
+				})
+
 				uni.showToast({
-					title: '校验通过，可提交',
+					title: '创建成功',
 					icon: 'success'
 				})
-				// TODO: 提交表单数据到后端
-			})
-			.catch((err) => {
-				console.warn('表单校验未通过', err)
-			})
+			}, 1000)
+
+		}
+
+		console.log(res);
 	}
+
+	const handleSubmit = async () => {
+
+		try {
+			// 主动触发表单校验
+			await formRef.value.validate()
+
+			uni.showToast({
+				title: '校验通过，可提交',
+				icon: 'success'
+			})
+
+			await filePicker.value.upload()
+
+			uni.showLoading()
+
+
+		} catch (e) {
+			uni.showToast({
+				title: '请完善信息',
+				icon: 'error'
+			})
+		}
+	}
+
+	onMounted(async () => {
+		let res = await apiGetClubManageList(userId)
+		organizerOptions.value = res.data.items
+	})
 </script>
 
 <style lang="scss" scoped>

@@ -1,19 +1,20 @@
 <template>
 	<view class="com-activity-item_cotainer" @click="onToActivitDetail">
-		<view class="activity_tag">报名中</view>
+		<view class="activity_tag">{{ activiyInfo.status }}</view>
 		<view class="activity_image">
-			<image src="/static/logo.png" mode="aspectFill"></image>
+			<image :src="activiyInfo.imageUrls[0]" mode="aspectFill"></image>
 		</view>
-		<view class="activity_time">2025.11.26至2025.11.30</view>
-		<view class="activity_title">广西民族大学校园广播节目类型与需求调查问卷第二期</view>
-		<view class="activity_category">文化艺体</view>
+		<view class="activity_time">{{ activiyInfo.startTime }}至{{ activiyInfo.endTime }}</view>
+		<view class="activity_title">{{ activiyInfo.name }}</view>
+		<view class="activity_category">{{ activiyInfo.activityType }}</view>
 	</view>
 </template>
 
 <script setup>
+	const props=defineProps(['activiyInfo'])
 	function onToActivitDetail(){
 		uni.navigateTo({
-			url:'/pages/activity/activityDetail/activityDetail'
+			url:`/pages/activity/activityDetail/activityDetail?id=${props.activiyInfo.id}`
 		})
 	}
 </script>

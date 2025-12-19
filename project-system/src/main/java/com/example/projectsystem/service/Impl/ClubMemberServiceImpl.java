@@ -1,10 +1,13 @@
 package com.example.projectsystem.service.Impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.projectsystem.domain.Club;
 import com.example.projectsystem.domain.ClubMember;
 import com.example.projectsystem.domain.User;
 import com.example.projectsystem.dto.ClubMemberWithUserDTO;
+import com.example.projectsystem.dto.ClubOptionDTO;
 import com.example.projectsystem.mapper.ClubMemberMapper;
+import com.example.projectsystem.service.ClubService;
 import com.example.projectsystem.service.ClubMemberService;
 import com.example.projectsystem.service.UserService;
 import org.springframework.stereotype.Service;
@@ -18,9 +21,11 @@ import java.util.stream.Collectors;
 public class ClubMemberServiceImpl extends ServiceImpl<ClubMemberMapper, ClubMember> implements ClubMemberService {
 
     private final UserService userService;
+    private final ClubService clubService;
 
-    public ClubMemberServiceImpl(UserService userService) {
+    public ClubMemberServiceImpl(UserService userService, ClubService clubService) {
         this.userService = userService;
+        this.clubService = clubService;
     }
 
     @Override
@@ -117,6 +122,36 @@ public class ClubMemberServiceImpl extends ServiceImpl<ClubMemberMapper, ClubMem
                     User user = userService.getById(member.getUserId());
                     return new ClubMemberWithUserDTO(member, user);
                 })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ClubOptionDTO> getManagedClubOptionsByUserId(Long userId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("用户ID不能为空");
+        }
+
+        List<ClubMember> managerRecords = lambdaQuery()
+                .eq(ClubMember::getUserId, userId)
+                .eq(ClubMember::getIsManager, true)
+                .list();
+
+        if (managerRecords.isEmpty()) {
+            return List.of();
+        }
+
+        List<Long> clubIds = managerRecords.stream()
+                .map(ClubMember::getClubId)
+                .distinct()
+                .collect(Collectors.toList());
+
+        List<Club> clubs = clubService.lambdaQuery()
+                .in(Club::getId, clubIds)
+                .eq(Club::getStatus, 1)
+                .list();
+
+        return clubs.stream()
+                .map(club -> new ClubOptionDTO(club.getName(), club.getId()))
                 .collect(Collectors.toList());
     }
 }

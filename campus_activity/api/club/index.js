@@ -43,3 +43,8 @@ export const apiSettingClubManager=(data)=>request({
 export const apiGetClubNewList=()=>request({
 	url:'/clubs/latest?limit=6',
 })
+
+// 获取用户管理的社团下拉列表
+export const apiGetClubManageList=(id)=>request({
+	url:`/clubs/managed?userId=${id}`
+})

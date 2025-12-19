@@ -18,15 +18,15 @@
 			<view class="info_mask">
 				<view class="mask_bg"></view>
 				<view class="mask_content">
-					<view class="tag status-tag">报名中</view>
-					<view class="title">广西民族大学第三届大学生面试挑战赛</view>
+					<view class="tag status-tag">{{ activityInfo?.status }}</view>
+					<view class="title">{{ activityInfo?.name }}</view>
 					<view class="address">
 						<uni-icons type="location-filled" size="16" color="#fff"></uni-icons>
-						<view class="text">广西民族大学大学相思湖校区</view>
+						<view class="text">{{ activityInfo?.location }}</view>
 					</view>
 					<view class="number_info">
-						<view class="id">ID：123123</view>
-						<view class="people_count">已报人数：28/100</view>
+						<view class="id">ID：{{ activityInfo?.id }}</view>
+						<view class="people_count">已报人数：28/{{activityInfo?.maxParticipants }}</view>
 					</view>
 				</view>
 			</view>
@@ -53,14 +53,14 @@
 					<view class="detail_section">
 						<view class="section_title">活动介绍</view>
 						<view class="section_content">
-							这里是活动的详细描述信息，包括活动背景、目的、特色等内容。可以详细介绍活动的各项安排和注意事项。
+							{{ activityInfo?.description }}
 						</view>
 					</view>
 
 					<view class="detail_section">
 						<view class="section_title">参与须知</view>
 						<view class="section_content">
-							列表描述信息列表描述信息列表描述信息列表描述信息列表描述信息列表描述信息列表描述信息列表描述信息列表描述信息列表描述信息列表描述信息列表描述信息列表描述信息列表描述信息列表描述信息列表描述信息
+							{{ activityInfo?.notice }}
 						</view>
 					</view>
 
@@ -71,42 +71,43 @@
 								<uni-icons type="calendar" size="16" color="#666"></uni-icons>
 								<text>报名时间</text>
 							</view>
-							<view class="info_value">2025.10.01-2025.11.01</view>
+							<view class="info_value">
+								{{ activityInfo?.registrationStartTime }}-{{ activityInfo?.registrationEndTime }}</view>
 						</view>
 						<view class="info_item">
 							<view class="info_label">
 								<uni-icons type="calendar" size="16" color="#666"></uni-icons>
 								<text>活动时间</text>
 							</view>
-							<view class="info_value">2025.10.01-2025.11.01</view>
+							<view class="info_value">{{ activityInfo?.startTime }}-{{ activityInfo?.updateTime }}</view>
 						</view>
 						<view class="info_item">
 							<view class="info_label">
 								<uni-icons type="flag" size="16" color="#666"></uni-icons>
 								<text>活动级别</text>
 							</view>
-							<view class="info_value">院级</view>
+							<view class="info_value">{{ activityInfo?.activityLevel }}</view>
 						</view>
 						<view class="info_item">
 							<view class="info_label">
 								<uni-icons type="bars" size="16" color="#666"></uni-icons>
 								<text>活动类型</text>
 							</view>
-							<view class="info_value">文体艺术</view>
+							<view class="info_value">{{ activityInfo?.activityType }}</view>
 						</view>
 						<view class="info_item">
 							<view class="info_label">
 								<uni-icons type="person" size="16" color="#666"></uni-icons>
 								<text>报名人数</text>
 							</view>
-							<view class="info_value">300</view>
+							<view class="info_value">{{ activityInfo?.maxParticipants }}</view>
 						</view>
 						<view class="info_item">
 							<view class="info_label">
 								<uni-icons type="star" size="16" color="#666"></uni-icons>
 								<text>综合评分</text>
 							</view>
-							<view class="info_value rating">0.0</view>
+							<view class="info_value rating">{{ activityInfo?.score }}</view>
 						</view>
 					</view>
 				</view>
@@ -115,10 +116,10 @@
 
 		<!-- 底部操作栏 -->
 		<view class="activityDetail_btn">
-			<view class="operation_btn" @click="toggleCollect">
-				<uni-icons :type="isCollected ? 'star-filled' : 'star'" size="22"
+			<view class="operation_btn">
+				<!-- <uni-icons :type="isCollected ? 'star-filled' : 'star'" size="22"
 					:color="isCollected ? '#FCB857' : '#666'"></uni-icons>
-				<view class="btn_text" :class="{ collected: isCollected }">{{ isCollected ? '已收藏' : '收藏' }}</view>
+				<view class="btn_text" :class="{ collected: isCollected }">{{ isCollected ? '已收藏' : '收藏' }}</view> -->
 			</view>
 
 
@@ -131,26 +132,24 @@
 
 <script setup>
 	import {
-		ref
-	} from 'vue'
+		onMounted,
+		ref,
+	} from 'vue';
+	import {
+		apiQueryActivity
+	} from '@/api/activity/index.js'
 
+	const props = defineProps(['id'])
+
+	const activityInfo = ref(null)
 	const currentSwiper = ref(0)
 	const isCollected = ref(true)
-	const bannerList = ref([
-		'/static/logo.png',
-		'/static/logo.png',
-		'/static/logo.png',
-		'/static/logo.png',
-		'/static/logo.png'
-	])
+	const bannerList = ref([])
 
 	const onSwiperChange = (e) => {
 		currentSwiper.value = e.detail.current
 	}
 
-	const toggleCollect = () => {
-		isCollected.value = !isCollected.value
-	}
 
 	const handleSignUp = () => {
 		// 报名逻辑
@@ -159,6 +158,17 @@
 			icon: 'success'
 		})
 	}
+
+	async function queryActivity() {
+		let res = await apiQueryActivity(props.id)
+		bannerList.value = res.data.imageUrls
+		activityInfo.value = res.data.activity
+	}
+
+
+	onMounted(() => {
+		queryActivity()
+	})
 </script>
 
 <style lang="scss" scoped>

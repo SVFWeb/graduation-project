@@ -60,6 +60,7 @@ CREATE TABLE `activity`  (
   `activity_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '活动类型（例如：文体艺术、体育活动）',
   `activity_level` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '活动等级（例如：校级、院级、班级）',
   `status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '审核中' COMMENT '活动状态（审核中、报名中、等待中、进行中、已结束）',
+  `score` decimal(5, 1) NOT NULL DEFAULT 0 COMMENT '活动总评分（平均分，保留1位小数）',
   `audit_status` tinyint(1) NULL DEFAULT 0 COMMENT '审核状态(0-待审核,1-已通过,2-已拒绝)',
   `audit_time` datetime NULL DEFAULT NULL COMMENT '审核时间',
   `audit_user_id` bigint NULL DEFAULT NULL COMMENT '审核人ID',
