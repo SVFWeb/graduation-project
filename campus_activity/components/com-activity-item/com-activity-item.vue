@@ -4,13 +4,18 @@
 		<view class="activity_image">
 			<image :src="activiyInfo.imageUrls[0]" mode="aspectFill"></image>
 		</view>
-		<view class="activity_time">{{ activiyInfo.startTime }}至{{ activiyInfo.endTime }}</view>
+		<view class="activity_time">
+			<text class="time_start">{{ formatTime(activiyInfo.startTime) }}</text>
+			<text class="time_separator">至</text>
+			<text class="time_end">{{ formatTime(activiyInfo.endTime) }}</text>
+		</view>
 		<view class="activity_title">{{ activiyInfo.name }}</view>
 		<view class="activity_category">{{ activiyInfo.activityType }}</view>
 	</view>
 </template>
 
 <script setup>
+	import formatTime from '@/utils/dateUtil.js'
 	const props=defineProps(['activiyInfo'])
 	function onToActivitDetail(){
 		uni.navigateTo({
@@ -61,10 +66,26 @@
 		}
 
 		.activity_time {
+			display: flex;
+			align-items: center;
 			font-size: 22rpx;
 			color: $uni-topic-color;
 			margin-bottom: 16rpx;
-			line-height: 1.4;
+			line-height: 1.5;
+			flex-wrap: wrap;
+			gap: 8rpx;
+
+			.time_start,
+			.time_end {
+				font-weight: 500;
+				letter-spacing: 0.5rpx;
+			}
+
+			.time_separator {
+				color: rgba(255, 107, 53, 0.6);
+				margin: 0 4rpx;
+				font-weight: 400;
+			}
 		}
 
 		.activity_title {

@@ -4,6 +4,7 @@ import com.example.projectsystem.domain.Activity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 /**
@@ -18,10 +19,10 @@ public class ActivityDTO {
     private String description;
     private String location;
     private String notice;
-    private LocalDateTime registrationStartTime;
-    private LocalDateTime registrationEndTime;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private Long registrationStartTime;
+    private Long registrationEndTime;
+    private Long startTime;
+    private Long endTime;
     private Integer maxParticipants;
     private Boolean needAudit;
     private String activityType;
@@ -47,10 +48,19 @@ public class ActivityDTO {
         this.description = activity.getDescription();
         this.location = activity.getLocation();
         this.notice = activity.getNotice();
-        this.registrationStartTime = activity.getRegistrationStartTime();
-        this.registrationEndTime = activity.getRegistrationEndTime();
-        this.startTime = activity.getStartTime();
-        this.endTime = activity.getEndTime();
+        // 将 LocalDateTime 转换为时间戳（毫秒）
+        this.registrationStartTime = activity.getRegistrationStartTime() != null
+                ? activity.getRegistrationStartTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                : null;
+        this.registrationEndTime = activity.getRegistrationEndTime() != null
+                ? activity.getRegistrationEndTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                : null;
+        this.startTime = activity.getStartTime() != null
+                ? activity.getStartTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                : null;
+        this.endTime = activity.getEndTime() != null
+                ? activity.getEndTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                : null;
         this.maxParticipants = activity.getMaxParticipants();
         this.needAudit = activity.getNeedAudit();
         this.activityType = activity.getActivityType();
@@ -120,35 +130,35 @@ public class ActivityDTO {
         this.notice = notice;
     }
 
-    public LocalDateTime getRegistrationStartTime() {
+    public Long getRegistrationStartTime() {
         return registrationStartTime;
     }
 
-    public void setRegistrationStartTime(LocalDateTime registrationStartTime) {
+    public void setRegistrationStartTime(Long registrationStartTime) {
         this.registrationStartTime = registrationStartTime;
     }
 
-    public LocalDateTime getRegistrationEndTime() {
+    public Long getRegistrationEndTime() {
         return registrationEndTime;
     }
 
-    public void setRegistrationEndTime(LocalDateTime registrationEndTime) {
+    public void setRegistrationEndTime(Long registrationEndTime) {
         this.registrationEndTime = registrationEndTime;
     }
 
-    public LocalDateTime getStartTime() {
+    public Long getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
+    public void setStartTime(Long startTime) {
         this.startTime = startTime;
     }
 
-    public LocalDateTime getEndTime() {
+    public Long getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
+    public void setEndTime(Long endTime) {
         this.endTime = endTime;
     }
 

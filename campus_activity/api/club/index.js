@@ -48,3 +48,8 @@ export const apiGetClubNewList=()=>request({
 export const apiGetClubManageList=(id)=>request({
 	url:`/clubs/managed?userId=${id}`
 })
+
+// 查看社团详情
+export const apiGetClubDetail=(id)=>request({
+	url:`/clubs/${id}`,
+})

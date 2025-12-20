@@ -298,191 +298,6 @@ GET /api/users/search?keyword=张三&currentPage=1&pageSize=10
 
 ---
 
-### 3. 新增学校
-
-**接口**: `POST /api/campus/schools`
-
-**请求参数**:
-```json
-{
-  "schoolName": "学校名称",
-  "sort": 0,
-  "status": 1
-}
-```
-
-**响应示例**:
-```json
-{
-  "code": 200,
-  "message": "新增学校成功",
-  "success": true,
-  "data": {
-    "id": 1
-  }
-}
-```
-
----
-
-### 4. 查询学校列表
-
-**接口**: `GET /api/campus/schools`
-
-**响应示例**:
-```json
-{
-  "code": 200,
-  "success": true,
-  "data": {
-    "items": []
-  }
-}
-```
-
----
-
-### 5. 更新学校
-
-**接口**: `PUT /api/campus/schools/{id}`
-
-**路径参数**:
-- `id`: 学校ID
-
-**请求参数**:
-```json
-{
-  "schoolName": "学校名称",
-  "sort": 0,
-  "status": 1
-}
-```
-
----
-
-### 6. 删除学校
-
-**接口**: `DELETE /api/campus/schools/{id}`
-
-**路径参数**:
-- `id`: 学校ID
-
----
-
-### 7. 新增学院
-
-**接口**: `POST /api/campus/schools/{schoolId}/colleges`
-
-**路径参数**:
-- `schoolId`: 学校ID
-
-**请求参数**:
-```json
-{
-  "collegeName": "学院名称",
-  "sort": 0,
-  "status": 1
-}
-```
-
----
-
-### 8. 查询学院列表
-
-**接口**: `GET /api/campus/schools/{schoolId}/colleges`
-
-**路径参数**:
-- `schoolId`: 学校ID
-
----
-
-### 9. 更新学院
-
-**接口**: `PUT /api/campus/schools/{schoolId}/colleges/{id}`
-
-**路径参数**:
-- `schoolId`: 学校ID
-- `id`: 学院ID
-
-**请求参数**:
-```json
-{
-  "collegeName": "学院名称",
-  "sort": 0,
-  "status": 1
-}
-```
-
----
-
-### 10. 删除学院
-
-**接口**: `DELETE /api/campus/schools/{schoolId}/colleges/{id}`
-
-**路径参数**:
-- `schoolId`: 学校ID
-- `id`: 学院ID
-
----
-
-### 11. 新增班级
-
-**接口**: `POST /api/campus/colleges/{collegeId}/classes`
-
-**路径参数**:
-- `collegeId`: 学院ID
-
-**请求参数**:
-```json
-{
-  "className": "班级名称",
-  "sort": 0,
-  "status": 1
-}
-```
-
----
-
-### 12. 查询班级列表
-
-**接口**: `GET /api/campus/colleges/{collegeId}/classes`
-
-**路径参数**:
-- `collegeId`: 学院ID
-
----
-
-### 13. 更新班级
-
-**接口**: `PUT /api/campus/colleges/{collegeId}/classes/{id}`
-
-**路径参数**:
-- `collegeId`: 学院ID
-- `id`: 班级ID
-
-**请求参数**:
-```json
-{
-  "className": "班级名称",
-  "sort": 0,
-  "status": 1
-}
-```
-
----
-
-### 14. 删除班级
-
-**接口**: `DELETE /api/campus/colleges/{collegeId}/classes/{id}`
-
-**路径参数**:
-- `collegeId`: 学院ID
-- `id`: 班级ID
-
----
-
----
-
 ## 三、社团相关接口
 
 ### 1. 添加社团
@@ -520,7 +335,49 @@ GET /api/users/search?keyword=张三&currentPage=1&pageSize=10
 
 ---
 
-### 2. 模糊查询社团列表
+### 2. 根据社团ID获取社团信息
+
+**接口**: `GET /api/clubs/{id}`
+
+**路径参数**:
+- `id`: 社团ID（必填）
+
+**请求示例**:
+```
+GET /api/clubs/1
+```
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "查询成功",
+  "success": true,
+  "data": {
+    "club": {
+      "id": 1,
+      "iconUrl": "https://example.com/club-icon.jpg",
+      "name": "计算机协会",
+      "tags": "技术,编程,计算机",
+      "description": "致力于计算机技术交流与学习的社团",
+      "status": 1,
+      "levelTag": "校级",
+      "memberCount": 35,
+      "createTime": "2024-01-01T10:00:00",
+      "updateTime": "2024-01-01T10:00:00"
+    }
+  }
+}
+```
+
+**说明**:
+- 返回指定ID的社团详细信息
+- 包含社团人数（`memberCount`）
+- 如果社团不存在，返回错误信息
+
+---
+
+### 3. 模糊查询社团列表
 
 **接口**: `POST /api/clubs/search`
 
@@ -566,7 +423,7 @@ GET /api/users/search?keyword=张三&currentPage=1&pageSize=10
 
 ---
 
-### 3. 加入社团
+### 4. 加入社团
 
 **接口**: `POST /api/clubs/join`
 
@@ -601,7 +458,7 @@ GET /api/users/search?keyword=张三&currentPage=1&pageSize=10
 
 ---
 
-### 4. 模糊查询已加入的社团列表
+### 5. 模糊查询已加入的社团列表
 
 **接口**: `POST /api/clubs/joined`
 
@@ -648,7 +505,7 @@ GET /api/users/search?keyword=张三&currentPage=1&pageSize=10
 
 ---
 
-### 5. 获取用户管理的社团下拉列表
+### 6. 获取用户管理的社团下拉列表
 
 **接口**: `GET /api/clubs/managed`
 
@@ -674,7 +531,7 @@ GET /api/users/search?keyword=张三&currentPage=1&pageSize=10
 
 ---
 
-### 6. 获取社团成员列表
+### 7. 获取社团成员列表
 
 **接口**: `GET /api/clubs/{clubId}/members`
 
@@ -721,7 +578,7 @@ GET /api/users/search?keyword=张三&currentPage=1&pageSize=10
 
 ---
 
-### 7. 设置社团人员为管理员 / 取消管理员
+### 8. 设置社团人员为管理员 / 取消管理员
 
 **接口**: `POST /api/clubs/{clubId}/members/{userId}/manager`
 
@@ -910,13 +767,20 @@ GET /api/activities/1/registrations/pending?managerUserId=2
 **请求参数**:
 ```json
 {
-  "registrationId": 1,
   "activityId": 1,
+  "userId": 3,
   "managerUserId": 2,
   "pass": true,
   "remark": "通过审核"
 }
 ```
+
+**参数说明**:
+- `activityId`: 活动ID（必填）
+- `userId`: 参加人员的用户ID（必填）
+- `managerUserId`: 社团管理者用户ID（必填，需要是该活动主办社团的管理员）
+- `pass`: 是否通过（必填，true-通过，false-拒绝）
+- `remark`: 审核备注（可选）
 
 **响应示例**:
 ```json
@@ -927,6 +791,11 @@ GET /api/activities/1/registrations/pending?managerUserId=2
   "data": {}
 }
 ```
+
+**说明**:
+- 通过活动ID和用户ID查找对应的报名记录进行审核
+- 审核通过后，活动的 `currentParticipants` 字段会自动更新
+- 如果报名记录不存在，返回错误信息
 
 ---
 
@@ -975,7 +844,7 @@ GET /api/activities/1/registrations/pending?managerUserId=2
 **路径参数**:
 - `id`: 活动ID
 
-**说明**: 返回活动实体信息，并额外返回解析好的图片URL数组。
+**说明**: 返回活动实体信息，并额外返回解析好的图片URL数组。活动信息中包含 `currentParticipants` 字段，表示当前已通过的报名人数。
 
 **响应示例**:
 ```json
@@ -984,7 +853,14 @@ GET /api/activities/1/registrations/pending?managerUserId=2
   "message": "查询成功",
   "success": true,
   "data": {
-    "activity": {},
+    "activity": {
+      "id": 1,
+      "name": "活动名称",
+      "description": "活动描述",
+      "maxParticipants": 100,
+      "currentParticipants": 35,
+      ...
+    },
     "imageUrls": [
       "http://123.com/a.jpg",
       "http://123.com/b.jpg"
@@ -992,6 +868,10 @@ GET /api/activities/1/registrations/pending?managerUserId=2
   }
 }
 ```
+
+**说明**:
+- `currentParticipants`: 当前已通过的报名人数（统计状态为"已通过"的报名记录）
+- 如果活动不存在，返回错误信息
 
 ---
 
@@ -1055,19 +935,21 @@ GET /api/activities/1/registrations/pending?managerUserId=2
 
 ---
 
-### 10. 查看人员报名详情（是否通过审核）
+### 10. 获取审核人员列表（由社团的管理者进行审核）
 
 **接口**: `GET /api/activities/{activityId}/registrations/status`
 
+**说明**: 由活动主办方社团的管理员查看待审核的报名人员列表，包含个人信息。时间字段返回时间戳（毫秒）。
+
 **路径参数**:
-- `activityId`: 活动ID
+- `activityId`: 活动ID（必填）
 
 **请求参数** (查询参数):
-- `userId`: 用户ID
+- `managerUserId`: 管理者用户ID（必填，需要是该活动主办社团的管理员）
 
 **请求示例**:
 ```
-GET /api/activities/1/registrations/status?userId=3
+GET /api/activities/1/registrations/status?managerUserId=2
 ```
 
 **响应示例**:
@@ -1077,11 +959,37 @@ GET /api/activities/1/registrations/status?userId=3
   "message": "查询成功",
   "success": true,
   "data": {
-    "status": "已通过",
-    "registration": {}
+    "items": [
+      {
+        "id": 3,
+        "username": "user001",
+        "isCompleted": true,
+        "realName": "张三",
+        "studentNo": "2021001",
+        "gender": 1,
+        "phone": "13800138000",
+        "email": "zhangsan@example.com",
+        "schoolName": "XX大学",
+        "collegeName": "计算机学院",
+        "className": "计算机1班",
+        "completeTime": 1703059200000,
+        "isManager": false,
+        "isBoss": false,
+        "avatarUrl": "https://example.com/avatar.jpg",
+        "createTime": 1703059200000,
+        "updateTime": 1703059200000
+      }
+    ]
   }
 }
 ```
+
+**说明**:
+- 只有该活动主办社团的管理员才能调用此接口
+- 返回该活动下所有状态为"待审核"的报名人员列表
+- 列表中每个元素为用户个人信息对象
+- 时间字段（如 `completeTime`、`createTime`、`updateTime` 等）以时间戳（毫秒）形式返回
+- 如果没有待审核人员，`items` 为空数组
 
 ---
 

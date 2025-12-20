@@ -26,7 +26,8 @@
 					</view>
 					<view class="number_info">
 						<view class="id">ID：{{ activityInfo?.id }}</view>
-						<view class="people_count">已报人数：28/{{activityInfo?.maxParticipants }}</view>
+						<view class="people_count">
+							已报人数：{{ activityInfo?.currentParticipants }}/{{activityInfo?.maxParticipants }}</view>
 					</view>
 				</view>
 			</view>
@@ -38,13 +39,13 @@
 					<!-- 组织者信息 -->
 					<view class="organizer_card">
 						<view class="organizer_header">
-							<image class="organizer_avatar" src="/static/image/xin.jpg" mode="aspectFill"></image>
+							<image class="organizer_avatar" :src="clubInfo?.iconUrl" mode="aspectFill"></image>
 							<view class="organizer_info">
-								<view class="organizer_name">招生处</view>
-								<view class="organizer_desc">官方招生部门</view>
+								<view class="organizer_name">{{ clubInfo?.name }}</view>
+								<view class="organizer_desc">{{ clubInfo?.description }}</view>
 							</view>
 							<view>
-								1212
+								{{ clubInfo?.memberCount }}
 							</view>
 						</view>
 					</view>
@@ -66,20 +67,27 @@
 
 					<!-- 活动信息列表 -->
 					<view class="info_list">
-						<view class="info_item">
+						<view class="info_item info_item--time">
 							<view class="info_label">
 								<uni-icons type="calendar" size="16" color="#666"></uni-icons>
 								<text>报名时间</text>
 							</view>
-							<view class="info_value">
-								{{ activityInfo?.registrationStartTime }}-{{ activityInfo?.registrationEndTime }}</view>
+							<view class="info_value info_value--time">
+								<text class="time_start">{{ formatTime(activityInfo?.registrationStartTime) }}</text>
+								<text class="time_separator">至</text>
+								<text class="time_end">{{ formatTime(activityInfo?.registrationEndTime) }}</text>
+							</view>
 						</view>
-						<view class="info_item">
+						<view class="info_item info_item--time">
 							<view class="info_label">
 								<uni-icons type="calendar" size="16" color="#666"></uni-icons>
 								<text>活动时间</text>
 							</view>
-							<view class="info_value">{{ activityInfo?.startTime }}-{{ activityInfo?.updateTime }}</view>
+							<view class="info_value info_value--time">
+								<text class="time_start">{{ formatTime(activityInfo?.startTime) }}</text>
+								<text class="time_separator">至</text>
+								<text class="time_end">{{ formatTime(activityInfo?.endTime) }}</text>
+							</view>
 						</view>
 						<view class="info_item">
 							<view class="info_label">
@@ -98,7 +106,7 @@
 						<view class="info_item">
 							<view class="info_label">
 								<uni-icons type="person" size="16" color="#666"></uni-icons>
-								<text>报名人数</text>
+								<text>最大报名人数</text>
 							</view>
 							<view class="info_value">{{ activityInfo?.maxParticipants }}</view>
 						</view>
@@ -122,7 +130,6 @@
 				<view class="btn_text" :class="{ collected: isCollected }">{{ isCollected ? '已收藏' : '收藏' }}</view> -->
 			</view>
 
-
 			<view class="primary_btn" @click="handleSignUp">
 				立即报名
 			</view>
@@ -138,6 +145,10 @@
 	import {
 		apiQueryActivity
 	} from '@/api/activity/index.js'
+	import {
+		apiGetClubDetail
+	} from '@/api/club/index.js'
+	import formatTime from '@/utils/dateUtil.js'
 
 	const props = defineProps(['id'])
 
@@ -145,11 +156,11 @@
 	const currentSwiper = ref(0)
 	const isCollected = ref(true)
 	const bannerList = ref([])
+	const clubInfo = ref()
 
 	const onSwiperChange = (e) => {
 		currentSwiper.value = e.detail.current
 	}
-
 
 	const handleSignUp = () => {
 		// 报名逻辑
@@ -163,8 +174,9 @@
 		let res = await apiQueryActivity(props.id)
 		bannerList.value = res.data.imageUrls
 		activityInfo.value = res.data.activity
+		let clubRes = await apiGetClubDetail(res.data.activity.clubId)
+		clubInfo.value = clubRes.data.club
 	}
-
 
 	onMounted(() => {
 		queryActivity()
@@ -404,11 +416,29 @@
 						border-bottom: none;
 					}
 
+					&--time {
+						flex-direction: column;
+						align-items: flex-start;
+						padding: 32rpx 30rpx;
+
+						.info_label {
+							margin-bottom: 16rpx;
+							width: 100%;
+						}
+
+						.info_value {
+							width: 100%;
+							text-align: left;
+						}
+					}
+
 					.info_label {
 						display: flex;
 						align-items: center;
 						font-size: 28rpx;
 						color: #666;
+						flex-shrink: 0;
+						margin-right: 20rpx;
 
 						uni-icons {
 							margin-right: 12rpx;
@@ -419,9 +449,58 @@
 						font-size: 28rpx;
 						color: #333;
 						font-weight: 500;
+						text-align: right;
+						flex: 1;
+						min-width: 0;
 
 						&.rating {
 							color: #FF6B35;
+						}
+
+						&--time {
+							display: flex;
+							flex-direction: column;
+							align-items: flex-start;
+							gap: 10rpx;
+
+							.time_start,
+							.time_end {
+								font-size: 26rpx;
+								color: #333;
+								font-weight: 500;
+								line-height: 1.6;
+								word-break: break-all;
+								position: relative;
+								padding-left: 24rpx;
+
+								&::before {
+									content: '';
+									position: absolute;
+									left: 0;
+									top: 50%;
+									transform: translateY(-50%);
+									width: 8rpx;
+									height: 8rpx;
+									border-radius: 50%;
+									background: $uni-topic-color;
+								}
+							}
+
+							.time_start::before {
+								background: #4CAF50;
+							}
+
+							.time_end::before {
+								background: #FF6B35;
+							}
+
+							.time_separator {
+								font-size: 24rpx;
+								color: #999;
+								margin: 2rpx 0 2rpx 24rpx;
+								font-weight: 400;
+								opacity: 0.8;
+							}
 						}
 					}
 				}

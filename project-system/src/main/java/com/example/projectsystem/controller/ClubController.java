@@ -277,6 +277,31 @@ public class ClubController {
     }
 
     /**
+     * 根据社团ID获取社团信息
+     */
+    @GetMapping("/{id}")
+    public Results getClubById(@PathVariable Long id) {
+        try {
+            Club club = clubService.getById(id);
+            if (club == null) {
+                return Results.fail().message("社团不存在");
+            }
+
+            // 填充社团人数
+            long memberCount = clubMemberService.lambdaQuery()
+                    .eq(ClubMember::getClubId, id)
+                    .count();
+            club.setMemberCount(memberCount);
+
+            return Results.success()
+                    .message("查询成功")
+                    .data("club", club);
+        } catch (Exception e) {
+            return Results.fail().message("查询失败: " + e.getMessage());
+        }
+    }
+
+    /**
      * 获取最新的社团列表（默认前四个）
      */
     @GetMapping("/latest")
