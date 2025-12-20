@@ -252,7 +252,8 @@
 			registrationStartTime: form.signupRange[0],
 			registrationEndTime: form.signupRange[1],
 			startTime: form.activityRange[0],
-			endTime: form.activityRange[1]
+			endTime: form.activityRange[1],
+			needAudit:form.needReview=='1'?true:false
 		}
 
 		let res = await apiCreateActivity(fomData)
@@ -261,7 +262,7 @@
 			uni.hideLoading()
 
 			setTimeout(() => {
-				uni.navigateTo({
+				uni.reLaunch({
 					url: '/pages/user/user'
 				})
 
@@ -272,12 +273,9 @@
 			}, 1000)
 
 		}
-
-		console.log(res);
 	}
 
 	const handleSubmit = async () => {
-
 		try {
 			// 主动触发表单校验
 			await formRef.value.validate()
