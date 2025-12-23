@@ -135,6 +135,11 @@
 			</view>
 		</view>
 	</view>
+
+	<uni-popup ref="popup" type="dialog" background-color="#fff">
+		<uni-popup-dialog type="info" title="活动报名" content="确认报名当前活动？" confirmText="确认" cancelText="取消"
+			@confirm="handelJoinActivity" />
+	</uni-popup>
 </template>
 
 <script setup>
@@ -143,7 +148,8 @@
 		ref,
 	} from 'vue';
 	import {
-		apiQueryActivity
+		apiQueryActivity,
+		apiJoinActivity
 	} from '@/api/activity/index.js'
 	import {
 		apiGetClubDetail
@@ -152,22 +158,20 @@
 
 	const props = defineProps(['id'])
 
+	const popup = ref(null)
 	const activityInfo = ref(null)
 	const currentSwiper = ref(0)
 	const isCollected = ref(true)
 	const bannerList = ref([])
 	const clubInfo = ref()
+	const userId = uni.getStorageSync('userInfo')
 
 	const onSwiperChange = (e) => {
 		currentSwiper.value = e.detail.current
 	}
 
 	const handleSignUp = () => {
-		// 报名逻辑
-		uni.showToast({
-			title: '报名成功',
-			icon: 'success'
-		})
+		popup.value.open()
 	}
 
 	async function queryActivity() {
@@ -177,6 +181,27 @@
 		let clubRes = await apiGetClubDetail(res.data.activity.clubId)
 		clubInfo.value = clubRes.data.club
 	}
+
+	async function handelJoinActivity() {
+		let res = await apiJoinActivity(props.id, {
+			userId: userId.id
+		})
+
+		if (res.code == 200) {
+			uni.showToast({
+				icon: 'success',
+				title: '报名成功'
+			})
+			
+			setTimeout(()=>{
+				uni.reLaunch({
+					url:'/pages/activity/activity'
+				})
+			},1000)
+		}
+	}
+
+
 
 	onMounted(() => {
 		queryActivity()

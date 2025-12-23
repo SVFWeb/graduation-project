@@ -24,7 +24,7 @@
 		</view>
 
 		<view class="search-activity_list">
-			<com-activity-item v-for="item in activityList.length" :key="item"></com-activity-item>
+			<com-activity-item v-for="item in activityList" :activiyInfo="item"></com-activity-item>
 		</view>
 
 	</view>
@@ -38,6 +38,9 @@
 	} from 'vue'
 	import comSearch from '@/components/com-search/com-search.vue';
 	import comActivityItem from '@/components/com-activity-item/com-activity-item.vue';
+	import {
+		apiGetActivityList
+	} from '@/api/activity/index.js'
 
 	const searchValue = ref('')
 	const searchHistory = ref(uni.getStorageSync('searchHistory') || [])
@@ -45,16 +48,24 @@
 
 	const isShowSearchHistory = computed(() => searchHistory.value.length === 0)
 
-	function onSearch() {
-		if(searchValue.value=='') return 
+	async function onSearch() {
+		if (searchValue.value == '') return
 		searchHistory.value.unshift(searchValue.value)
 		searchHistory.value = [...new Set(searchHistory.value)]
 		if (searchHistory.value.length > 10) {
 			searchHistory.value.pop()
 		}
-		uni.setStorageSync('searchHistory', searchHistory.value)
-		// 模拟获取数据
-		activityList.value = [1, 2, 3]
+		let res= await apiGetActivityList({
+			keyword: searchValue.value
+		})
+		
+		
+		if(res.code==200){
+			activityList.value= res.data.page.records
+			
+			
+			uni.setStorageSync('searchHistory', searchHistory.value)
+		}
 	}
 
 	function onClear() {

@@ -17,12 +17,12 @@
 			<view class="btn_item" @click="onActivityDetail">
 				活动详情
 			</view>
-			<view class="btn_item" @click="onParticipationDetail">
+			<!-- <view class="btn_item" @click="onParticipationDetail">
 				参与详情
 			</view>
 			<view class="btn_item" @click="onOpenRate">
 				评价活动
-			</view>
+			</view> -->
 		</view>
 
 		<view class="activity_tag">
@@ -58,24 +58,20 @@
 		ref
 	} from 'vue'
 	import formatTime from '@/utils/dateUtil.js'
-	import {
-		apiActivityRate
-	} from '@/api/activity/index.js'
 
 	const props = defineProps(['activeInfo'])
-	const userId = uni.getStorageSync('userInfo').id
 	const rateActivityPopup = ref()
 	const rateValue = ref(0)
 
 	function onActivityDetail() {
 		uni.navigateTo({
-			url: `/pages/activity/activityDetail/activityDetail?id=${props.activeInfo.id}`
+			url: '/pages/activity/activityDetail/activityDetail'
 		})
 	}
 
 	function onParticipationDetail() {
 		uni.navigateTo({
-			url: `/pages/user/myActivity/participationDetails/participationDetails?activeId=${props.activeInfo.id}`
+			url: '/pages/user/myActivity/participationDetails/participationDetails'
 		})
 	}
 
@@ -88,20 +84,7 @@
 		rateValue.value = 0
 	}
 
-	async function onGitRate() {
-
-		let res = await apiActivityRate({
-			activityId: props.activeInfo.id,
-			userId: userId,
-			score: rateValue.value
-		})
-
-		if (res.code == 200) {
-			uni.showToast({
-				icon: 'success',
-				title: res.message
-			})
-		}
+	function onGitRate() {
 		onCloseRate()
 	}
 </script>

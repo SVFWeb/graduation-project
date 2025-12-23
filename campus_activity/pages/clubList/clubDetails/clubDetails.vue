@@ -26,7 +26,8 @@
 		<view class="clubDatails_activity">
 			<view class="title">社团活动</view>
 			<view class="activity_list">
-				<com-activity-item v-for="item in 6" :key="item"></com-activity-item>
+				<com-activity-item v-if="activityList.length!=0" v-for="item in activityList" :activiyInfo="item"></com-activity-item>
+				<view>社团暂无活动</view>
 			</view>
 		</view>
 	</view>
@@ -70,13 +71,15 @@
 	import comActivityItem from '@/components/com-activity-item/com-activity-item.vue';
 	import {
 		ref,
-		defineProps
+		defineProps,
+		onMounted
 	} from 'vue';
 	import {
 		apiJoinClub,
 		apiGetJoinClubUserList,
 		apiSettingClubManager
 	} from '@/api/club/index.js'
+	import { apiGetClubActivity } from '@/api/activity/index.js'
 
 	const props = defineProps({
 		info: {
@@ -88,6 +91,7 @@
 	const alertDialog = ref(null)
 	const settingManagerDialog = ref(null)
 	const showRight = ref(null)
+	const activityList=ref([])
 	const clubInfo = ref([])
 	const userList = ref([])
 	const userInfo = ref(uni.getStorageSync('userInfo'))
@@ -145,6 +149,13 @@
 			})
 		}
 	}
+	
+	async function getClubActivity(){
+		let res= await apiGetClubActivity(clubInfo.value.id)
+		if (res.code == 200) {
+			activityList.value= res.data.page.records
+		}
+	}
 
 	function onCheckUserList() {
 		showRight.value?.open()
@@ -157,6 +168,10 @@
 		if (rawInfo) {
 			clubInfo.value = JSON.parse(decodeURIComponent(rawInfo))
 		}
+	})
+	
+	onMounted(()=>{
+		getClubActivity()
 	})
 </script>
 

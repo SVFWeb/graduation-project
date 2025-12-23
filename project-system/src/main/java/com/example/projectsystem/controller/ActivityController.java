@@ -353,6 +353,130 @@ public class ActivityController {
     }
 
     /**
+     * 获取热门活动列表（根据报名人数排序，返回前4个）
+     */
+    @GetMapping("/hot")
+    public Results getHotActivities() {
+        try {
+            LambdaQueryWrapper<Activity> wrapper = new LambdaQueryWrapper<>();
+            // 只查询已通过审核的活动
+            wrapper.eq(Activity::getAuditStatus, 1);
+            
+            List<Activity> activities = activityService.list(wrapper);
+            
+            // 统计每个活动的实际报名人数并更新
+            for (Activity activity : activities) {
+                long participantCount = activityRegistrationService.lambdaQuery()
+                        .eq(ActivityRegistration::getActivityId, activity.getId())
+                        .eq(ActivityRegistration::getStatus, "已通过")
+                        .count();
+                activity.setCurrentParticipants((int) participantCount);
+                // 刷新活动状态
+                refreshActivityStatusByTime(activity);
+            }
+            
+            // 按报名人数降序排序，取前4个
+            List<Activity> hotActivities = activities.stream()
+                    .sorted((a1, a2) -> {
+                        int count1 = a1.getCurrentParticipants() != null ? a1.getCurrentParticipants() : 0;
+                        int count2 = a2.getCurrentParticipants() != null ? a2.getCurrentParticipants() : 0;
+                        return Integer.compare(count2, count1); // 降序
+                    })
+                    .limit(4)
+                    .collect(Collectors.toList());
+            
+            // 转换为 DTO，将 imageUrls 字符串转换为数组
+            List<ActivityDTO> activityDTOs = hotActivities.stream()
+                    .map(activity -> {
+                        ActivityDTO dto = new ActivityDTO(activity);
+                        // 将 imageUrls 字符串转换为数组
+                        if (StringUtils.hasText(activity.getImageUrls())) {
+                            List<String> urls = Arrays.stream(activity.getImageUrls().split(","))
+                                    .map(String::trim)
+                                    .filter(StringUtils::hasText)
+                                    .collect(Collectors.toList());
+                            dto.setImageUrls(urls);
+                        } else {
+                            dto.setImageUrls(new ArrayList<>());
+                        }
+                        return dto;
+                    })
+                    .collect(Collectors.toList());
+            
+            return Results.success()
+                    .message("查询成功")
+                    .data("activities", activityDTOs);
+        } catch (Exception e) {
+            return Results.fail().message("查询失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 根据社团ID获取该社团的活动列表
+     */
+    @GetMapping("/club/{clubId}")
+    public Results getActivitiesByClubId(@PathVariable Long clubId,
+                                        @RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
+                                        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+        try {
+            // 验证社团是否存在
+            Club club = clubService.getById(clubId);
+            if (club == null) {
+                return Results.fail().message("社团不存在");
+            }
+
+            Page<Activity> page = new Page<>(currentPage, pageSize);
+            LambdaQueryWrapper<Activity> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(Activity::getClubId, clubId);
+            wrapper.orderByDesc(Activity::getCreateTime);
+
+            IPage<Activity> result = activityService.page(page, wrapper);
+            
+            // 查询时根据当前时间刷新每个活动的状态
+            for (Activity activity : result.getRecords()) {
+                refreshActivityStatusByTime(activity);
+                // 统计已通过的报名人数
+                long participantCount = activityRegistrationService.lambdaQuery()
+                        .eq(ActivityRegistration::getActivityId, activity.getId())
+                        .eq(ActivityRegistration::getStatus, "已通过")
+                        .count();
+                activity.setCurrentParticipants((int) participantCount);
+            }
+            
+            // 转换为 DTO，将 imageUrls 字符串转换为数组
+            List<ActivityDTO> activityDTOs = result.getRecords().stream()
+                    .map(activity -> {
+                        ActivityDTO dto = new ActivityDTO(activity);
+                        // 将 imageUrls 字符串转换为数组
+                        if (StringUtils.hasText(activity.getImageUrls())) {
+                            List<String> urls = Arrays.stream(activity.getImageUrls().split(","))
+                                    .map(String::trim)
+                                    .filter(StringUtils::hasText)
+                                    .collect(Collectors.toList());
+                            dto.setImageUrls(urls);
+                        } else {
+                            dto.setImageUrls(new ArrayList<>());
+                        }
+                        return dto;
+                    })
+                    .collect(Collectors.toList());
+            
+            PageResult<ActivityDTO> pageData = new PageResult<>(
+                    result.getTotal(),
+                    (int) result.getCurrent(),
+                    (int) result.getSize(),
+                    activityDTOs
+            );
+
+            return Results.success()
+                    .message("查询成功")
+                    .data("page", pageData);
+        } catch (Exception e) {
+            return Results.fail().message("查询失败: " + e.getMessage());
+        }
+    }
+
+    /**
      * 根据活动ID查看活动详情
      */
     @GetMapping("/{id}")
@@ -542,6 +666,11 @@ public class ActivityController {
                 return Results.fail().message("报名未通过，不能评价");
             }
 
+            // Check if the user has already commented
+            if (registration.getScore() != null) {
+                return Results.fail().message("您已经评价过该活动，不能重复评价");
+            }
+
             BigDecimal score = request.getScore();
             if (score.compareTo(BigDecimal.ZERO) < 0 || score.compareTo(new BigDecimal("100")) > 0) {
                 return Results.fail().message("评分范围应在0-100之间");
@@ -625,6 +754,203 @@ public class ActivityController {
             return Results.success()
                     .message("查询成功")
                     .data("items", resultList);
+        } catch (Exception e) {
+            return Results.fail().message("查询失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 查询用户是否报名了某个活动及其审核状态
+     * 根据活动ID和用户ID查询报名状态（待审核、已通过、已拒绝）
+     */
+    @GetMapping("/{activityId}/registrations/check")
+    public Results checkUserRegistration(@PathVariable Long activityId,
+                                        @RequestParam("userId") Long userId) {
+        try {
+            // 验证活动是否存在
+            Activity activity = activityService.getById(activityId);
+            if (activity == null) {
+                return Results.fail().message("活动不存在");
+            }
+
+            // 查询报名记录
+            ActivityRegistration registration = activityRegistrationService.lambdaQuery()
+                    .eq(ActivityRegistration::getActivityId, activityId)
+                    .eq(ActivityRegistration::getUserId, userId)
+                    .one();
+
+            // 构建返回结果
+            Map<String, Object> result = new HashMap<>();
+            if (registration == null) {
+                // 未报名
+                result.put("isRegistered", false);
+                result.put("status", null);
+            } else {
+                // 已报名，返回报名状态
+                result.put("isRegistered", true);
+                result.put("status", registration.getStatus());
+                result.put("registrationId", registration.getId());
+                result.put("registrationTime", registration.getRegistrationTime() != null
+                        ? registration.getRegistrationTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                        : null);
+                result.put("auditTime", registration.getAuditTime() != null
+                        ? registration.getAuditTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                        : null);
+                result.put("score", registration.getScore());
+                // 判断是否被录取（状态为"已通过"）
+                result.put("isAccepted", "已通过".equals(registration.getStatus()));
+            }
+
+            return Results.success()
+                    .message("查询成功")
+                    .data("registration", result);
+        } catch (Exception e) {
+            return Results.fail().message("查询失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 根据用户ID获取用户参与或管理的社团活动
+     * 返回两部分：
+     * 1. 用户参与的活动（通过 activity_registration 表查询）
+     * 2. 用户管理的活动（用户是社团管理员，查询这些社团发布的活动）
+     * 
+     * @param userId 用户ID
+     * @param type 查询类型：participated（只返回参与的活动）、managed（只返回管理的活动）、all或不传（返回两种活动）
+     */
+    @GetMapping("/user/{userId}")
+    public Results getUserActivities(@PathVariable Long userId,
+                                    @RequestParam(value = "type", required = false, defaultValue = "all") String type) {
+        try {
+            if (userId == null) {
+                return Results.fail().message("用户ID不能为空");
+            }
+
+            // 规范化type参数
+            if (type == null || type.trim().isEmpty()) {
+                type = "all";
+            }
+            type = type.toLowerCase().trim();
+
+            // 验证type参数
+            if (!"participated".equals(type) && !"managed".equals(type) && !"all".equals(type)) {
+                return Results.fail().message("type参数值无效，只能是：participated、managed 或 all");
+            }
+
+            List<ActivityDTO> participatedDTOs = new ArrayList<>();
+            List<ActivityDTO> managedDTOs = new ArrayList<>();
+
+            // 如果需要查询参与的活动（type为"participated"或"all"）
+            if ("participated".equals(type) || "all".equals(type)) {
+                // 查询用户参与的活动（通过报名记录）
+                List<ActivityRegistration> registrations = activityRegistrationService.lambdaQuery()
+                        .eq(ActivityRegistration::getUserId, userId)
+                        .list();
+
+                List<Long> participatedActivityIds = registrations.stream()
+                        .map(ActivityRegistration::getActivityId)
+                        .distinct()
+                        .collect(Collectors.toList());
+
+                List<Activity> participatedActivities = new ArrayList<>();
+                if (!participatedActivityIds.isEmpty()) {
+                    participatedActivities = activityService.listByIds(participatedActivityIds);
+                    // 刷新活动状态并统计报名人数
+                    for (Activity activity : participatedActivities) {
+                        refreshActivityStatusByTime(activity);
+                        long participantCount = activityRegistrationService.lambdaQuery()
+                                .eq(ActivityRegistration::getActivityId, activity.getId())
+                                .eq(ActivityRegistration::getStatus, "已通过")
+                                .count();
+                        activity.setCurrentParticipants((int) participantCount);
+                    }
+                }
+
+                // 转换为 DTO
+                participatedDTOs = participatedActivities.stream()
+                        .map(activity -> {
+                            ActivityDTO dto = new ActivityDTO(activity);
+                            // 将 imageUrls 字符串转换为数组
+                            if (StringUtils.hasText(activity.getImageUrls())) {
+                                List<String> urls = Arrays.stream(activity.getImageUrls().split(","))
+                                        .map(String::trim)
+                                        .filter(StringUtils::hasText)
+                                        .collect(Collectors.toList());
+                                dto.setImageUrls(urls);
+                            } else {
+                                dto.setImageUrls(new ArrayList<>());
+                            }
+                            return dto;
+                        })
+                        .collect(Collectors.toList());
+            }
+
+            // 如果需要查询管理的活动（type为"managed"或"all"）
+            if ("managed".equals(type) || "all".equals(type)) {
+                // 查询用户管理的社团（用户是管理员）
+                List<ClubMember> managerRecords = clubMemberService.lambdaQuery()
+                        .eq(ClubMember::getUserId, userId)
+                        .eq(ClubMember::getIsManager, true)
+                        .list();
+
+                List<Activity> managedActivities = new ArrayList<>();
+                if (!managerRecords.isEmpty()) {
+                    List<Long> managedClubIds = managerRecords.stream()
+                            .map(ClubMember::getClubId)
+                            .distinct()
+                            .collect(Collectors.toList());
+
+                    // 查询这些社团发布的所有活动
+                    LambdaQueryWrapper<Activity> wrapper = new LambdaQueryWrapper<>();
+                    wrapper.in(Activity::getClubId, managedClubIds);
+                    wrapper.orderByDesc(Activity::getCreateTime);
+                    managedActivities = activityService.list(wrapper);
+
+                    // 刷新活动状态并统计报名人数
+                    for (Activity activity : managedActivities) {
+                        refreshActivityStatusByTime(activity);
+                        long participantCount = activityRegistrationService.lambdaQuery()
+                                .eq(ActivityRegistration::getActivityId, activity.getId())
+                                .eq(ActivityRegistration::getStatus, "已通过")
+                                .count();
+                        activity.setCurrentParticipants((int) participantCount);
+                    }
+                }
+
+                // 转换为 DTO
+                managedDTOs = managedActivities.stream()
+                        .map(activity -> {
+                            ActivityDTO dto = new ActivityDTO(activity);
+                            // 将 imageUrls 字符串转换为数组
+                            if (StringUtils.hasText(activity.getImageUrls())) {
+                                List<String> urls = Arrays.stream(activity.getImageUrls().split(","))
+                                        .map(String::trim)
+                                        .filter(StringUtils::hasText)
+                                        .collect(Collectors.toList());
+                                dto.setImageUrls(urls);
+                            } else {
+                                dto.setImageUrls(new ArrayList<>());
+                            }
+                            return dto;
+                        })
+                        .collect(Collectors.toList());
+            }
+
+            // 根据type参数决定返回的数据结构
+            Results result = Results.success().message("查询成功");
+            if ("participated".equals(type)) {
+                // 只返回参与的活动
+                result.data("activities", participatedDTOs);
+            } else if ("managed".equals(type)) {
+                // 只返回管理的活动
+                result.data("activities", managedDTOs);
+            } else {
+                // 返回两种活动
+                result.data("participated", participatedDTOs)
+                       .data("managed", managedDTOs);
+            }
+
+            return result;
         } catch (Exception e) {
             return Results.fail().message("查询失败: " + e.getMessage());
         }

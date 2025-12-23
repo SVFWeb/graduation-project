@@ -24,6 +24,7 @@ public class ActivityDTO {
     private Long startTime;
     private Long endTime;
     private Integer maxParticipants;
+    private Integer currentParticipants;
     private Boolean needAudit;
     private String activityType;
     private String activityLevel;
@@ -62,6 +63,7 @@ public class ActivityDTO {
                 ? activity.getEndTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
                 : null;
         this.maxParticipants = activity.getMaxParticipants();
+        this.currentParticipants = activity.getCurrentParticipants();
         this.needAudit = activity.getNeedAudit();
         this.activityType = activity.getActivityType();
         this.activityLevel = activity.getActivityLevel();
@@ -168,6 +170,14 @@ public class ActivityDTO {
 
     public void setMaxParticipants(Integer maxParticipants) {
         this.maxParticipants = maxParticipants;
+    }
+
+    public Integer getCurrentParticipants() {
+        return currentParticipants;
+    }
+
+    public void setCurrentParticipants(Integer currentParticipants) {
+        this.currentParticipants = currentParticipants;
     }
 
     public Boolean getNeedAudit() {

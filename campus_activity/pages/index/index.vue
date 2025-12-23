@@ -11,9 +11,24 @@
 		<view class="home_banner">
 			<swiper indicator-dots autoplay :interval="3000" :duration="1000" circular
 				indicator-color="rgba(255, 255, 255, 0.5)" indicator-active-color="#ffffff">
-				<swiper-item v-for="item in 4" :key="item">
+				<swiper-item>
 					<view class="swiper-item">
-						<image src="/static/image/xin.jpg" mode="aspectFill"></image>
+						<image src="/static/image/fang.jpg" mode="aspectFill"></image>
+					</view>
+				</swiper-item>
+				<swiper-item>
+					<view class="swiper-item">
+						<image src="/static/image/qiao.jpg" mode="aspectFill"></image>
+					</view>
+				</swiper-item>
+				<swiper-item>
+					<view class="swiper-item">
+						<image src="/static/image/shitou.jpg" mode="aspectFill"></image>
+					</view>
+				</swiper-item>
+				<swiper-item>
+					<view class="swiper-item">
+						<image src="/static/image/huanghun.jpg" mode="aspectFill"></image>
 					</view>
 				</swiper-item>
 			</swiper>
@@ -28,7 +43,7 @@
 		<view class="home_tribe">
 			<view class="tribe_title">
 				<com-title>
-					<template #left>社团</template>
+					<template #left>最新社团</template>
 					<template #right>
 						<view @click="()=>{uni.switchTab({
 						url:'/pages/clubList/clubList'
@@ -61,7 +76,7 @@
 		<!-- 社团活动 -->
 		<view class="home_activity">
 			<com-title>
-				<template #left>社团活动</template>
+				<template #left>热门活动</template>
 				<template #right>
 					<navigator open-type="reLaunch" url="/pages/activity/activity">
 						More+
@@ -70,11 +85,10 @@
 			</com-title>
 
 			<view class="activity_list">
-			<!-- 	<com-activity-item v-for="item in 6" :key="item">
-				</com-activity-item> -->
+				<com-activity-item v-for="item in activityList" :activiyInfo="item"></com-activity-item>
 			</view>
 		</view>
-		
+
 	</view>
 	<!-- 自定义tabBar -->
 	<custom-tabbar></custom-tabbar>
@@ -92,11 +106,15 @@
 		apiGetClubNewList
 	} from '@/api/club/index.js'
 	import {
+		apiGetHotActivity
+	} from '@/api/activity/index.js'
+	import {
 		onMounted,
 		ref
 	} from 'vue';
 
 	const clubList = ref([])
+	const activityList = ref([])
 
 
 	async function getClubNewList() {
@@ -106,8 +124,16 @@
 		}
 	}
 
+	async function getHotActivityList() {
+		let res = await apiGetHotActivity()
+		if (res.code == 200) {
+			activityList.value = res.data.activities
+		}
+	}
+
 	onShow(() => {
 		getClubNewList()
+		getHotActivityList()
 	})
 </script>
 
@@ -260,8 +286,6 @@
 
 		// 活动区域
 		.home_activity {
-			margin-bottom: 40rpx;
-
 			.activity_list {
 				display: flex;
 				flex-wrap: wrap;

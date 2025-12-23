@@ -8,13 +8,50 @@ export const apiCreateActivity = (data) => request({
 })
 
 // 获取活动列表
-export const apiGetActivityList=(data)=>request({
-	url:'/activities/search',
+export const apiGetActivityList = (data) => request({
+	url: '/activities/search',
 	method: 'POST',
 	data
 })
 
 // 活动详情
-export const apiQueryActivity=(id)=>request({
-	url:`/activities/${id}`
+export const apiQueryActivity = (id) => request({
+	url: `/activities/${id}`
+})
+
+// 报名活动
+export const apiJoinActivity = (id, data) => request({
+	url: `/activities/${id}/register`,
+	method: 'POST',
+	data
+})
+
+
+// 获取热门活动列表
+export const apiGetHotActivity = () => request({
+	url: '/activities/hot'
+})
+
+// 获取社团活动
+export const apiGetClubActivity = (id) => request({
+	url: `/activities/club/${id}`
+})
+
+//获取参与或管理的活动列表
+export const apiGetJoinOrManangeActivity = (data) => {
+	return request({
+		url: `/activities/user/${data.id}?type=${data.type}`
+	})
+}
+
+// 获取活动报名详情
+export const apiGetActiviyStatus = (data) => request({
+	url: `/activities/${data.activityId}/registrations/check?userId=${data.userId}`
+})
+
+//评价活动
+export const apiActivityRate=(data)=>request({
+	url:'/activities/comment',
+	method: 'POST',
+	data
 })

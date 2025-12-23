@@ -6,17 +6,23 @@
 		<view class="registration_filter">
 			<view class="left">
 				<view v-for="tab in tabs" :key="tab.value" class="btn" :class="{ active: activeTab === tab.value }"
-					@click="activeTab = tab.value">
+					@click="OnChangeActiveTab(tab.value)">
 					{{ tab.label }}
 				</view>
 			</view>
 
-			<view class="right">
-				<com-filter-btn v-model:title="filterValue"></com-filter-btn>
-			</view>
 		</view>
 		<view class="registration_activity_list">
-			<com-activity-item v-for="item in 6" :key="item"></com-activity-item>
+			<view v-if="activeTab==='participated'">
+				<com-activity-item v-for="item in activity_participated" :key="item.id" :activeInfo="item">
+				</com-activity-item>
+			</view>
+			<view v-else>
+				<com-activity-item-managed v-for="item in activity_managed" :key="item.id" :activeInfo="item">
+
+				</com-activity-item-managed>
+			</view>
+
 		</view>
 	</view>
 </template>
@@ -25,27 +31,59 @@
 	import comSearch from '@/components/com-search/com-search.vue';
 	import comFilterBtn from '@/components/com-filter-btn/com-filter-btn.vue';
 	import comActivityItem from './components/com-activity-item/com-activity-item.vue';
+	import comActivityItemManaged from './components/com-activity-item-managed/com-activity-item-managed.vue';
 	import {
+		onMounted,
 		ref
 	} from 'vue'
+	import {
+		apiGetJoinOrManangeActivity
+	} from '@/api/activity/index.js'
 
 	const searchValue = ref('')
 	const filterValue = ref('筛选')
-	const activeTab = ref('participate')
+	const activeTab = ref('participated')
+	const userId = uni.getStorageSync('userInfo').id
+	const activity_participated = ref([])
+	const activity_managed = ref([])
 
 	const tabs = [{
 			label: '参与',
-			value: 'participate'
+			value: 'participated'
 		},
 		{
 			label: '管理',
-			value: 'manage'
+			value: 'managed'
 		}
 	]
 
 	function onSearch() {
 		console.log(searchValue.value);
 	}
+	
+	function OnChangeActiveTab(tab){
+		activeTab.value = tab
+		getJoinOrManangeActivityList()
+	}
+
+
+	async function getJoinOrManangeActivityList() {
+		let res = await apiGetJoinOrManangeActivity({
+			id: userId,
+			type: activeTab.value
+		})
+		if (res.code == 200) {
+			let {
+				activities
+			} = res.data
+			activeTab.value === 'participated' ? activity_participated.value = activities : activity_managed.value =
+				activities
+		}
+	}
+
+	onMounted(() => {
+		getJoinOrManangeActivityList()
+	})
 </script>
 
 <style lang="scss" scoped>

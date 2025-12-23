@@ -1,25 +1,32 @@
 <template>
 	<view class="participation container">
 		<view class="participation_step">
-			<uni-steps :options="list" :active="active" />
+			<uni-steps :options="list" :active="active" :active-color="list[2].title==='已拒绝'?activeColor:'#2979FF	'" />
 		</view>
 
 		<view class="participation_list">
-			<uni-list >
-				<uni-list-item showArrow clickable   title="报名信息" @click="()=>console.log(11)"></uni-list-item>
-				<uni-list-item   title="报名时间" rightText="2025.11.08"></uni-list-item>
+			<uni-list>
+				<uni-list-item title="报名时间" :rightText="formatTime(registrationTime,'YYYY.MM.DD')"></uni-list-item>
 			</uni-list>
 		</view>
-
 	</view>
 </template>
 
 <script setup>
 	import {
+		onMounted,
 		ref
 	} from 'vue'
+	import {
+		apiGetActiviyStatus
+	} from '@/api/activity/index.js'
+	import formatTime from '@/utils/dateUtil'
 
+	const props = defineProps(['activeId'])
+	const userId = uni.getStorageSync('userInfo').id
+	const registrationTime=ref('')
 	const active = ref(1)
+	const activeColor='#FB4A3E'
 	const list = ref([{
 		title: '已报名'
 	}, {
@@ -27,17 +34,42 @@
 	}, {
 		title: '已录取'
 	}])
+
+	async function getActiviyStatus() {
+		let res = await apiGetActiviyStatus({
+			activityId: props.activeId,
+			userId: userId
+		})
+		
+		if (res.code == 200) {
+			let status = res.data.registration.status
+			registrationTime.value=res.data.registration.registrationTime
+
+			if (status === '已通过') {
+				active.value = 2
+			} else if (status === '已拒绝') {
+				active.value = 2
+				list.value[2].title ='已拒绝'
+			}
+
+		}
+	}
+
+	onMounted(() => {
+		getActiviyStatus()
+	})
 </script>
 
 <style lang="scss" scoped>
 	.participation {
 		display: flex;
 		flex-direction: column;
-		.participation_step{
+
+		.participation_step {
 			margin-top: 20vh;
 		}
-		
-		.participation_list{
+
+		.participation_list {
 			margin-top: 270rpx;
 		}
 	}

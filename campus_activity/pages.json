@@ -143,6 +143,13 @@
 				"navigationBarTitleText" : "新键社团",
 				"navigationBarBackgroundColor": "#fff"
 			}
+		},
+		{
+			"path" : "pages/user/myActivity/components/com-activity-item-managed/com-activity-item-managed",
+			"style" : 
+			{
+				"navigationBarTitleText" : ""
+			}
 		}
 	],
 	"tabBar": {

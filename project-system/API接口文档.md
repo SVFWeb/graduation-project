@@ -837,7 +837,138 @@ GET /api/activities/1/registrations/pending?managerUserId=2
 
 ---
 
-### 7. 根据活动ID查看活动详情
+### 7. 获取热门活动列表
+
+**接口**: `GET /api/activities/hot`
+
+**说明**: 根据活动报名人数排序，返回前4个热门活动。只返回已通过审核的活动。
+
+**请求参数**: 无
+
+**请求示例**:
+```
+GET /api/activities/hot
+```
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "查询成功",
+  "success": true,
+  "data": {
+    "activities": [
+      {
+        "id": 1,
+        "name": "活动名称",
+        "description": "活动描述",
+        "location": "活动地点",
+        "activityType": "活动类型",
+        "activityLevel": "活动级别",
+        "status": "报名中",
+        "maxParticipants": 100,
+        "currentParticipants": 85,
+        "needAudit": true,
+        "score": 95.5,
+        "auditStatus": 1,
+        "clubId": 1,
+        "registrationStartTime": 1703059200000,
+        "registrationEndTime": 1703145600000,
+        "startTime": 1703232000000,
+        "endTime": 1703318400000,
+        "imageUrls": [
+          "http://123.com/a.jpg",
+          "http://123.com/b.jpg"
+        ],
+        "createTime": "2025-12-20T09:00:00",
+        "updateTime": "2025-12-20T09:00:00"
+      }
+    ]
+  }
+}
+```
+
+**说明**:
+- 只返回已通过审核的活动（`auditStatus = 1`）
+- 按报名人数（`currentParticipants`）降序排序
+- 最多返回4个活动
+- `currentParticipants`: 当前已通过的报名人数（实时统计状态为"已通过"的报名记录）
+- 活动状态会根据当前时间自动刷新（报名中/等待中/进行中/已结束）
+- 如果符合条件的活动少于4个，则返回实际数量
+
+---
+
+### 8. 根据社团ID获取该社团的活动列表
+
+**接口**: `GET /api/activities/club/{clubId}`
+
+**路径参数**:
+- `clubId`: 社团ID（必填）
+
+**请求参数** (查询参数):
+- `currentPage`: 当前页码（可选，默认 1）
+- `pageSize`: 每页条数（可选，默认 10）
+
+**请求示例**:
+```
+GET /api/activities/club/1?currentPage=1&pageSize=10
+```
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "查询成功",
+  "success": true,
+  "data": {
+    "page": {
+      "total": 10,
+      "currentPage": 1,
+      "pageSize": 10,
+      "totalPage": 1,
+      "records": [
+        {
+          "id": 1,
+          "name": "活动名称",
+          "description": "活动描述",
+          "location": "活动地点",
+          "activityType": "活动类型",
+          "activityLevel": "活动级别",
+          "status": "报名中",
+          "maxParticipants": 100,
+          "currentParticipants": 35,
+          "needAudit": true,
+          "score": 95.5,
+          "auditStatus": 1,
+          "clubId": 1,
+          "registrationStartTime": 1703059200000,
+          "registrationEndTime": 1703145600000,
+          "startTime": 1703232000000,
+          "endTime": 1703318400000,
+          "imageUrls": [
+            "http://123.com/a.jpg",
+            "http://123.com/b.jpg"
+          ],
+          "createTime": "2025-12-20T09:00:00",
+          "updateTime": "2025-12-20T09:00:00"
+        }
+      ]
+    }
+  }
+}
+```
+
+**说明**:
+- 返回指定社团的所有活动列表
+- 按创建时间降序排序（最新的在前）
+- 支持分页查询
+- `currentParticipants`: 当前已通过的报名人数（实时统计状态为"已通过"的报名记录）
+- 活动状态会根据当前时间自动刷新（报名中/等待中/进行中/已结束）
+- 如果社团不存在，返回错误信息
+
+---
+
+### 9. 根据活动ID查看活动详情
 
 **接口**: `GET /api/activities/{id}`
 
@@ -875,7 +1006,7 @@ GET /api/activities/1/registrations/pending?managerUserId=2
 
 ---
 
-### 8. 人员活动报名
+### 10. 人员活动报名
 
 **接口**: `POST /api/activities/{activityId}/register`
 
@@ -908,7 +1039,7 @@ GET /api/activities/1/registrations/pending?managerUserId=2
 
 ---
 
-### 9. 人员评价活动
+### 11. 人员评价活动
 
 **接口**: `POST /api/activities/comment`
 
@@ -935,7 +1066,7 @@ GET /api/activities/1/registrations/pending?managerUserId=2
 
 ---
 
-### 10. 获取审核人员列表（由社团的管理者进行审核）
+### 12. 获取审核人员列表（由社团的管理者进行审核）
 
 **接口**: `GET /api/activities/{activityId}/registrations/status`
 
@@ -990,6 +1121,280 @@ GET /api/activities/1/registrations/status?managerUserId=2
 - 列表中每个元素为用户个人信息对象
 - 时间字段（如 `completeTime`、`createTime`、`updateTime` 等）以时间戳（毫秒）形式返回
 - 如果没有待审核人员，`items` 为空数组
+
+---
+
+### 13. 查询用户是否报名了某个活动及其审核状态
+
+**接口**: `GET /api/activities/{activityId}/registrations/check`
+
+**说明**: 根据活动ID和用户ID查询该用户是否报名了该活动，以及报名状态（待审核、已通过、已拒绝）。用于判断用户是否被录取。
+
+**路径参数**:
+- `activityId`: 活动ID（必填）
+
+**请求参数** (查询参数):
+- `userId`: 用户ID（必填）
+
+**请求示例**:
+```
+GET /api/activities/1/registrations/check?userId=3
+```
+
+**响应示例**（已报名且已通过）:
+```json
+{
+  "code": 200,
+  "message": "查询成功",
+  "success": true,
+  "data": {
+    "registration": {
+      "isRegistered": true,
+      "status": "已通过",
+      "registrationId": 1,
+      "registrationTime": 1703059200000,
+      "auditTime": 1703059300000,
+      "score": 95,
+      "isAccepted": true
+    }
+  }
+}
+```
+
+**响应示例**（已报名但待审核）:
+```json
+{
+  "code": 200,
+  "message": "查询成功",
+  "success": true,
+  "data": {
+    "registration": {
+      "isRegistered": true,
+      "status": "待审核",
+      "registrationId": 1,
+      "registrationTime": 1703059200000,
+      "auditTime": null,
+      "score": null,
+      "isAccepted": false
+    }
+  }
+}
+```
+
+**响应示例**（未报名）:
+```json
+{
+  "code": 200,
+  "message": "查询成功",
+  "success": true,
+  "data": {
+    "registration": {
+      "isRegistered": false,
+      "status": null
+    }
+  }
+}
+```
+
+**说明**:
+- `isRegistered`: 是否已报名（true/false）
+- `status`: 报名状态（"待审核"、"已通过"、"已拒绝"），未报名时为 null
+- `registrationId`: 报名记录ID，未报名时为 null
+- `registrationTime`: 报名时间（时间戳，毫秒），未报名时为 null
+- `auditTime`: 审核时间（时间戳，毫秒），未审核时为 null
+- `score`: 评分（0-100），未评分时为 null
+- `isAccepted`: 是否被录取（true/false），当 status 为"已通过"时为 true，其他情况为 false
+- 如果活动不存在，返回错误信息
+
+---
+
+### 14. 根据用户ID获取用户参与或管理的社团活动
+
+**接口**: `GET /api/activities/user/{userId}`
+
+**说明**: 根据用户ID返回活动列表，可以通过 `type` 参数控制返回的内容：
+1. **用户参与的活动**：用户通过报名参与的活动（通过 `activity_registration` 表查询）
+2. **用户管理的活动**：用户作为社团管理员，其管理的社团发布的所有活动
+
+**路径参数**:
+- `userId`: 用户ID（必填）
+
+**请求参数** (查询参数):
+- `type`: 查询类型（可选，默认 `all`）
+  - `participated`: 只返回用户参与的活动
+  - `managed`: 只返回用户管理的活动
+  - `all`: 返回两种活动（默认值）
+
+**请求示例**（返回所有活动）:
+```
+GET /api/activities/user/1
+或
+GET /api/activities/user/1?type=all
+```
+
+**请求示例**（只返回参与的活动）:
+```
+GET /api/activities/user/1?type=participated
+```
+
+**请求示例**（只返回管理的活动）:
+```
+GET /api/activities/user/1?type=managed
+```
+
+**响应示例**（type=all 或不传type，返回两种活动）:
+```json
+{
+  "code": 200,
+  "message": "查询成功",
+  "success": true,
+  "data": {
+    "participated": [
+      {
+        "id": 1,
+        "name": "活动名称1",
+        "description": "活动描述",
+        "location": "活动地点",
+        "activityType": "活动类型",
+        "activityLevel": "活动级别",
+        "status": "报名中",
+        "maxParticipants": 100,
+        "currentParticipants": 35,
+        "needAudit": true,
+        "score": 95.5,
+        "auditStatus": 1,
+        "clubId": 1,
+        "registrationStartTime": 1703059200000,
+        "registrationEndTime": 1703145600000,
+        "startTime": 1703232000000,
+        "endTime": 1703318400000,
+        "imageUrls": [
+          "http://123.com/a.jpg",
+          "http://123.com/b.jpg"
+        ],
+        "createTime": "2025-12-20T09:00:00",
+        "updateTime": "2025-12-20T09:00:00"
+      }
+    ],
+    "managed": [
+      {
+        "id": 2,
+        "name": "活动名称2",
+        "description": "活动描述",
+        "location": "活动地点",
+        "activityType": "活动类型",
+        "activityLevel": "活动级别",
+        "status": "进行中",
+        "maxParticipants": 50,
+        "currentParticipants": 20,
+        "needAudit": false,
+        "score": 88.0,
+        "auditStatus": 1,
+        "clubId": 2,
+        "registrationStartTime": 1703059200000,
+        "registrationEndTime": 1703145600000,
+        "startTime": 1703232000000,
+        "endTime": 1703318400000,
+        "imageUrls": [
+          "http://123.com/c.jpg"
+        ],
+        "createTime": "2025-12-21T09:00:00",
+        "updateTime": "2025-12-21T09:00:00"
+      }
+    ]
+  }
+}
+```
+
+**响应示例**（type=participated，只返回参与的活动）:
+```json
+{
+  "code": 200,
+  "message": "查询成功",
+  "success": true,
+  "data": {
+    "activities": [
+      {
+        "id": 1,
+        "name": "活动名称1",
+        "description": "活动描述",
+        "location": "活动地点",
+        "activityType": "活动类型",
+        "activityLevel": "活动级别",
+        "status": "报名中",
+        "maxParticipants": 100,
+        "currentParticipants": 35,
+        "needAudit": true,
+        "score": 95.5,
+        "auditStatus": 1,
+        "clubId": 1,
+        "registrationStartTime": 1703059200000,
+        "registrationEndTime": 1703145600000,
+        "startTime": 1703232000000,
+        "endTime": 1703318400000,
+        "imageUrls": [
+          "http://123.com/a.jpg",
+          "http://123.com/b.jpg"
+        ],
+        "createTime": "2025-12-20T09:00:00",
+        "updateTime": "2025-12-20T09:00:00"
+      }
+    ]
+  }
+}
+```
+
+**响应示例**（type=managed，只返回管理的活动）:
+```json
+{
+  "code": 200,
+  "message": "查询成功",
+  "success": true,
+  "data": {
+    "activities": [
+      {
+        "id": 2,
+        "name": "活动名称2",
+        "description": "活动描述",
+        "location": "活动地点",
+        "activityType": "活动类型",
+        "activityLevel": "活动级别",
+        "status": "进行中",
+        "maxParticipants": 50,
+        "currentParticipants": 20,
+        "needAudit": false,
+        "score": 88.0,
+        "auditStatus": 1,
+        "clubId": 2,
+        "registrationStartTime": 1703059200000,
+        "registrationEndTime": 1703145600000,
+        "startTime": 1703232000000,
+        "endTime": 1703318400000,
+        "imageUrls": [
+          "http://123.com/c.jpg"
+        ],
+        "createTime": "2025-12-21T09:00:00",
+        "updateTime": "2025-12-21T09:00:00"
+      }
+    ]
+  }
+}
+```
+
+**说明**:
+- `type` 参数说明：
+  - `participated`: 只返回用户参与的活动，响应数据中 `activities` 字段包含参与的活动列表
+  - `managed`: 只返回用户管理的活动，响应数据中 `activities` 字段包含管理的活动列表
+  - `all` 或不传: 返回两种活动，响应数据中包含 `participated` 和 `managed` 两个字段
+- `participated`: 用户参与的活动列表（通过报名记录查询）
+- `managed`: 用户管理的活动列表（用户是社团管理员，查询这些社团发布的活动）
+- 活动列表中的活动都会自动刷新状态（报名中/等待中/进行中/已结束）
+- `currentParticipants`: 当前已通过的报名人数（实时统计状态为"已通过"的报名记录）
+- `imageUrls`: 活动图片URL数组（从数据库中的逗号分隔字符串解析而来）
+- 如果用户没有参与任何活动，`participated` 或 `activities` 为空数组
+- 如果用户不是任何社团的管理员，`managed` 或 `activities` 为空数组
+- 如果用户ID为空，返回错误信息
+- 如果 `type` 参数值无效（不是 `participated`、`managed` 或 `all`），返回错误信息
 
 ---
 
