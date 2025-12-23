@@ -14,42 +14,24 @@
 		</view>
 
 		<view class="activity_btn">
-			<view class="btn_item" @click="onActivityDetail">
+			<view class="btn_item" @click="activityDetail">
 				活动详情
 			</view>
-			<!-- <view class="btn_item" @click="onParticipationDetail">
-				参与详情
+			<view class="btn_item" v-if="activeInfo.needAudit" @click="memberReview">
+				人员审核
 			</view>
-			<view class="btn_item" @click="onOpenRate">
-				评价活动
-			</view> -->
+			<view class="btn_item">
+				报名统计
+			</view>
+			<view class="btn_item">
+				生成签到码
+			</view>
 		</view>
 
 		<view class="activity_tag">
 			{{ activeInfo.status }}
 		</view>
 
-		<uni-popup ref="rateActivityPopup" type="bottom" background-color="#fff">
-			<view class="popup_container">
-				<view class="title">
-					<view class="left">
-						综合评分
-					</view>
-					<view class="right" @click="onCloseRate">
-						取消
-					</view>
-				</view>
-				<view class="rate">
-					<view class="left">
-						你的评分：{{ rateValue }}
-					</view>
-					<view class="right">
-						<uni-rate size="35" allow-half v-model="rateValue" />
-					</view>
-				</view>
-				<view class="btn" @click="onGitRate">确定</view>
-			</view>
-		</uni-popup>
 	</view>
 </template>
 
@@ -63,29 +45,24 @@
 	const rateActivityPopup = ref()
 	const rateValue = ref(0)
 
-	function onActivityDetail() {
+	function activityDetail() {
 		uni.navigateTo({
-			url: '/pages/activity/activityDetail/activityDetail'
+			url: `/pages/activity/activityDetail/activityDetail?id=${props.activeInfo.id}`
+		})
+	}
+	
+	function memberReview(){
+		uni.navigateTo({
+			url: `/pages/user/memberReview/memberReview?id=${props.activeInfo.id}`
 		})
 	}
 
 	function onParticipationDetail() {
-		uni.navigateTo({
-			url: '/pages/user/myActivity/participationDetails/participationDetails'
-		})
+
 	}
 
 	function onOpenRate() {
-		rateActivityPopup.value.open()
-	}
 
-	function onCloseRate() {
-		rateActivityPopup.value.close()
-		rateValue.value = 0
-	}
-
-	function onGitRate() {
-		onCloseRate()
 	}
 </script>
 

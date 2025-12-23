@@ -150,6 +150,22 @@
 			{
 				"navigationBarTitleText" : ""
 			}
+		},
+		{
+			"path" : "pages/user/memberReview/memberReview",
+			"style" : 
+			{
+				"navigationBarTitleText" : "审核列表",
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/user/clubReview/clubReview",
+			"style" : 
+			{
+				"navigationBarTitleText" : "活动审核",
+				"navigationBarBackgroundColor": "#fff"
+			}
 		}
 	],
 	"tabBar": {

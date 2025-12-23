@@ -58,7 +58,7 @@
 	]
 
 	function onSearch() {
-		console.log(searchValue.value);
+		getJoinOrManangeActivityList()
 	}
 	
 	function OnChangeActiveTab(tab){
@@ -70,7 +70,8 @@
 	async function getJoinOrManangeActivityList() {
 		let res = await apiGetJoinOrManangeActivity({
 			id: userId,
-			type: activeTab.value
+			type: activeTab.value,
+			keyword:searchValue.value
 		})
 		if (res.code == 200) {
 			let {

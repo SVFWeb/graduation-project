@@ -65,11 +65,13 @@
 			<text class="section-title">我的服务</text>
 			<view class="services-grid">
 				<!-- 待办事项 -->
-				<view class="service-item">
+				<view class="service-item" @click="uni.navigateTo({
+					url:'/pages/user/clubReview/clubReview'
+				})">
 					<view class="service-icon blue">
 						<uni-icons type="calendar" size="24" color="#fff"></uni-icons>
 					</view>
-					<text class="service-label">待办事项</text>
+					<text class="service-label">活动审核</text>
 				</view>
 
 				<!-- 我的活动 -->

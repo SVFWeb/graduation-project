@@ -279,12 +279,7 @@
 		try {
 			// 主动触发表单校验
 			await formRef.value.validate()
-
-			uni.showToast({
-				title: '校验通过，可提交',
-				icon: 'success'
-			})
-
+			
 			await filePicker.value.upload()
 
 			uni.showLoading()

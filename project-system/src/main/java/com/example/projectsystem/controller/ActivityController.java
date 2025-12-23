@@ -114,12 +114,30 @@ public class ActivityController {
             wrapper.orderByDesc(Activity::getCreateTime);
 
             IPage<Activity> result = activityService.page(page, wrapper);
-            PageResult<Activity> pageData = new PageResult<>(
+            
+            // 转换为 DTO，将 imageUrls 字符串转换为数组，时间转换为时间戳
+            List<ActivityDTO> activityDTOs = result.getRecords().stream()
+                    .map(activity -> {
+                        ActivityDTO dto = new ActivityDTO(activity);
+                        // 将 imageUrls 字符串转换为数组
+                        if (StringUtils.hasText(activity.getImageUrls())) {
+                            List<String> urls = Arrays.stream(activity.getImageUrls().split(","))
+                                    .map(String::trim)
+                                    .filter(StringUtils::hasText)
+                                    .collect(Collectors.toList());
+                            dto.setImageUrls(urls);
+                        } else {
+                            dto.setImageUrls(new ArrayList<>());
+                        }
+                        return dto;
+                    })
+                    .collect(Collectors.toList());
+            
+            PageResult<ActivityDTO> pageData = new PageResult<>(
                     result.getTotal(),
                     (int) result.getCurrent(),
                     (int) result.getSize(),
-                    result.getRecords()
-            );
+                    activityDTOs);
 
             return Results.success()
                     .message("查询成功")
@@ -820,7 +838,8 @@ public class ActivityController {
      */
     @GetMapping("/user/{userId}")
     public Results getUserActivities(@PathVariable Long userId,
-                                    @RequestParam(value = "type", required = false, defaultValue = "all") String type) {
+                                    @RequestParam(value = "type", required = false, defaultValue = "all") String type,
+                                    @RequestParam(value = "keyword", required = false) String keyword) {
         try {
             if (userId == null) {
                 return Results.fail().message("用户ID不能为空");
@@ -854,7 +873,19 @@ public class ActivityController {
 
                 List<Activity> participatedActivities = new ArrayList<>();
                 if (!participatedActivityIds.isEmpty()) {
-                    participatedActivities = activityService.listByIds(participatedActivityIds);
+                    // 构建查询条件，支持模糊搜索
+                    LambdaQueryWrapper<Activity> participatedWrapper = new LambdaQueryWrapper<>();
+                    participatedWrapper.in(Activity::getId, participatedActivityIds);
+                    
+                    // 应用 keyword 过滤
+                    if (StringUtils.hasText(keyword)) {
+                        participatedWrapper.and(wrapper -> wrapper
+                            .like(Activity::getName, keyword)
+                            .or()
+                            .like(Activity::getDescription, keyword));
+                    }
+                    
+                    participatedActivities = activityService.list(participatedWrapper);
                     // 刷新活动状态并统计报名人数
                     for (Activity activity : participatedActivities) {
                         refreshActivityStatusByTime(activity);
@@ -864,6 +895,19 @@ public class ActivityController {
                                 .count();
                         activity.setCurrentParticipants((int) participantCount);
                     }
+                    
+                    // 按活动状态排序，优先显示进行中的活动
+                    participatedActivities.sort((a1, a2) -> {
+                        // 先比较状态
+                        if ("进行中".equals(a1.getStatus()) && !"进行中".equals(a2.getStatus())) {
+                            return -1; // a1 排在前面
+                        }
+                        if (!"进行中".equals(a1.getStatus()) && "进行中".equals(a2.getStatus())) {
+                            return 1; // a2 排在前面
+                        }
+                        // 状态相同按创建时间倒序
+                        return a2.getCreateTime().compareTo(a1.getCreateTime());
+                    });
                 }
 
                 // 转换为 DTO
@@ -903,8 +947,31 @@ public class ActivityController {
                     // 查询这些社团发布的所有活动
                     LambdaQueryWrapper<Activity> wrapper = new LambdaQueryWrapper<>();
                     wrapper.in(Activity::getClubId, managedClubIds);
+                    
+                    // 应用 keyword 过滤
+                    if (StringUtils.hasText(keyword)) {
+                        wrapper.and(q -> q
+                            .like(Activity::getName, keyword)
+                            .or()
+                            .like(Activity::getDescription, keyword));
+                    }
+                    
+                    // 先按创建时间倒序查询，后续会重新排序
                     wrapper.orderByDesc(Activity::getCreateTime);
                     managedActivities = activityService.list(wrapper);
+                    
+                    // 按活动状态排序，优先显示进行中的活动
+                    managedActivities.sort((a1, a2) -> {
+                        // 先比较状态
+                        if ("进行中".equals(a1.getStatus()) && !"进行中".equals(a2.getStatus())) {
+                            return -1; // a1 排在前面
+                        }
+                        if (!"进行中".equals(a1.getStatus()) && "进行中".equals(a2.getStatus())) {
+                            return 1; // a2 排在前面
+                        }
+                        // 状态相同按创建时间倒序
+                        return a2.getCreateTime().compareTo(a1.getCreateTime());
+                    });
 
                     // 刷新活动状态并统计报名人数
                     for (Activity activity : managedActivities) {

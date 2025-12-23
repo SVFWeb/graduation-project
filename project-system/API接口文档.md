@@ -1224,6 +1224,9 @@ GET /api/activities/1/registrations/check?userId=3
   - `participated`: 只返回用户参与的活动
   - `managed`: 只返回用户管理的活动
   - `all`: 返回两种活动（默认值）
+- `keyword`: 搜索关键字（可选）
+  - 用于模糊搜索活动名称和描述
+  - 当提供关键字时，只返回名称或描述中包含该关键字的活动
 
 **请求示例**（返回所有活动）:
 ```
@@ -1240,6 +1243,16 @@ GET /api/activities/user/1?type=participated
 **请求示例**（只返回管理的活动）:
 ```
 GET /api/activities/user/1?type=managed
+```
+
+**请求示例**（搜索包含关键字的参与活动）:
+```
+GET /api/activities/user/1?type=participated&keyword=科技
+```
+
+**请求示例**（搜索所有包含关键字的活动）:
+```
+GET /api/activities/user/1?keyword=讲座
 ```
 
 **响应示例**（type=all 或不传type，返回两种活动）:
@@ -1386,9 +1399,14 @@ GET /api/activities/user/1?type=managed
   - `participated`: 只返回用户参与的活动，响应数据中 `activities` 字段包含参与的活动列表
   - `managed`: 只返回用户管理的活动，响应数据中 `activities` 字段包含管理的活动列表
   - `all` 或不传: 返回两种活动，响应数据中包含 `participated` 和 `managed` 两个字段
+- `keyword` 参数说明：
+  - 用于模糊搜索活动名称和描述
+  - 不区分大小写
+  - 支持部分匹配（如关键字"科技"会匹配"科技创新活动"和"科技前沿讲座"）
 - `participated`: 用户参与的活动列表（通过报名记录查询）
 - `managed`: 用户管理的活动列表（用户是社团管理员，查询这些社团发布的活动）
 - 活动列表中的活动都会自动刷新状态（报名中/等待中/进行中/已结束）
+- **活动列表排序规则**：优先显示进行中的活动，其他活动按创建时间倒序排列
 - `currentParticipants`: 当前已通过的报名人数（实时统计状态为"已通过"的报名记录）
 - `imageUrls`: 活动图片URL数组（从数据库中的逗号分隔字符串解析而来）
 - 如果用户没有参与任何活动，`participated` 或 `activities` 为空数组
