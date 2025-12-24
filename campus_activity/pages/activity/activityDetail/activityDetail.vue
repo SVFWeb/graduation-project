@@ -123,16 +123,28 @@
 		</view>
 
 		<!-- 底部操作栏 -->
-		<view class="activityDetail_btn">
+		<view v-if="!isReview" class="activityDetail_btn">
 			<view class="operation_btn">
-				<!-- <uni-icons :type="isCollected ? 'star-filled' : 'star'" size="22"
-					:color="isCollected ? '#FCB857' : '#666'"></uni-icons>
-				<view class="btn_text" :class="{ collected: isCollected }">{{ isCollected ? '已收藏' : '收藏' }}</view> -->
+
 			</view>
 
 			<view class="primary_btn" @click="handleSignUp">
 				立即报名
 			</view>
+		</view>
+
+		<view v-else class="activityDetail_btn activityDetail_btn--review">
+		  <view class="review_action review_action--reject" @click="handleReview(false)">
+		    <uni-icons type="closeempty" size="24" color="#fff"></uni-icons>
+		    <text class="action_text">拒绝</text>
+		  </view>
+		  
+		  <view class="review_divider"></view>
+		  
+		  <view class="review_action review_action--approve" @click="handleReview(true)">
+		    <uni-icons type="checkmarkempty" size="24" color="#fff"></uni-icons>
+		    <text class="action_text">同意</text>
+		  </view>
 		</view>
 	</view>
 
@@ -148,8 +160,12 @@
 		ref,
 	} from 'vue';
 	import {
+		onLoad
+	} from '@dcloudio/uni-app'
+	import {
 		apiQueryActivity,
-		apiJoinActivity
+		apiJoinActivity,
+		apiActivityReview
 	} from '@/api/activity/index.js'
 	import {
 		apiGetClubDetail
@@ -158,13 +174,14 @@
 
 	const props = defineProps(['id'])
 
+	const isReview = ref(false)
 	const popup = ref(null)
 	const activityInfo = ref(null)
 	const currentSwiper = ref(0)
 	const isCollected = ref(true)
 	const bannerList = ref([])
 	const clubInfo = ref()
-	const userId = uni.getStorageSync('userInfo')
+	const userId = uni.getStorageSync('userInfo').id
 
 	const onSwiperChange = (e) => {
 		currentSwiper.value = e.detail.current
@@ -184,7 +201,7 @@
 
 	async function handelJoinActivity() {
 		let res = await apiJoinActivity(props.id, {
-			userId: userId.id
+			userId,
 		})
 
 		if (res.code == 200) {
@@ -192,16 +209,53 @@
 				icon: 'success',
 				title: '报名成功'
 			})
-			
-			setTimeout(()=>{
+
+			setTimeout(() => {
 				uni.reLaunch({
-					url:'/pages/activity/activity'
+					url: '/pages/activity/activity'
 				})
-			},1000)
+			}, 1000)
 		}
 	}
+	
+	function handleReview(value){
+		uni.showModal({
+			title: '提示',
+			content: value?'确认通过此活动吗？':'确认拒绝此活动吗？',
+			success: async function (res) {
+				if (res.confirm) {
+					let res= await apiActivityReview({
+						activityId: props.id,
+						auditUserId:userId ,
+						pass: value
+					})
+					
+					if(res.code==200){
+						uni.showToast({
+							icon: 'success',
+							title: value?'通过成功':'拒绝成功'
+						})
+						
+						setTimeout(() => {
+							uni.navigateBack()
+						}, 1000)
+					}
+				}
+			}
+		});
+	}
 
+	onLoad(() => {
+		// 获取页面栈
+		const pages = getCurrentPages();
 
+		// 上一个页面（如果存在）
+		const prevPage = pages[pages.length - 2];
+
+		if (prevPage.route === 'pages/user/clubReview/clubReview') {
+			isReview.value = true
+		}
+	})
 
 	onMounted(() => {
 		queryActivity()
@@ -576,6 +630,58 @@
 				border-radius: 40rpx;
 				box-shadow: 0 8rpx 24rpx rgba($uni-topic-color, 0.3);
 			}
+		
+			   &.activityDetail_btn--review {
+			       padding: 0 40rpx;
+			       height: 140rpx;
+			       background: #fff;
+			       box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.1);
+			       
+			       .review_action {
+			         flex: 1;
+			         height: 80rpx;
+			         display: flex;
+			         align-items: center;
+			         justify-content: center;
+			         border-radius: 40rpx;
+			         font-size: 0;
+			         
+			         uni-icons {
+			           margin-right: 12rpx;
+			         }
+			         
+			         .action_text {
+			           font-size: 28rpx;
+			           font-weight: 600;
+			         }
+			         
+			         &--reject {
+			           background: linear-gradient(135deg, #FF6B6B, #FF4757);
+			           color: #fff;
+			           box-shadow: 0 6rpx 16rpx rgba(255, 107, 107, 0.3);
+			           
+			           &:active {
+			             background: linear-gradient(135deg, #FF4757, #FF3838);
+			             transform: translateY(2rpx);
+			           }
+			         }
+			         
+			         &--approve {
+			           background: linear-gradient(135deg, #4CAF50, #2E7D32);
+			           color: #fff;
+			           box-shadow: 0 6rpx 16rpx rgba(76, 175, 80, 0.3);
+			           
+			           &:active {
+			             background: linear-gradient(135deg, #43A047, #1B5E20);
+			             transform: translateY(2rpx);
+			           }
+			         }
+			       }
+			       
+			       .review_divider {
+			         width: 40rpx;
+			       }
+			     }
 		}
 	}
 </style>

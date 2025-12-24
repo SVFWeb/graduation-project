@@ -50,10 +50,6 @@
 					<uni-icons type="eye" size="18"></uni-icons>
 					查看详情
 				</button>
-				<button class="btn-review" @click="handleReview(item.id)">
-					<uni-icons type="compose" size="18"></uni-icons>
-					立即审核
-				</button>
 			</view>
 			
 			<!-- 分割线 -->
@@ -71,9 +67,9 @@
 
 <script setup>
 	import {
-		onMounted,
 		ref
 	} from 'vue';
+	import { onShow } from '@dcloudio/uni-app'
 	import {
 		apiActivityReviewList
 	} from '@/api/activity/index.js'
@@ -81,7 +77,8 @@
 
 	const activityList = ref([])
 	const imageLoaded = ref({})
-
+	const userId = uni.getStorageSync('userInfo').id
+	
 	async function getActivityReviewList() {
 		try {
 			const res = await apiActivityReviewList()
@@ -98,18 +95,16 @@
 	}
 
 	function handleViewDetail(activityId) {
-		
-	}
-
-	function handleReview(activityId) {
-		
+		uni.navigateTo({
+			url:`/pages/activity/activityDetail/activityDetail?id=${activityId}`
+		})
 	}
 
 	function onImageLoad(index) {
 		imageLoaded.value[index] = true
 	}
 
-	onMounted(() => {
+	onShow(() => {
 		getActivityReviewList()
 	})
 </script>

@@ -70,3 +70,10 @@ export const apiMemberReview=(data)=>request({
 export const apiActivityReviewList=()=>request({
 	url:'/activities/pending?bossUserId=8'
 })
+
+// 活动审核
+export const apiActivityReview=(data)=>request({
+	url:'/activities/review',
+	method: 'POST',
+	data
+})
