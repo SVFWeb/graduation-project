@@ -803,7 +803,7 @@ GET /api/activities/1/registrations/pending?managerUserId=2
 
 **接口**: `POST /api/activities/search`
 
-**说明**: 所有参数均为可选，如果都为空则返回所有活动列表。
+**说明**: 所有参数均为可选，如果都为空则返回所有活动列表。不返回"已拒绝"的活动（`auditStatus = 2`）。
 
 **请求参数**:
 ```json
@@ -835,13 +835,18 @@ GET /api/activities/1/registrations/pending?managerUserId=2
 }
 ```
 
+**说明**:
+- 不返回审核状态为"已拒绝"的活动（`auditStatus = 2`）
+- 支持根据关键字、状态、分类、级别等条件进行模糊查询
+- 活动状态会根据当前时间自动刷新（报名中/等待中/进行中/已结束）
+
 ---
 
 ### 7. 获取热门活动列表
 
 **接口**: `GET /api/activities/hot`
 
-**说明**: 根据活动报名人数排序，返回前4个热门活动。只返回已通过审核的活动。
+**说明**: 根据活动报名人数排序，返回前4个热门活动。只返回报名中的活动。
 
 **请求参数**: 无
 
@@ -889,7 +894,7 @@ GET /api/activities/hot
 ```
 
 **说明**:
-- 只返回已通过审核的活动（`auditStatus = 1`）
+- 只返回已通过审核且状态为"报名中"的活动（`auditStatus = 1` 且 `status = "报名中"`）
 - 按报名人数（`currentParticipants`）降序排序
 - 最多返回4个活动
 - `currentParticipants`: 当前已通过的报名人数（实时统计状态为"已通过"的报名记录）

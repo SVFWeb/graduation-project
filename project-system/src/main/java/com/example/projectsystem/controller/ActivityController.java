@@ -319,6 +319,9 @@ public class ActivityController {
             Page<Activity> page = new Page<>(currentPage, pageSize);
             LambdaQueryWrapper<Activity> wrapper = new LambdaQueryWrapper<>();
 
+            // 排除已拒绝的活动（auditStatus = 2）
+            wrapper.ne(Activity::getAuditStatus, 2);
+
             if (StringUtils.hasText(request.getKeyword())) {
                 wrapper.and(w -> w
                         .like(Activity::getName, request.getKeyword())
@@ -381,6 +384,7 @@ public class ActivityController {
 
     /**
      * 获取热门活动列表（根据报名人数排序，返回前4个）
+     * 只返回报名中的活动
      */
     @GetMapping("/hot")
     public Results getHotActivities() {
@@ -391,7 +395,7 @@ public class ActivityController {
             
             List<Activity> activities = activityService.list(wrapper);
             
-            // 统计每个活动的实际报名人数并更新
+            // 统计每个活动的实际报名人数并更新状态
             for (Activity activity : activities) {
                 long participantCount = activityRegistrationService.lambdaQuery()
                         .eq(ActivityRegistration::getActivityId, activity.getId())
@@ -402,8 +406,9 @@ public class ActivityController {
                 refreshActivityStatusByTime(activity);
             }
             
-            // 按报名人数降序排序，取前4个
+            // 过滤出状态为"报名中"的活动，按报名人数降序排序，取前4个
             List<Activity> hotActivities = activities.stream()
+                    .filter(activity -> "报名中".equals(activity.getStatus()))
                     .sorted((a1, a2) -> {
                         int count1 = a1.getCurrentParticipants() != null ? a1.getCurrentParticipants() : 0;
                         int count2 = a2.getCurrentParticipants() != null ? a2.getCurrentParticipants() : 0;
