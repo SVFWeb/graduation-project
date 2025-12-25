@@ -21,6 +21,10 @@ if (!Math) {
   "./pages/user/createClass/createClass.js";
   "./pages/user/classList/classList.js";
   "./pages/user/createClub/createClub.js";
+  "./pages/user/myActivity/components/com-activity-item-managed/com-activity-item-managed.js";
+  "./pages/user/memberReview/memberReview.js";
+  "./pages/user/clubReview/clubReview.js";
+  "./pages/user/myActivity/registrationStatistics/registrationStatistics.js";
 }
 const _sfc_main = {
   onLaunch: function() {

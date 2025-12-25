@@ -60,10 +60,24 @@
   height: 100%;
 }
 .com-activity-item_cotainer .activity_time.data-v-63dc9a1c {
+  display: flex;
+  align-items: center;
   font-size: 22rpx;
   color: #FCB857;
   margin-bottom: 16rpx;
-  line-height: 1.4;
+  line-height: 1.5;
+  flex-wrap: wrap;
+  gap: 8rpx;
+}
+.com-activity-item_cotainer .activity_time .time_start.data-v-63dc9a1c,
+.com-activity-item_cotainer .activity_time .time_end.data-v-63dc9a1c {
+  font-weight: 500;
+  letter-spacing: 0.5rpx;
+}
+.com-activity-item_cotainer .activity_time .time_separator.data-v-63dc9a1c {
+  color: rgba(255, 107, 53, 0.6);
+  margin: 0 4rpx;
+  font-weight: 400;
 }
 .com-activity-item_cotainer .activity_title.data-v-63dc9a1c {
   font-size: 26rpx;

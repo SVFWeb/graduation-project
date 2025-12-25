@@ -29,7 +29,6 @@
 
 <script setup>
 	import comSearch from '@/components/com-search/com-search.vue';
-	import comFilterBtn from '@/components/com-filter-btn/com-filter-btn.vue';
 	import comActivityItem from './components/com-activity-item/com-activity-item.vue';
 	import comActivityItemManaged from './components/com-activity-item-managed/com-activity-item-managed.vue';
 	import {
@@ -41,7 +40,6 @@
 	} from '@/api/activity/index.js'
 
 	const searchValue = ref('')
-	const filterValue = ref('筛选')
 	const activeTab = ref('participated')
 	const userId = uni.getStorageSync('userInfo').id
 	const activity_participated = ref([])

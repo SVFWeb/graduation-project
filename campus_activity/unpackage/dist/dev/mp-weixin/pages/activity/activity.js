@@ -1,5 +1,6 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
+const api_activity_index = require("../../api/activity/index.js");
 if (!Math) {
   (comSearch + comFilterBtn + comActivityItem + customTabbar)();
 }
@@ -11,14 +12,27 @@ const _sfc_main = {
   __name: "activity",
   setup(__props) {
     const searchValue = common_vendor.ref("");
-    const filterRes = common_vendor.ref({
-      status: "状态",
-      cate: "分类",
-      level: "级别"
+    const activityList = common_vendor.ref();
+    const filterRes = common_vendor.reactive({
+      status: "",
+      category: "",
+      level: ""
     });
     function onSearch() {
-      common_vendor.index.__f__("log", "at pages/activity/activity.vue:36", filterRes.value);
+      getActivityList();
     }
+    async function getActivityList() {
+      let res = await api_activity_index.apiGetActivityList({
+        ...filterRes,
+        keyword: searchValue.value
+      });
+      if (res.code == 200) {
+        activityList.value = res.data.page.records;
+      }
+    }
+    common_vendor.onShow(() => {
+      getActivityList();
+    });
     return (_ctx, _cache) => {
       return {
         a: common_vendor.o(onSearch),
@@ -26,24 +40,30 @@ const _sfc_main = {
         c: common_vendor.p({
           value: searchValue.value
         }),
-        d: common_vendor.o(($event) => filterRes.value.status = $event),
+        d: common_vendor.o(($event) => filterRes.status = $event),
         e: common_vendor.p({
+          text: "状态",
           type: "status",
-          title: filterRes.value.status
+          title: filterRes.status
         }),
-        f: common_vendor.o(($event) => filterRes.value.cate = $event),
+        f: common_vendor.o(($event) => filterRes.category = $event),
         g: common_vendor.p({
-          type: "cate",
-          title: filterRes.value.cate
+          text: "分类",
+          type: "category",
+          title: filterRes.category
         }),
-        h: common_vendor.o(($event) => filterRes.value.level = $event),
+        h: common_vendor.o(($event) => filterRes.level = $event),
         i: common_vendor.p({
+          text: "等级",
           type: "level",
-          title: filterRes.value.level
+          title: filterRes.level
         }),
-        j: common_vendor.f(6, (item, k0, i0) => {
+        j: common_vendor.f(activityList.value, (item, k0, i0) => {
           return {
-            a: "da48f91d-4-" + i0
+            a: "da48f91d-4-" + i0,
+            b: common_vendor.p({
+              activiyInfo: item
+            })
           };
         })
       };

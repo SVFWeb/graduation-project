@@ -1,5 +1,6 @@
 "use strict";
 const common_vendor = require("../../../common/vendor.js");
+const api_activity_index = require("../../../api/activity/index.js");
 if (!Math) {
   (comSearch + comActivityItem)();
 }
@@ -12,7 +13,7 @@ const _sfc_main = {
     const searchHistory = common_vendor.ref(common_vendor.index.getStorageSync("searchHistory") || []);
     const activityList = common_vendor.ref([]);
     const isShowSearchHistory = common_vendor.computed(() => searchHistory.value.length === 0);
-    function onSearch() {
+    async function onSearch() {
       if (searchValue.value == "")
         return;
       searchHistory.value.unshift(searchValue.value);
@@ -20,8 +21,13 @@ const _sfc_main = {
       if (searchHistory.value.length > 10) {
         searchHistory.value.pop();
       }
-      common_vendor.index.setStorageSync("searchHistory", searchHistory.value);
-      activityList.value = [1, 2, 3];
+      let res = await api_activity_index.apiGetActivityList({
+        keyword: searchValue.value
+      });
+      if (res.code == 200) {
+        activityList.value = res.data.page.records;
+        common_vendor.index.setStorageSync("searchHistory", searchHistory.value);
+      }
     }
     function onClear() {
       searchHistory.value = [];
@@ -48,10 +54,12 @@ const _sfc_main = {
             c: common_vendor.o(($event) => onClickHistory(item), item + index)
           };
         }),
-        g: common_vendor.f(activityList.value.length, (item, k0, i0) => {
+        g: common_vendor.f(activityList.value, (item, k0, i0) => {
           return {
-            a: item,
-            b: "b69fed56-1-" + i0
+            a: "b69fed56-1-" + i0,
+            b: common_vendor.p({
+              activiyInfo: item
+            })
           };
         })
       });

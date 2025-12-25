@@ -28,10 +28,18 @@ const apiSettingClubManager = (data) => utils_request.request({
   method: "POST"
 });
 const apiGetClubNewList = () => utils_request.request({
-  url: "/clubs/latest"
+  url: "/clubs/latest?limit=6"
+});
+const apiGetClubManageList = (id) => utils_request.request({
+  url: `/clubs/managed?userId=${id}`
+});
+const apiGetClubDetail = (id) => utils_request.request({
+  url: `/clubs/${id}`
 });
 exports.apiCreateClub = apiCreateClub;
+exports.apiGetClubDetail = apiGetClubDetail;
 exports.apiGetClubList = apiGetClubList;
+exports.apiGetClubManageList = apiGetClubManageList;
 exports.apiGetClubNewList = apiGetClubNewList;
 exports.apiGetJoinClubUserList = apiGetJoinClubUserList;
 exports.apiJoinClub = apiJoinClub;

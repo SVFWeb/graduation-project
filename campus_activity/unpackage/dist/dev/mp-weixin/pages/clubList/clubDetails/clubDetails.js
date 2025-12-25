@@ -1,6 +1,7 @@
 "use strict";
 const common_vendor = require("../../../common/vendor.js");
 const api_club_index = require("../../../api/club/index.js");
+const api_activity_index = require("../../../api/activity/index.js");
 if (!Array) {
   const _easycom_uni_popup_dialog2 = common_vendor.resolveComponent("uni-popup-dialog");
   const _easycom_uni_popup2 = common_vendor.resolveComponent("uni-popup");
@@ -33,6 +34,7 @@ const _sfc_main = {
     const alertDialog = common_vendor.ref(null);
     const settingManagerDialog = common_vendor.ref(null);
     const showRight = common_vendor.ref(null);
+    const activityList = common_vendor.ref([]);
     const clubInfo = common_vendor.ref([]);
     const userList = common_vendor.ref([]);
     const userInfo = common_vendor.ref(common_vendor.index.getStorageSync("userInfo"));
@@ -51,6 +53,11 @@ const _sfc_main = {
           icon: "success",
           title: res.message
         });
+        setTimeout(() => {
+          common_vendor.index.reLaunch({
+            url: "/pages/clubList/clubList"
+          });
+        }, 1500);
       }
     }
     async function getJoinClubUserList() {
@@ -78,6 +85,12 @@ const _sfc_main = {
         });
       }
     }
+    async function getClubActivity() {
+      let res = await api_activity_index.apiGetClubActivity(clubInfo.value.id);
+      if (res.code == 200) {
+        activityList.value = res.data.page.records;
+      }
+    }
     function onCheckUserList() {
       var _a;
       (_a = showRight.value) == null ? void 0 : _a.open();
@@ -89,34 +102,42 @@ const _sfc_main = {
         clubInfo.value = JSON.parse(decodeURIComponent(rawInfo));
       }
     });
+    common_vendor.onMounted(() => {
+      getClubActivity();
+    });
     return (_ctx, _cache) => {
-      return {
+      return common_vendor.e({
         a: common_vendor.t(clubInfo.value.name),
         b: common_vendor.t(clubInfo.value.id),
         c: common_vendor.o(onShowDialog),
         d: common_vendor.t(clubInfo.value.memberCount),
         e: common_vendor.o(onCheckUserList),
         f: common_vendor.t(clubInfo.value.description),
-        g: common_vendor.f(6, (item, k0, i0) => {
+        g: activityList.value.length != 0
+      }, activityList.value.length != 0 ? {
+        h: common_vendor.f(activityList.value, (item, k0, i0) => {
           return {
-            a: item,
-            b: "e409fb66-0-" + i0
+            a: "e409fb66-0-" + i0,
+            b: common_vendor.p({
+              activiyInfo: item
+            })
           };
-        }),
-        h: common_vendor.o(onJoinClub),
-        i: common_vendor.p({
+        })
+      } : {}, {
+        i: common_vendor.o(onJoinClub),
+        j: common_vendor.p({
           type: "info",
           confirmText: "加入",
           cancelText: "取消",
           content: "是否确认加入该社团"
         }),
-        j: common_vendor.sr(alertDialog, "e409fb66-1", {
+        k: common_vendor.sr(alertDialog, "e409fb66-1", {
           "k": "alertDialog"
         }),
-        k: common_vendor.p({
+        l: common_vendor.p({
           type: "dialog"
         }),
-        l: common_vendor.f(userList.value, (item, k0, i0) => {
+        m: common_vendor.f(userList.value, (item, k0, i0) => {
           return common_vendor.e({
             a: item.isManager
           }, item.isManager ? {
@@ -144,27 +165,27 @@ const _sfc_main = {
             })
           });
         }),
-        m: common_vendor.sr(showRight, "e409fb66-3", {
+        n: common_vendor.sr(showRight, "e409fb66-3", {
           "k": "showRight"
         }),
-        n: common_vendor.p({
+        o: common_vendor.p({
           mode: "right",
           width: 300
         }),
-        o: common_vendor.o(settingManager),
-        p: common_vendor.p({
+        p: common_vendor.o(settingManager),
+        q: common_vendor.p({
           type: "info",
           confirmText: "设置",
           cancelText: "取消",
           content: "是否设置该成员为管理员"
         }),
-        q: common_vendor.sr(settingManagerDialog, "e409fb66-8", {
+        r: common_vendor.sr(settingManagerDialog, "e409fb66-8", {
           "k": "settingManagerDialog"
         }),
-        r: common_vendor.p({
+        s: common_vendor.p({
           type: "dialog"
         })
-      };
+      });
     };
   }
 };

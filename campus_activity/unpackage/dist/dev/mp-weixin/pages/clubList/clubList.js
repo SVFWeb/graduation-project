@@ -56,7 +56,7 @@ const _sfc_main = {
             d: common_vendor.p({
               clickable: true,
               title: item.name,
-              note: item.tags,
+              note: item.levelTag + "#" + item.tags,
               thumb: item.iconUrl,
               ["thumb-size"]: "lg",
               rightText: String(item.memberCount)

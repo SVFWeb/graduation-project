@@ -25,7 +25,6 @@
 /* 文章场景相关 */
 .com-filter-list.data-v-4c128c7b {
   background-color: #fff;
-  border-radius: 20rpx 20rpx 0 0;
   padding: 20rpx 0;
   max-height: 60vh;
   overflow-y: auto;

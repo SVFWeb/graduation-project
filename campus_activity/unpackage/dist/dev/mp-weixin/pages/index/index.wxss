@@ -143,9 +143,6 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
-.home_container .home_activity.data-v-1cf27b2a {
-  margin-bottom: 40rpx;
-}
 .home_container .home_activity .activity_list.data-v-1cf27b2a {
   display: flex;
   flex-wrap: wrap;

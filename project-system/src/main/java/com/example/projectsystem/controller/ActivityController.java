@@ -828,6 +828,73 @@ public class ActivityController {
     }
 
     /**
+     * 获取单个活动的报名状态统计（用于ECharts饼图）
+     */
+    @GetMapping("/{activityId}/statistics")
+    public Results getActivityStatistics(@PathVariable Long activityId,
+                                         @RequestParam("managerUserId") Long managerUserId) {
+        try {
+            Activity activity = activityService.getById(activityId);
+            if (activity == null) {
+                return Results.fail().message("活动不存在");
+            }
+
+            // 校验是否为该社团管理员
+            ClubMember member = clubMemberService.lambdaQuery()
+                    .eq(ClubMember::getClubId, activity.getClubId())
+                    .eq(ClubMember::getUserId, managerUserId)
+                    .one();
+            if (member == null || member.getIsManager() == null || !member.getIsManager()) {
+                return Results.fail().message("无权限查看该活动统计信息");
+            }
+
+            // 报名状态统计
+            Map<String, Object> statusStats = new HashMap<>();
+            
+            // 各状态报名人数
+            long pendingCount = activityRegistrationService.lambdaQuery()
+                    .eq(ActivityRegistration::getActivityId, activityId)
+                    .eq(ActivityRegistration::getStatus, "待审核")
+                    .count();
+            long approvedCount = activityRegistrationService.lambdaQuery()
+                    .eq(ActivityRegistration::getActivityId, activityId)
+                    .eq(ActivityRegistration::getStatus, "已通过")
+                    .count();
+            long rejectedCount = activityRegistrationService.lambdaQuery()
+                    .eq(ActivityRegistration::getActivityId, activityId)
+                    .eq(ActivityRegistration::getStatus, "已拒绝")
+                    .count();
+            
+            statusStats.put("pending", pendingCount);
+            statusStats.put("approved", approvedCount);
+            statusStats.put("rejected", rejectedCount);
+            statusStats.put("total", pendingCount + approvedCount + rejectedCount);
+
+            // 报名成功率统计
+            double successRate = 0.0;
+            long totalRegistrations = pendingCount + approvedCount + rejectedCount;
+            if (totalRegistrations > 0) {
+                successRate = (double) approvedCount / totalRegistrations * 100;
+                successRate = new BigDecimal(successRate).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            }
+
+            // 构建返回数据
+            Map<String, Object> statistics = new HashMap<>();
+            statistics.put("activityInfo", new ActivityDTO(activity));
+            statistics.put("statusStats", statusStats);
+            statistics.put("successRate", successRate);
+            statistics.put("maxParticipants", activity.getMaxParticipants());
+            statistics.put("currentParticipants", activity.getCurrentParticipants());
+
+            return Results.success()
+                    .message("查询成功")
+                    .data("statistics", statistics);
+        } catch (Exception e) {
+            return Results.fail().message("查询失败: " + e.getMessage());
+        }
+    }
+
+    /**
      * 根据用户ID获取用户参与或管理的社团活动
      * 返回两部分：
      * 1. 用户参与的活动（通过 activity_registration 表查询）

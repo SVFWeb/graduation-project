@@ -166,6 +166,14 @@
 				"navigationBarTitleText" : "活动审核",
 				"navigationBarBackgroundColor": "#fff"
 			}
+		},
+		{
+			"path" : "pages/user/myActivity/registrationStatistics/registrationStatistics",
+			"style" : 
+			{
+				"navigationBarTitleText" : "报名统计",
+				"navigationBarBackgroundColor": "#fff"
+			}
 		}
 	],
 	"tabBar": {

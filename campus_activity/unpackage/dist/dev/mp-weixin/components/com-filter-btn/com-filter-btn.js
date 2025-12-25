@@ -11,12 +11,12 @@ if (!Math) {
 const comFilterTagList = () => "../com-filter-tag-list/com-filter-tag-list.js";
 const _sfc_main = {
   __name: "com-filter-btn",
-  props: ["title", "type"],
+  props: ["title", "type", "text"],
   emits: ["update:title", "update:type"],
   setup(__props, { emit: __emit }) {
     const props = __props;
     const $emit = __emit;
-    const initTitle = common_vendor.ref(props.title);
+    common_vendor.ref(props.title);
     const isActive = common_vendor.ref(false);
     const popup = common_vendor.ref(null);
     function goFilter() {
@@ -28,7 +28,7 @@ const _sfc_main = {
     function onChangeTitle(e) {
       if (e.value === "全部") {
         isActive.value = false;
-        $emit("update:title", initTitle.value);
+        $emit("update:title", "");
       } else {
         isActive.value = true;
         $emit("update:title", e.value);
@@ -38,7 +38,7 @@ const _sfc_main = {
     common_vendor.onUnmounted(() => common_vendor.index.$off(`filterBack_${props.type}`, onChangeTitle));
     return (_ctx, _cache) => {
       return {
-        a: common_vendor.t(__props.title),
+        a: common_vendor.t(__props.title ? __props.title : __props.text),
         b: isActive.value ? 1 : "",
         c: common_vendor.o(goFilter),
         d: common_vendor.o(closePopup),
@@ -49,7 +49,7 @@ const _sfc_main = {
           "k": "popup"
         }),
         g: common_vendor.p({
-          type: "bottom",
+          type: "top",
           ["is-mask-click"]: true
         })
       };

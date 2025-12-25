@@ -1,6 +1,7 @@
 "use strict";
 const common_vendor = require("../../../../../common/vendor.js");
-const common_assets = require("../../../../../common/assets.js");
+const utils_dateUtil = require("../../../../../utils/dateUtil.js");
+const api_activity_index = require("../../../../../api/activity/index.js");
 if (!Array) {
   const _easycom_uni_rate2 = common_vendor.resolveComponent("uni-rate");
   const _easycom_uni_popup2 = common_vendor.resolveComponent("uni-popup");
@@ -13,17 +14,20 @@ if (!Math) {
 }
 const _sfc_main = {
   __name: "com-activity-item",
+  props: ["activeInfo"],
   setup(__props) {
+    const props = __props;
+    const userId = common_vendor.index.getStorageSync("userInfo").id;
     const rateActivityPopup = common_vendor.ref();
     const rateValue = common_vendor.ref(0);
     function onActivityDetail() {
       common_vendor.index.navigateTo({
-        url: "/pages/activity/activityDetail/activityDetail"
+        url: `/pages/activity/activityDetail/activityDetail?id=${props.activeInfo.id}`
       });
     }
     function onParticipationDetail() {
       common_vendor.index.navigateTo({
-        url: "/pages/user/myActivity/participationDetails/participationDetails"
+        url: `/pages/user/myActivity/participationDetails/participationDetails?activeId=${props.activeInfo.id}`
       });
     }
     function onOpenRate() {
@@ -33,28 +37,44 @@ const _sfc_main = {
       rateActivityPopup.value.close();
       rateValue.value = 0;
     }
-    function onGitRate() {
+    async function onGitRate() {
+      let res = await api_activity_index.apiActivityRate({
+        activityId: props.activeInfo.id,
+        userId,
+        score: rateValue.value
+      });
+      if (res.code == 200) {
+        common_vendor.index.showToast({
+          icon: "success",
+          title: res.message
+        });
+      }
       onCloseRate();
     }
     return (_ctx, _cache) => {
       return {
-        a: common_assets._imports_0$1,
-        b: common_vendor.o(onActivityDetail),
-        c: common_vendor.o(onParticipationDetail),
-        d: common_vendor.o(onOpenRate),
-        e: common_vendor.o(onCloseRate),
-        f: common_vendor.t(rateValue.value),
-        g: common_vendor.o(($event) => rateValue.value = $event),
-        h: common_vendor.p({
+        a: __props.activeInfo.imageUrls[0],
+        b: common_vendor.t(__props.activeInfo.name),
+        c: common_vendor.t(__props.activeInfo.activityType),
+        d: common_vendor.t(common_vendor.unref(utils_dateUtil.formatTime)(__props.activeInfo.startTime, "YYYY.MM.DD hh:mm")),
+        e: common_vendor.t(common_vendor.unref(utils_dateUtil.formatTime)(__props.activeInfo.endTime, "YYYY.MM.DD hh:mm")),
+        f: common_vendor.o(onActivityDetail),
+        g: common_vendor.o(onParticipationDetail),
+        h: common_vendor.o(onOpenRate),
+        i: common_vendor.t(__props.activeInfo.status),
+        j: common_vendor.o(onCloseRate),
+        k: common_vendor.t(rateValue.value),
+        l: common_vendor.o(($event) => rateValue.value = $event),
+        m: common_vendor.p({
           size: "35",
           ["allow-half"]: true,
           modelValue: rateValue.value
         }),
-        i: common_vendor.o(onGitRate),
-        j: common_vendor.sr(rateActivityPopup, "3405a3f7-0", {
+        n: common_vendor.o(onGitRate),
+        o: common_vendor.sr(rateActivityPopup, "3405a3f7-0", {
           "k": "rateActivityPopup"
         }),
-        k: common_vendor.p({
+        p: common_vendor.p({
           type: "bottom",
           ["background-color"]: "#fff"
         })

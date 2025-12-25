@@ -20,7 +20,11 @@
 			<view class="btn_item" v-if="activeInfo.needAudit" @click="memberReview">
 				人员审核
 			</view>
-			<view class="btn_item">
+			<view class="btn_item" @click="()=>{
+				uni.navigateTo({
+					url:`/pages/user/myActivity/registrationStatistics/registrationStatistics?id=${props.activeInfo.id}`
+				})
+			}">
 				报名统计
 			</view>
 			<view class="btn_item">

@@ -1,5 +1,7 @@
 "use strict";
 const common_vendor = require("../../../common/vendor.js");
+const api_club_index = require("../../../api/club/index.js");
+const api_activity_index = require("../../../api/activity/index.js");
 if (!Array) {
   const _easycom_uni_easyinput2 = common_vendor.resolveComponent("uni-easyinput");
   const _easycom_uni_forms_item2 = common_vendor.resolveComponent("uni-forms-item");
@@ -25,20 +27,24 @@ if (!Math) {
 const _sfc_main = {
   __name: "publishActivity",
   setup(__props) {
+    const userId = common_vendor.index.getStorageSync("userInfo").id;
     const formRef = common_vendor.ref(null);
+    const filePicker = common_vendor.ref(null);
     const form = common_vendor.reactive({
-      title: "",
-      intro: "",
-      type: "",
+      name: "",
+      description: "",
+      activityType: "",
       location: "",
-      organizer: "",
+      clubId: "",
       notice: "",
       signupRange: [],
       activityRange: [],
       maxParticipants: "1",
       needReview: "1",
-      materials: []
+      imageUrls: []
+      // 上传材料
     });
+    const nowLimit = Date.now();
     const signupEndLimit = common_vendor.computed(() => {
       var _a;
       return ((_a = form.activityRange) == null ? void 0 : _a[0]) || "";
@@ -47,70 +53,49 @@ const _sfc_main = {
       var _a;
       return ((_a = form.signupRange) == null ? void 0 : _a[1]) || "";
     });
+    const organizerOptions = common_vendor.ref([]);
     const typeOptions = [
       {
-        text: "学术讲座",
-        value: "lecture"
+        text: "思想成长",
+        value: "思想成长"
       },
       {
-        text: "文体活动",
-        value: "sports"
+        text: "实践实习",
+        value: "实践实习"
       },
       {
-        text: "志愿服务",
-        value: "volunteer"
+        text: "公益志愿",
+        value: "公益志愿"
       },
       {
-        text: "竞赛赛事",
-        value: "competition"
+        text: "创新创业",
+        value: "创新创业"
       },
       {
-        text: "其他",
-        value: "other"
+        text: "文化艺体",
+        value: "文化艺体"
       }
     ];
     const locationOptions = [
       {
         text: "主楼报告厅",
-        value: "hall"
+        value: "主楼报告厅"
       },
       {
         text: "体育馆",
-        value: "gym"
+        value: "体育馆"
       },
       {
         text: "教学楼",
-        value: "classroom"
+        value: "教学楼"
       },
       {
         text: "图书馆",
-        value: "library"
+        value: "图书馆"
       },
       {
         text: "户外场地",
-        value: "outdoor"
-      }
-    ];
-    const organizerOptions = [
-      {
-        text: "学生会",
-        value: "student_union"
-      },
-      {
-        text: "社团联合会",
-        value: "association_union"
-      },
-      {
-        text: "研究生会",
-        value: "postgraduate_union"
-      },
-      {
-        text: "学院",
-        value: "college"
-      },
-      {
-        text: "其他",
-        value: "other"
+        value: "户外场地"
       }
     ];
     const reviewOptions = [
@@ -124,113 +109,177 @@ const _sfc_main = {
       }
     ];
     const rules = {
-      title: {
-        required: true,
-        errorMessage: "请填写活动名称"
+      name: {
+        rules: [{
+          required: true,
+          errorMessage: "请填写活动名称"
+        }]
       },
-      intro: {
-        required: true,
-        errorMessage: "请填写活动介绍"
+      description: {
+        rules: [{
+          required: true,
+          errorMessage: "请填写活动介绍"
+        }]
       },
-      type: {
-        required: true,
-        errorMessage: "请选择活动类型"
+      activityType: {
+        rules: [{
+          required: true,
+          errorMessage: "请选择活动类型"
+        }]
       },
       location: {
-        required: true,
-        errorMessage: "请选择活动地点"
+        rules: [{
+          required: true,
+          errorMessage: "请选择活动地点"
+        }]
       },
-      organizer: {
-        required: true,
-        errorMessage: "请选择主办方"
+      clubId: {
+        rules: [{
+          required: true,
+          errorMessage: "请选择主办方"
+        }]
       },
       notice: {
-        required: true,
-        errorMessage: "请填写参与须知"
+        rules: [{
+          required: true,
+          errorMessage: "请填写参与须知"
+        }]
       },
       signupRange: {
-        required: true,
-        errorMessage: "请选择报名时间"
+        rules: [{
+          required: true,
+          errorMessage: "请选择报名时间"
+        }]
       },
       activityRange: {
-        required: true,
-        errorMessage: "请选择活动时间"
+        rules: [{
+          required: true,
+          errorMessage: "请选择活动时间"
+        }]
       },
       maxParticipants: {
-        required: true,
-        errorMessage: "请输入最大报名人数",
-        validator: (rule, value, callback) => {
-          const num = Number(value);
-          if (Number.isNaN(num) || num <= 0 || !Number.isInteger(num)) {
-            callback("请输入正整数");
-            return;
+        rules: [
+          {
+            required: true,
+            errorMessage: "请输入最大报名人数"
+          },
+          {
+            validateFunction: (rule, value, data, callback) => {
+              const num = Number(value);
+              if (Number.isNaN(num) || num <= 0 || !Number.isInteger(num)) {
+                callback("请输入正整数");
+                return;
+              }
+              return true;
+            }
           }
-          callback();
-        }
+        ]
       },
       needReview: {
-        required: true,
-        errorMessage: "请选择是否需要审核"
+        rules: [{
+          required: true,
+          errorMessage: "请选择是否需要审核"
+        }]
       },
-      materials: {
-        required: true,
-        errorMessage: "请至少上传 1 张图片",
-        validator: (rule, value, callback) => {
-          if (!Array.isArray(value) || value.length < 1) {
-            callback("请至少上传 1 张图片");
-            return;
+      imageUrls: {
+        rules: [
+          {
+            required: true,
+            errorMessage: "请至少上传 1 张图片"
+          },
+          {
+            validateFunction: (rule, value, data, callback) => {
+              if (!Array.isArray(value) || value.length < 1) {
+                callback("请至少上传 1 张图片");
+                return;
+              }
+              if (value.length > 5) {
+                callback("最多上传 5 张图片");
+                return;
+              }
+              return true;
+            }
           }
-          if (value.length > 5) {
-            callback("最多上传 5 张图片");
-            return;
-          }
-          callback();
-        }
+        ]
       }
     };
-    const handleSubmit = () => {
-      formRef.value.validate().then(() => {
+    function selectImageFile(e) {
+      form.imageUrls = e.tempFiles;
+    }
+    async function successImageFile(e) {
+      let imageUrls = e.tempFiles.map((item) => item.url);
+      let fomData = {
+        ...form,
+        imageUrls,
+        registrationStartTime: form.signupRange[0],
+        registrationEndTime: form.signupRange[1],
+        startTime: form.activityRange[0],
+        endTime: form.activityRange[1],
+        needAudit: form.needReview == "1" ? true : false
+      };
+      let res = await api_activity_index.apiCreateActivity(fomData);
+      if (res.code == 200) {
+        common_vendor.index.hideLoading();
+        setTimeout(() => {
+          common_vendor.index.reLaunch({
+            url: "/pages/user/user"
+          });
+          common_vendor.index.showToast({
+            title: "创建成功",
+            icon: "success"
+          });
+        }, 1e3);
+      }
+    }
+    const handleSubmit = async () => {
+      try {
+        await formRef.value.validate();
+        await filePicker.value.upload();
+        common_vendor.index.showLoading();
+      } catch (e) {
         common_vendor.index.showToast({
-          title: "校验通过，可提交",
-          icon: "success"
+          title: "请完善信息",
+          icon: "error"
         });
-      }).catch((err) => {
-        common_vendor.index.__f__("warn", "at pages/user/publishActivity/publishActivity.vue:238", "表单校验未通过", err);
-      });
+      }
     };
+    common_vendor.onMounted(async () => {
+      let res = await api_club_index.apiGetClubManageList(userId);
+      organizerOptions.value = res.data.items;
+    });
     return (_ctx, _cache) => {
       return {
-        a: common_vendor.o(($event) => form.title = $event),
+        a: common_vendor.o(($event) => form.name = $event),
         b: common_vendor.p({
           placeholder: "请输入活动名称",
-          modelValue: form.title
+          modelValue: form.name
         }),
         c: common_vendor.p({
           label: "活动名称",
-          name: "title",
+          name: "name",
           required: true
         }),
-        d: common_vendor.o(($event) => form.intro = $event),
+        d: common_vendor.o(($event) => form.description = $event),
         e: common_vendor.p({
           type: "textarea",
           placeholder: "请填写活动介绍",
           ["auto-height"]: true,
-          modelValue: form.intro
+          modelValue: form.description
         }),
         f: common_vendor.p({
           label: "活动介绍",
-          name: "intro",
+          name: "description",
           required: true
         }),
-        g: common_vendor.o(($event) => form.type = $event),
+        g: common_vendor.o(($event) => form.activityType = $event),
         h: common_vendor.p({
           localdata: typeOptions,
           placeholder: "请选择活动类型",
-          modelValue: form.type
+          modelValue: form.activityType
         }),
         i: common_vendor.p({
           label: "活动类型",
-          name: "type",
+          name: "activityType",
           required: true
         }),
         j: common_vendor.o(($event) => form.location = $event),
@@ -244,15 +293,15 @@ const _sfc_main = {
           name: "location",
           required: true
         }),
-        m: common_vendor.o(($event) => form.organizer = $event),
+        m: common_vendor.o(($event) => form.clubId = $event),
         n: common_vendor.p({
-          localdata: organizerOptions,
+          localdata: organizerOptions.value,
           placeholder: "请选择主办方",
-          modelValue: form.organizer
+          modelValue: form.clubId
         }),
         o: common_vendor.p({
           label: "活动主办方",
-          name: "organizer",
+          name: "clubId",
           required: true
         }),
         p: common_vendor.o(($event) => form.notice = $event),
@@ -273,6 +322,7 @@ const _sfc_main = {
           ["range-separator"]: "至",
           ["start-placeholder"]: "报名开始时间",
           ["end-placeholder"]: "报名结束时间",
+          start: common_vendor.unref(nowLimit),
           end: signupEndLimit.value,
           modelValue: form.signupRange
         }),
@@ -284,6 +334,7 @@ const _sfc_main = {
         w: common_vendor.o(($event) => form.activityRange = $event),
         x: common_vendor.p({
           type: "datetimerange",
+          disabled: form.signupRange == "",
           ["range-separator"]: "至",
           ["start-placeholder"]: "活动开始时间",
           ["end-placeholder"]: "活动结束时间",
@@ -319,29 +370,32 @@ const _sfc_main = {
           name: "needReview",
           required: true
         }),
-        F: common_vendor.o(($event) => form.materials = $event),
-        G: common_vendor.p({
+        F: common_vendor.sr(filePicker, "755b73c9-22,755b73c9-21", {
+          "k": "filePicker"
+        }),
+        G: common_vendor.o(selectImageFile),
+        H: common_vendor.o(successImageFile),
+        I: common_vendor.o(($event) => form.imageUrls = $event),
+        J: common_vendor.p({
           fileMediatype: "image",
           limit: "5",
           ["auto-upload"]: false,
-          mode: "list",
-          modelValue: form.materials
-        }),
-        H: common_vendor.p({
-          label: "材料上传",
-          name: "materials",
-          required: true
-        }),
-        I: common_vendor.o(handleSubmit),
-        J: common_vendor.sr(formRef, "755b73c9-0", {
-          "k": "formRef"
+          modelValue: form.imageUrls
         }),
         K: common_vendor.p({
+          label: "材料图片上传",
+          name: "imageUrls",
+          required: true
+        }),
+        L: common_vendor.o(handleSubmit),
+        M: common_vendor.sr(formRef, "755b73c9-0", {
+          "k": "formRef"
+        }),
+        N: common_vendor.p({
           modelValue: form,
           rules,
           ["label-position"]: "top",
-          ["label-width"]: "120",
-          ["validate-trigger"]: "bind"
+          ["label-width"]: "120"
         })
       };
     };

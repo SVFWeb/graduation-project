@@ -83,50 +83,53 @@ const _sfc_main = {
           size: "24",
           color: "#fff"
         }),
-        q: common_vendor.p({
+        q: common_vendor.o(($event) => common_vendor.index.navigateTo({
+          url: "/pages/user/clubReview/clubReview"
+        })),
+        r: common_vendor.p({
           type: "star",
           size: "24",
           color: "#fff"
         }),
-        r: common_vendor.o(() => {
+        s: common_vendor.o(() => {
           common_vendor.index.navigateTo({
             url: "/pages/user/myActivity/myActivity"
           });
         }),
-        s: common_vendor.p({
+        t: common_vendor.p({
           type: "medal",
           size: "24",
           color: "#fff"
         }),
-        t: common_vendor.o(() => {
+        v: common_vendor.o(() => {
           common_vendor.index.navigateTo({
             url: `/pages/user/myClub/myClub?id=${common_vendor.unref(userInfo).id}`
           });
         }),
-        v: common_vendor.p({
+        w: common_vendor.p({
           type: "contact",
           size: "24",
           color: "#fff"
         }),
-        w: common_vendor.o(() => common_vendor.index.navigateTo({
+        x: common_vendor.o(() => common_vendor.index.navigateTo({
           url: "/pages/user/classList/classList"
         })),
-        x: common_vendor.unref(token)
+        y: common_vendor.unref(token)
       }, common_vendor.unref(token) ? {
-        y: common_vendor.o(onOutLogin)
+        z: common_vendor.o(onOutLogin)
       } : {}, {
-        z: common_vendor.o(confirmLogout),
-        A: common_vendor.p({
+        A: common_vendor.o(confirmLogout),
+        B: common_vendor.p({
           type: "info",
           title: "退出登录",
           content: "确认退出当前账号？",
           confirmText: "退出",
           cancelText: "取消"
         }),
-        B: common_vendor.sr(logoutPopup, "0f7520f0-8", {
+        C: common_vendor.sr(logoutPopup, "0f7520f0-8", {
           "k": "logoutPopup"
         }),
-        C: common_vendor.p({
+        D: common_vendor.p({
           type: "dialog",
           ["background-color"]: "#fff"
         })

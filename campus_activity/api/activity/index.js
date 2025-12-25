@@ -77,3 +77,13 @@ export const apiActivityReview=(data)=>request({
 	method: 'POST',
 	data
 })
+
+// 获取活动报名统计数据
+export const apiGetActivityRegistrationStats = (activityId, type) => request({
+	url: `/activities/${activityId}/statistics?type=${type}`
+})
+
+// 获取报名统计
+export const apiGetRegistrationStatistics = (data) => request({
+	url: `/activities/${data.activityId}/statistics?managerUserId=${data.managerUserId}`,
+})

@@ -2813,6 +2813,15 @@ function inject(key, defaultValue, treatDefaultAsFactory = false) {
     warn$1(`inject() can only be used inside setup() or functional components.`);
   }
 }
+/*! #__NO_SIDE_EFFECTS__ */
+// @__NO_SIDE_EFFECTS__
+function defineComponent(options, extraOptions) {
+  return isFunction(options) ? (
+    // #8326: extend call and options.name access are considered side-effects
+    // by Rollup, so we have to wrap it in a pure-annotated IIFE.
+    /* @__PURE__ */ (() => extend({ name: options.name }, extraOptions, { setup: options }))()
+  ) : options;
+}
 const isKeepAlive = (vnode) => vnode.type.__isKeepAlive;
 function onActivated(hook, target) {
   registerKeepAliveHook(hook, "a", target);
@@ -7317,9 +7326,9 @@ function isConsoleWritable() {
   return isWritable;
 }
 function initRuntimeSocketService() {
-  const hosts = "26.245.181.160,192.168.1.104,127.0.0.1";
+  const hosts = "26.245.181.160,192.168.1.103,127.0.0.1";
   const port = "8090";
-  const id = "mp-weixin_eaS6FH";
+  const id = "mp-weixin_IJ81N2";
   const lazy = typeof swan !== "undefined";
   let restoreError = lazy ? () => {
   } : initOnError();
@@ -8395,6 +8404,33 @@ const pages = [
       navigationBarTitleText: "新键社团",
       navigationBarBackgroundColor: "#fff"
     }
+  },
+  {
+    path: "pages/user/myActivity/components/com-activity-item-managed/com-activity-item-managed",
+    style: {
+      navigationBarTitleText: ""
+    }
+  },
+  {
+    path: "pages/user/memberReview/memberReview",
+    style: {
+      navigationBarTitleText: "审核列表",
+      navigationBarBackgroundColor: "#fff"
+    }
+  },
+  {
+    path: "pages/user/clubReview/clubReview",
+    style: {
+      navigationBarTitleText: "活动审核",
+      navigationBarBackgroundColor: "#fff"
+    }
+  },
+  {
+    path: "pages/user/myActivity/registrationStatistics/registrationStatistics",
+    style: {
+      navigationBarTitleText: "报名统计",
+      navigationBarBackgroundColor: "#fff"
+    }
   }
 ];
 const tabBar = {
@@ -8774,7 +8810,7 @@ class S {
 function T(e2) {
   return e2 && "string" == typeof e2 ? JSON.parse(e2) : e2;
 }
-const b = true, E = "mp-weixin", A = T(define_process_env_UNI_SECURE_NETWORK_CONFIG_default), P = E, C = T('{"address":["127.0.0.1","26.245.181.160","192.168.1.104"],"servePort":7000,"debugPort":9000,"initialLaunchType":"local","skipFiles":["<node_internals>/**","D:/HBuilderX/plugins/unicloud/**/*.js"]}'), O = T('[{"provider":"alipay","spaceName":"ljy-data","spaceId":"env-00jxuc2o76k9","spaceAppId":"2021006114668726","accessKey":"74li80axEPh8JZpK","secretKey":"SIsUTTWCmLGEKJnL"}]') || [];
+const b = true, E = "mp-weixin", A = T(define_process_env_UNI_SECURE_NETWORK_CONFIG_default), P = E, C = T('{"address":["127.0.0.1","26.245.181.160","192.168.1.103"],"servePort":7000,"debugPort":9000,"initialLaunchType":"local","skipFiles":["<node_internals>/**","D:/HBuilderX/plugins/unicloud/**/*.js"]}'), O = T('[{"provider":"alipay","spaceName":"ljy-data","spaceId":"env-00jxuc2o76k9","spaceAppId":"2021006114668726","accessKey":"74li80axEPh8JZpK","secretKey":"SIsUTTWCmLGEKJnL"}]') || [];
 let N = "";
 try {
   N = "__UNI__D37EE2B";
@@ -11312,12 +11348,16 @@ const onLoad = /* @__PURE__ */ createLifeCycleHook(
 exports._export_sfc = _export_sfc;
 exports.computed = computed;
 exports.createSSRApp = createSSRApp;
+exports.defineComponent = defineComponent;
 exports.e = e$1;
 exports.f = f$1;
+exports.getCurrentInstance = getCurrentInstance;
 exports.index = index;
 exports.initVueI18n = initVueI18n;
 exports.n = n$1;
+exports.nextTick$1 = nextTick$1;
 exports.o = o$1;
+exports.onBeforeUnmount = onBeforeUnmount;
 exports.onLoad = onLoad;
 exports.onMounted = onMounted;
 exports.onShow = onShow;

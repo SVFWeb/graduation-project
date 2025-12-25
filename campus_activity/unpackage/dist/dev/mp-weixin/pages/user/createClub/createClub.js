@@ -19,12 +19,14 @@ if (!Math) {
 const _sfc_main = {
   __name: "createClub",
   setup(__props) {
-    const availableTags = ["班级", "学院", "班级团支部", "音乐", "文艺", "传媒", "社团与协会", "公益志愿"];
+    const levelTags = ["班级", "院级", "校级"];
+    const availableTags = ["团支部", "音乐", "文艺", "传媒", "社团与协会", "公益志愿"];
     const formRef = common_vendor.ref(null);
     const form = common_vendor.reactive({
       iconUrl: [],
       name: "",
       description: "",
+      levelTag: "",
       tags: []
     });
     const coverImageUrl = common_vendor.ref("");
@@ -40,6 +42,9 @@ const _sfc_main = {
       } else {
         form.tags.push(tagValue);
       }
+    }
+    function toggleLevelTag(value) {
+      form.levelTag = value;
     }
     const rules = {
       iconUrl: {
@@ -110,6 +115,7 @@ const _sfc_main = {
           const formData = {
             name: form.name,
             description: form.description || void 0,
+            levelTag: form.levelTag,
             tags: form.tags.length > 0 ? form.tags.join(",") : void 0
           };
           if (filePath.value) {
@@ -123,7 +129,9 @@ const _sfc_main = {
               icon: "success"
             });
             setTimeout(() => {
-              common_vendor.index.navigateBack();
+              common_vendor.index.reLaunch({
+                url: "/pages/user/user"
+              });
             }, 1500);
           } else {
             common_vendor.index.showToast({
@@ -137,10 +145,10 @@ const _sfc_main = {
             title: "创建失败",
             icon: "none"
           });
-          common_vendor.index.__f__("error", "at pages/user/createClub/createClub.vue:195", "创建社团失败", e);
+          common_vendor.index.__f__("error", "at pages/user/createClub/createClub.vue:213", "创建社团失败", e);
         }
       }).catch((err) => {
-        common_vendor.index.__f__("warn", "at pages/user/createClub/createClub.vue:199", "表单校验未通过", err);
+        common_vendor.index.__f__("warn", "at pages/user/createClub/createClub.vue:217", "表单校验未通过", err);
       });
     }
     return (_ctx, _cache) => {
@@ -175,11 +183,28 @@ const _sfc_main = {
           name: "description",
           required: true
         }),
-        l: common_vendor.f(availableTags, (tag, index, i0) => {
+        l: common_vendor.f(levelTags, (tag, index, i0) => {
+          return {
+            a: index,
+            b: common_vendor.o(($event) => toggleLevelTag(tag), index),
+            c: "dbf6d87f-6-" + i0 + ",dbf6d87f-5",
+            d: common_vendor.p({
+              text: tag,
+              type: tag === form.levelTag ? "primary" : "default",
+              inverted: !(tag === form.levelTag)
+            })
+          };
+        }),
+        m: common_vendor.p({
+          label: "社团级别",
+          name: "tags",
+          required: true
+        }),
+        n: common_vendor.f(availableTags, (tag, index, i0) => {
           return {
             a: index,
             b: common_vendor.o(($event) => toggleTag(tag), index),
-            c: "dbf6d87f-6-" + i0 + ",dbf6d87f-5",
+            c: "dbf6d87f-8-" + i0 + ",dbf6d87f-7",
             d: common_vendor.p({
               text: tag,
               type: isTagSelected(tag) ? "primary" : "default",
@@ -187,22 +212,22 @@ const _sfc_main = {
             })
           };
         }),
-        m: common_vendor.p({
+        o: common_vendor.p({
           label: "社团标签",
           name: "tags",
           required: true
         }),
-        n: common_vendor.sr(formRef, "dbf6d87f-0", {
+        p: common_vendor.sr(formRef, "dbf6d87f-0", {
           "k": "formRef"
         }),
-        o: common_vendor.p({
+        q: common_vendor.p({
           modelValue: form,
           rules,
           ["label-position"]: "top",
           ["label-width"]: "120",
           ["validate-trigger"]: "bind"
         }),
-        p: common_vendor.o(handleSubmit)
+        r: common_vendor.o(handleSubmit)
       };
     };
   }

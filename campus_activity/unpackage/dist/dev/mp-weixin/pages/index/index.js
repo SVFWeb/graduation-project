@@ -2,6 +2,7 @@
 const common_vendor = require("../../common/vendor.js");
 const common_assets = require("../../common/assets.js");
 const api_club_index = require("../../api/club/index.js");
+const api_activity_index = require("../../api/activity/index.js");
 if (!Array) {
   const _easycom_uni_notice_bar2 = common_vendor.resolveComponent("uni-notice-bar");
   _easycom_uni_notice_bar2();
@@ -18,38 +19,44 @@ const _sfc_main = {
   __name: "index",
   setup(__props) {
     const clubList = common_vendor.ref([]);
+    const activityList = common_vendor.ref([]);
     async function getClubNewList() {
       let res = await api_club_index.apiGetClubNewList();
       if (res.code == 200) {
         clubList.value = res.data.items;
       }
     }
+    async function getHotActivityList() {
+      let res = await api_activity_index.apiGetHotActivity();
+      if (res.code == 200) {
+        activityList.value = res.data.activities;
+      }
+    }
     common_vendor.onShow(() => {
       getClubNewList();
+      getHotActivityList();
     });
     return (_ctx, _cache) => {
       return {
         a: common_vendor.o(($event) => common_vendor.index.navigateTo({
           url: "/pages/index/searchActivity/searchActivity"
         })),
-        b: common_vendor.f(4, (item, k0, i0) => {
-          return {
-            a: item
-          };
-        }),
-        c: common_assets._imports_0,
-        d: common_vendor.p({
+        b: common_assets._imports_0,
+        c: common_assets._imports_1,
+        d: common_assets._imports_2,
+        e: common_assets._imports_3,
+        f: common_vendor.p({
           showIcon: true,
           scrollable: true,
           single: true,
           text: "精彩热门活动，欢迎您来报名~~"
         }),
-        e: common_vendor.o(() => {
+        g: common_vendor.o(() => {
           common_vendor.index.switchTab({
             url: "/pages/clubList/clubList"
           });
         }),
-        f: common_vendor.f(clubList.value, (item, k0, i0) => {
+        h: common_vendor.f(clubList.value, (item, k0, i0) => {
           return {
             a: item.iconUrl,
             b: common_vendor.t(item.name),
@@ -60,16 +67,12 @@ const _sfc_main = {
             }), item.id)
           };
         }),
-        g: common_vendor.f(6, (item, k0, i0) => {
+        i: common_vendor.f(activityList.value, (item, k0, i0) => {
           return {
-            a: item,
-            b: "1cf27b2a-4-" + i0
-          };
-        }),
-        h: common_vendor.f(6, (item, k0, i0) => {
-          return {
-            a: item,
-            b: "1cf27b2a-6-" + i0
+            a: "1cf27b2a-4-" + i0,
+            b: common_vendor.p({
+              activiyInfo: item
+            })
           };
         })
       };

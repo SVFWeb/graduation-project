@@ -18,7 +18,11 @@
     "pages/user/publishActivity/publishActivity",
     "pages/user/createClass/createClass",
     "pages/user/classList/classList",
-    "pages/user/createClub/createClub"
+    "pages/user/createClub/createClub",
+    "pages/user/myActivity/components/com-activity-item-managed/com-activity-item-managed",
+    "pages/user/memberReview/memberReview",
+    "pages/user/clubReview/clubReview",
+    "pages/user/myActivity/registrationStatistics/registrationStatistics"
   ],
   "window": {
     "navigationBarTextStyle": "black",
