@@ -1,5 +1,6 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
+const api_activity_index = require("../../api/activity/index.js");
 if (!Math) {
   customTabbar();
 }
@@ -9,26 +10,86 @@ const _sfc_main = {
   setup(__props) {
     const isHandlingResult = common_vendor.ref(false);
     const canUseCamera = common_vendor.ref(false);
-    const handleScanResult = (res) => {
+    const userInfo = common_vendor.index.getStorageSync("userInfo");
+    const handleScanResult = async (res) => {
       if (isHandlingResult.value)
         return;
       isHandlingResult.value = true;
-      common_vendor.index.__f__("log", "at pages/scanCode/scanCode.vue:41", "scan result", res);
-      const result = (res == null ? void 0 : res.result) || (res == null ? void 0 : res.code) || (res == null ? void 0 : res.path);
-      if (result) {
-        common_vendor.index.showToast({ title: "签到成功", icon: "success" });
-      } else {
-        common_vendor.index.showToast({ title: "未能识别，请重试", icon: "none" });
+      common_vendor.index.__f__("log", "at pages/scanCode/scanCode.vue:46", "scan result", res);
+      const qrContent = (res == null ? void 0 : res.result) || (res == null ? void 0 : res.code) || (res == null ? void 0 : res.path);
+      if (!qrContent) {
+        common_vendor.index.showToast({
+          title: "未能识别二维码，请重试",
+          icon: "none"
+        });
+        setTimeout(() => {
+          isHandlingResult.value = false;
+        }, 800);
+        return;
       }
-      setTimeout(() => {
-        isHandlingResult.value = false;
-      }, 800);
+      let activityId = null;
+      try {
+        const qrData = JSON.parse(qrContent);
+        if (qrData.activityId) {
+          activityId = qrData.activityId;
+        }
+      } catch (e) {
+        const numId = parseInt(qrContent);
+        if (!isNaN(numId)) {
+          activityId = numId;
+        }
+      }
+      if (!activityId) {
+        common_vendor.index.showToast({
+          title: "二维码格式不正确",
+          icon: "none"
+        });
+        setTimeout(() => {
+          isHandlingResult.value = false;
+        }, 800);
+        return;
+      }
+      common_vendor.index.showLoading({
+        title: "签到中...",
+        mask: true
+      });
+      try {
+        const checkinRes = await api_activity_index.apiCheckinActivity({
+          qrContent,
+          userId: userInfo.id
+        });
+        common_vendor.index.hideLoading();
+        if (checkinRes.code === 200) {
+          common_vendor.index.showToast({
+            title: "签到成功",
+            icon: "success",
+            duration: 2e3
+          });
+          setTimeout(() => {
+            isHandlingResult.value = false;
+          }, 2e3);
+        } else {
+          setTimeout(() => {
+            isHandlingResult.value = false;
+          }, 1500);
+        }
+      } catch (error) {
+        common_vendor.index.hideLoading();
+        common_vendor.index.__f__("error", "at pages/scanCode/scanCode.vue:124", "签到失败:", error);
+        common_vendor.index.showToast({
+          title: "签到失败，请重试",
+          icon: "none"
+        });
+        setTimeout(() => {
+          isHandlingResult.value = false;
+        }, 1500);
+      }
     };
     const onScanCode = (event) => {
       handleScanResult(event == null ? void 0 : event.detail);
     };
     const onCameraError = (err) => {
-      common_vendor.index.__f__("warn", "at pages/scanCode/scanCode.vue:59", "camera error", err);
+      common_vendor.index.__f__("warn", "at pages/scanCode/scanCode.vue:140", "camera error", err);
       common_vendor.index.showToast({ title: "摄像头不可用", icon: "none" });
     };
     const requestCameraAuth = () => new Promise((resolve) => {
@@ -94,7 +155,7 @@ const _sfc_main = {
           handleScanResult(res);
         },
         fail(err) {
-          common_vendor.index.__f__("warn", "at pages/scanCode/scanCode.vue:130", "choose image failed", err);
+          common_vendor.index.__f__("warn", "at pages/scanCode/scanCode.vue:211", "choose image failed", err);
           common_vendor.index.showToast({ title: "未能识别，请重试", icon: "none" });
         }
       });

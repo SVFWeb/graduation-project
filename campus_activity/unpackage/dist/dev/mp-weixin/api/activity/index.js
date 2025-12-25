@@ -54,9 +54,15 @@ const apiActivityReview = (data) => utils_request.request({
 const apiGetRegistrationStatistics = (data) => utils_request.request({
   url: `/activities/${data.activityId}/statistics?managerUserId=${data.managerUserId}`
 });
+const apiCheckinActivity = (data) => utils_request.request({
+  url: "/activities/checkin",
+  method: "POST",
+  data
+});
 exports.apiActivityRate = apiActivityRate;
 exports.apiActivityReview = apiActivityReview;
 exports.apiActivityReviewList = apiActivityReviewList;
+exports.apiCheckinActivity = apiCheckinActivity;
 exports.apiCreateActivity = apiCreateActivity;
 exports.apiGetActivityList = apiGetActivityList;
 exports.apiGetActiviyStatus = apiGetActiviyStatus;

@@ -1288,7 +1288,7 @@ GET /api/activities/1/registrations/status?managerUserId=2
 
 **接口**: `GET /api/activities/{activityId}/registrations/check`
 
-**说明**: 根据活动ID和用户ID查询该用户是否报名了该活动，以及报名状态（待审核、已通过、已拒绝、签到成功）。用于判断用户是否被录取。如果用户已通过审核且已签到，状态会显示为"签到成功"。
+**说明**: 根据活动ID和用户ID查询该用户是否报名了该活动，以及报名状态（待审核、已通过、已拒绝）。用于判断用户是否被录取。
 
 **路径参数**:
 - `activityId`: 活动ID（必填）
@@ -1301,7 +1301,7 @@ GET /api/activities/1/registrations/status?managerUserId=2
 GET /api/activities/1/registrations/check?userId=3
 ```
 
-**响应示例**（已报名且已通过，但未签到）:
+**响应示例**（已报名且已通过）:
 ```json
 {
   "code": 200,
@@ -1311,26 +1311,6 @@ GET /api/activities/1/registrations/check?userId=3
     "registration": {
       "isRegistered": true,
       "status": "已通过",
-      "registrationId": 1,
-      "registrationTime": 1703059200000,
-      "auditTime": 1703059300000,
-      "score": 95,
-      "isAccepted": true
-    }
-  }
-}
-```
-
-**响应示例**（已报名且已通过，且已签到）:
-```json
-{
-  "code": 200,
-  "message": "查询成功",
-  "success": true,
-  "data": {
-    "registration": {
-      "isRegistered": true,
-      "status": "签到成功",
       "registrationId": 1,
       "registrationTime": 1703059200000,
       "auditTime": 1703059300000,
@@ -1378,18 +1358,12 @@ GET /api/activities/1/registrations/check?userId=3
 
 **说明**:
 - `isRegistered`: 是否已报名（true/false）
-- `status`: 报名状态，可能的值：
-  - `"待审核"`: 已报名，等待审核
-  - `"已通过"`: 已报名且审核通过，但未签到
-  - `"已拒绝"`: 已报名但审核被拒绝
-  - `"签到成功"`: 已报名、审核通过且已签到
-  - `null`: 未报名
+- `status`: 报名状态（"待审核"、"已通过"、"已拒绝"），未报名时为 null
 - `registrationId`: 报名记录ID，未报名时为 null
 - `registrationTime`: 报名时间（时间戳，毫秒），未报名时为 null
 - `auditTime`: 审核时间（时间戳，毫秒），未审核时为 null
 - `score`: 评分（0-100），未评分时为 null
-- `isAccepted`: 是否被录取（true/false），当 status 为"已通过"或"签到成功"时为 true，其他情况为 false
-- **状态说明**：如果用户报名状态为"已通过"且已签到，`status` 字段会显示为"签到成功"；如果只是"已通过"但未签到，则显示"已通过"
+- `isAccepted`: 是否被录取（true/false），当 status 为"已通过"时为 true，其他情况为 false
 - 如果活动不存在，返回错误信息
 
 ---

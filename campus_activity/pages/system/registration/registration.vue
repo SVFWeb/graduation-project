@@ -13,12 +13,12 @@
 				</uni-forms-item>
 
 				<uni-forms-item label="密码" name="password" required>
-					<input class="input" type="password" v-model="formData.password" placeholder="请输入密码（至少6位）"
+					<input class="input" password v-model="formData.password" placeholder="请输入密码（至少6位）"
 						maxlength="20" @input="onInput('password', $event)" />
 				</uni-forms-item>
 
 				<uni-forms-item label="确认密码" name="confirmPassword" required>
-					<input class="input" type="password" v-model="formData.confirmPassword" placeholder="请再次输入密码"
+					<input class="input" password v-model="formData.confirmPassword" placeholder="请再次输入密码"
 						maxlength="20" @input="onInput('confirmPassword', $event)" />
 				</uni-forms-item>
 			</uni-forms>

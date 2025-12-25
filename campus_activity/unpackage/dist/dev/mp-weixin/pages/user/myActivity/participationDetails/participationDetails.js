@@ -29,6 +29,8 @@ const _sfc_main = {
       title: "待录取"
     }, {
       title: "已录取"
+    }, {
+      title: "未签到"
     }]);
     async function getActiviyStatus() {
       let res = await api_activity_index.apiGetActiviyStatus({
@@ -38,11 +40,15 @@ const _sfc_main = {
       if (res.code == 200) {
         let status = res.data.registration.status;
         registrationTime.value = res.data.registration.registrationTime;
+        common_vendor.index.__f__("log", "at pages/user/myActivity/participationDetails/participationDetails.vue:50", res);
         if (status === "已通过") {
-          active.value = 2;
+          active.value = 3;
         } else if (status === "已拒绝") {
           active.value = 2;
           list.value[2].title = "已拒绝";
+        } else if (status === "签到成功") {
+          active.value = 3;
+          list.value[3].title = "签到成功";
         }
       }
     }

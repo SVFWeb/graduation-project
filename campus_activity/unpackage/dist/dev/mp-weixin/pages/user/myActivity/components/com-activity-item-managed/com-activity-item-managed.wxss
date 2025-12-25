@@ -168,3 +168,118 @@
   height: 90rpx;
   line-height: 90rpx;
 }
+.qrcode-popup.data-v-76fc133d {
+  width: 600rpx;
+  background: #ffffff;
+  border-radius: 24rpx;
+  overflow: hidden;
+  box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.2);
+}
+.qrcode-popup .qrcode-header.data-v-76fc133d {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx;
+  border-bottom: 1px solid #f0f0f0;
+}
+.qrcode-popup .qrcode-header .qrcode-title.data-v-76fc133d {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+.qrcode-popup .qrcode-header .qrcode-close.data-v-76fc133d {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #f5f5f5;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.qrcode-popup .qrcode-header .qrcode-close.data-v-76fc133d:active {
+  background: #e8e8e8;
+  transform: scale(0.95);
+}
+.qrcode-popup .qrcode-content.data-v-76fc133d {
+  padding: 40rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400rpx;
+}
+.qrcode-popup .qrcode-content .qrcode-loading.data-v-76fc133d {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20rpx;
+  color: #666;
+  font-size: 28rpx;
+}
+.qrcode-popup .qrcode-content .qrcode-wrapper.data-v-76fc133d {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24rpx;
+  width: 100%;
+}
+.qrcode-popup .qrcode-content .qrcode-wrapper .qrcode-image.data-v-76fc133d {
+  width: 400rpx;
+  height: 400rpx;
+  border-radius: 16rpx;
+  background: #fafafa;
+  border: 2rpx solid #f0f0f0;
+}
+.qrcode-popup .qrcode-content .qrcode-wrapper .qrcode-info.data-v-76fc133d {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+  width: 100%;
+}
+.qrcode-popup .qrcode-content .qrcode-wrapper .qrcode-info .activity-name.data-v-76fc133d {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+  text-align: center;
+}
+.qrcode-popup .qrcode-content .qrcode-wrapper .qrcode-info .activity-id.data-v-76fc133d {
+  font-size: 24rpx;
+  color: #999;
+  text-align: center;
+}
+.qrcode-popup .qrcode-content .qrcode-error.data-v-76fc133d {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20rpx;
+  color: #ff3b30;
+  font-size: 28rpx;
+}
+.qrcode-popup .qrcode-footer.data-v-76fc133d {
+  padding: 24rpx 32rpx 32rpx;
+  border-top: 1px solid #f0f0f0;
+}
+.qrcode-popup .qrcode-footer .save-btn.data-v-76fc133d {
+  width: 100%;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  background: linear-gradient(135deg, #FCB857 0%, #FF9800 100%);
+  border-radius: 16rpx;
+  color: #ffffff;
+  font-size: 28rpx;
+  font-weight: 500;
+  box-shadow: 0 8rpx 24rpx rgba(252, 184, 87, 0.3);
+  transition: all 0.3s ease;
+}
+.qrcode-popup .qrcode-footer .save-btn.data-v-76fc133d:active {
+  transform: scale(0.98);
+  box-shadow: 0 4rpx 12rpx rgba(252, 184, 87, 0.3);
+}

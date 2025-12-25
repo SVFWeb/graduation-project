@@ -27,8 +27,8 @@
 			}">
 				报名统计
 			</view>
-			<view class="btn_item">
-				生成签到码
+			<view class="btn_item" @click="showQrcode">
+				签到码
 			</view>
 		</view>
 
@@ -37,6 +37,41 @@
 		</view>
 
 	</view>
+
+	<!-- 二维码弹窗 -->
+	<uni-popup ref="qrcodePopup" type="center" background-color="rgba(0,0,0,0.5)">
+		<view class="qrcode-popup">
+			<view class="qrcode-header">
+				<view class="qrcode-title">活动签到二维码</view>
+				<view class="qrcode-close" @click="closeQrcode">
+					<uni-icons type="closeempty" size="24" color="#666"></uni-icons>
+				</view>
+			</view>
+			<view class="qrcode-content">
+				<view v-if="loading" class="qrcode-loading">
+					<uni-icons type="spinner-cycle" size="40" color="#FCB857"></uni-icons>
+					<text>加载中...</text>
+				</view>
+				<view v-else-if="qrcodeData" class="qrcode-wrapper">
+					<image :src="qrcodeData.qrCode" mode="aspectFit" class="qrcode-image"></image>
+					<view class="qrcode-info">
+						<text class="activity-name">{{ qrcodeData.activityName }}</text>
+						<text class="activity-id">活动ID: {{ qrcodeData.activityId }}</text>
+					</view>
+				</view>
+				<view v-else class="qrcode-error">
+					<uni-icons type="info" size="40" color="#ff3b30"></uni-icons>
+					<text>加载失败，请重试</text>
+				</view>
+			</view>
+			<view class="qrcode-footer" v-if="qrcodeData">
+				<view class="save-btn" @click="saveQrcode">
+					<uni-icons type="download" size="18" color="#fff"></uni-icons>
+					<text>保存到相册</text>
+				</view>
+			</view>
+		</view>
+	</uni-popup>
 </template>
 
 <script setup>
@@ -44,10 +79,14 @@
 		ref
 	} from 'vue'
 	import formatTime from '@/utils/dateUtil.js'
+	import request from '@/utils/request.js'
 
 	const props = defineProps(['activeInfo'])
 	const rateActivityPopup = ref()
 	const rateValue = ref(0)
+	const qrcodePopup = ref(null)
+	const qrcodeData = ref(null)
+	const loading = ref(false)
 
 	function activityDetail() {
 		uni.navigateTo({
@@ -68,6 +107,154 @@
 	function onOpenRate() {
 
 	}
+
+	// 显示二维码弹窗
+	async function showQrcode() {
+		qrcodePopup.value?.open()
+		loading.value = true
+		qrcodeData.value = null
+		
+		try {
+			const res = await request({
+				url: `/activities/${props.activeInfo.id}/qrcode`,
+				method: 'GET'
+			})
+			
+			if (res.code === 200 && res.data?.qrcode) {
+				qrcodeData.value = res.data.qrcode
+			} else {
+				uni.showToast({
+					title: res.message || '获取二维码失败',
+					icon: 'none'
+				})
+			}
+		} catch (error) {
+			console.error('获取二维码失败:', error)
+			uni.showToast({
+				title: '获取二维码失败',
+				icon: 'none'
+			})
+		} finally {
+			loading.value = false
+		}
+	}
+
+	// 关闭二维码弹窗
+	function closeQrcode() {
+		qrcodePopup.value?.close()
+	}
+
+	// 保存二维码到相册
+	async function saveQrcode() {
+		if (!qrcodeData.value?.qrCode) {
+			uni.showToast({
+				title: '二维码数据不存在',
+				icon: 'none'
+			})
+			return
+		}
+
+		const base64 = qrcodeData.value.qrCode
+		
+		// #ifdef MP-WEIXIN
+		uni.showLoading({
+			title: '保存中...'
+		})
+
+		try {
+			// 将base64转换为临时文件
+			const filePath = await base64ToPath(base64)
+			
+			// 保存到相册
+			await new Promise((resolve, reject) => {
+				uni.saveImageToPhotosAlbum({
+					filePath: filePath,
+					success: () => {
+						uni.hideLoading()
+						uni.showToast({
+							title: '保存成功',
+							icon: 'success'
+						})
+						resolve()
+					},
+					fail: (err) => {
+						uni.hideLoading()
+						if (err.errMsg.includes('auth deny')) {
+							uni.showModal({
+								title: '需要相册权限',
+								content: '请在设置中开启相册权限以保存图片',
+								confirmText: '去设置',
+								success: (res) => {
+									if (res.confirm) {
+										uni.openSetting()
+									}
+								}
+							})
+						} else {
+							uni.showToast({
+								title: '保存失败',
+								icon: 'none'
+							})
+						}
+						reject(err)
+					}
+				})
+			})
+		} catch (error) {
+			console.error('保存二维码失败:', error)
+			uni.hideLoading()
+			uni.showToast({
+				title: '保存失败',
+				icon: 'none'
+			})
+		}
+		// #endif
+		
+		// #ifdef H5
+		// H5端直接下载图片
+		try {
+			const [, format] = /data:image\/(\w+);base64,(.*)/.exec(base64) || []
+			const link = document.createElement('a')
+			link.href = base64
+			link.download = `qrcode_${qrcodeData.value.activityName || Date.now()}.${format || 'png'}`
+			document.body.appendChild(link)
+			link.click()
+			document.body.removeChild(link)
+			uni.showToast({
+				title: '下载成功',
+				icon: 'success'
+			})
+		} catch (error) {
+			console.error('下载二维码失败:', error)
+			uni.showToast({
+				title: '下载失败',
+				icon: 'none'
+			})
+		}
+		// #endif
+	}
+
+	// 将base64转换为临时文件路径（仅微信小程序）
+	// #ifdef MP-WEIXIN
+	function base64ToPath(base64) {
+		return new Promise((resolve, reject) => {
+			const [, format, bodyData] = /data:image\/(\w+);base64,(.*)/.exec(base64) || []
+			if (!format) {
+				reject(new Error('ERROR_BASE64SRC_PARSE'))
+				return
+			}
+			const filePath = `${wx.env.USER_DATA_PATH}/${Date.now()}.${format}`
+			const fs = wx.getFileSystemManager()
+			fs.writeFile({
+				filePath: filePath,
+				data: bodyData,
+				encoding: 'base64',
+				success: () => resolve(filePath),
+				fail: reject
+			})
+		})
+	}
+	// #endif
 </script>
 
 <style lang="scss" scoped>
@@ -233,6 +420,138 @@
 				text-align: center;
 				height: 90rpx;
 				line-height: 90rpx;
+			}
+		}
+	}
+
+	// 二维码弹窗样式
+	.qrcode-popup {
+		width: 600rpx;
+		background: #ffffff;
+		border-radius: 24rpx;
+		overflow: hidden;
+		box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.2);
+
+		.qrcode-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 32rpx;
+			border-bottom: 1px solid #f0f0f0;
+
+			.qrcode-title {
+				font-size: 32rpx;
+				font-weight: 600;
+				color: #1a1a1a;
+			}
+
+			.qrcode-close {
+				width: 48rpx;
+				height: 48rpx;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				border-radius: 50%;
+				background: #f5f5f5;
+				cursor: pointer;
+				transition: all 0.3s ease;
+
+				&:active {
+					background: #e8e8e8;
+					transform: scale(0.95);
+				}
+			}
+		}
+
+		.qrcode-content {
+			padding: 40rpx;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			min-height: 400rpx;
+
+			.qrcode-loading {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				gap: 20rpx;
+				color: #666;
+				font-size: 28rpx;
+			}
+
+			.qrcode-wrapper {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 24rpx;
+				width: 100%;
+
+				.qrcode-image {
+					width: 400rpx;
+					height: 400rpx;
+					border-radius: 16rpx;
+					background: #fafafa;
+					border: 2rpx solid #f0f0f0;
+				}
+
+				.qrcode-info {
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					gap: 12rpx;
+					width: 100%;
+
+					.activity-name {
+						font-size: 28rpx;
+						font-weight: 600;
+						color: #1a1a1a;
+						text-align: center;
+					}
+
+					.activity-id {
+						font-size: 24rpx;
+						color: #999;
+						text-align: center;
+					}
+				}
+			}
+
+			.qrcode-error {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				gap: 20rpx;
+				color: #ff3b30;
+				font-size: 28rpx;
+			}
+		}
+
+		.qrcode-footer {
+			padding: 24rpx 32rpx 32rpx;
+			border-top: 1px solid #f0f0f0;
+
+			.save-btn {
+				width: 100%;
+				height: 88rpx;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 12rpx;
+				background: linear-gradient(135deg, #FCB857 0%, #FF9800 100%);
+				border-radius: 16rpx;
+				color: #ffffff;
+				font-size: 28rpx;
+				font-weight: 500;
+				box-shadow: 0 8rpx 24rpx rgba(252, 184, 87, 0.3);
+				transition: all 0.3s ease;
+
+				&:active {
+					transform: scale(0.98);
+					box-shadow: 0 4rpx 12rpx rgba(252, 184, 87, 0.3);
+				}
 			}
 		}
 	}

@@ -31,24 +31,105 @@
 	import customTabbar from '@/components/custom-tabbar/custom-tabbar.vue';
 	import { onLoad } from '@dcloudio/uni-app';
 	import { ref } from 'vue';
+	import { apiCheckinActivity } from '@/api/activity/index.js';
 
 	const isHandlingResult = ref(false);
 	const canUseCamera = ref(false);
+	// 获取用户信息
+	const userInfo = uni.getStorageSync('userInfo');
 
-	const handleScanResult = (res) => {
+	// 处理扫码结果并执行签到
+	const handleScanResult = async (res) => {
 		if (isHandlingResult.value) return;
 		isHandlingResult.value = true;
+		
 		console.log('scan result', res);
-		const result = res?.result || res?.code || res?.path;
-		if (result) {
-			uni.showToast({ title: '签到成功', icon: 'success' });
-		} else {
-			uni.showToast({ title: '未能识别，请重试', icon: 'none' });
+		
+		// 获取扫描结果
+		const qrContent = res?.result || res?.code || res?.path;
+		
+		if (!qrContent) {
+			uni.showToast({ 
+				title: '未能识别二维码，请重试', 
+				icon: 'none' 
+			});
+			setTimeout(() => {
+				isHandlingResult.value = false;
+			}, 800);
+			return;
 		}
-		// 适当延时避免快速重复触发
-		setTimeout(() => {
-			isHandlingResult.value = false;
-		}, 800);
+
+		// 验证二维码内容格式
+		let activityId = null;
+		try {
+			// 尝试解析JSON格式的二维码内容
+			const qrData = JSON.parse(qrContent);
+			if (qrData.activityId) {
+				activityId = qrData.activityId;
+			}
+		} catch (e) {
+			// 如果不是JSON格式，可能是纯数字的活动ID
+			const numId = parseInt(qrContent);
+			if (!isNaN(numId)) {
+				activityId = numId;
+			}
+		}
+
+		if (!activityId) {
+			uni.showToast({ 
+				title: '二维码格式不正确', 
+				icon: 'none' 
+			});
+			setTimeout(() => {
+				isHandlingResult.value = false;
+			}, 800);
+			return;
+		}
+
+		// 显示加载提示
+		uni.showLoading({
+			title: '签到中...',
+			mask: true
+		});
+
+		try {
+			// 调用签到接口（使用方式2：传递二维码内容和用户ID）
+			const checkinRes = await apiCheckinActivity({
+				qrContent: qrContent,
+				userId: userInfo.id
+			});
+
+			uni.hideLoading();
+
+			if (checkinRes.code === 200) {
+				// 签到成功
+				uni.showToast({ 
+					title: '签到成功', 
+					icon: 'success',
+					duration: 2000
+				});
+				
+				// 延迟后重置状态，允许继续扫码
+				setTimeout(() => {
+					isHandlingResult.value = false;
+				}, 2000);
+			} else {
+				// 签到失败，错误信息已在request.js中通过showModal显示
+				setTimeout(() => {
+					isHandlingResult.value = false;
+				}, 1500);
+			}
+		} catch (error) {
+			uni.hideLoading();
+			console.error('签到失败:', error);
+			uni.showToast({ 
+				title: '签到失败，请重试', 
+				icon: 'none' 
+			});
+			setTimeout(() => {
+				isHandlingResult.value = false;
+			}, 1500);
+		}
 	};
 
 	const onScanCode = (event) => {

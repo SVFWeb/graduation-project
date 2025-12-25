@@ -87,3 +87,10 @@ export const apiGetActivityRegistrationStats = (activityId, type) => request({
 export const apiGetRegistrationStatistics = (data) => request({
 	url: `/activities/${data.activityId}/statistics?managerUserId=${data.managerUserId}`,
 })
+
+// 扫码签到
+export const apiCheckinActivity = (data) => request({
+	url: '/activities/checkin',
+	method: 'POST',
+	data
+})

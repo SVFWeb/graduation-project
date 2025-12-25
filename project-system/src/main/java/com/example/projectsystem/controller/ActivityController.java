@@ -8,6 +8,9 @@ import com.example.projectsystem.commons.Results;
 import com.example.projectsystem.domain.*;
 import com.example.projectsystem.dto.*;
 import com.example.projectsystem.service.*;
+import com.example.projectsystem.util.QrCodeUtil;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -32,17 +35,23 @@ public class ActivityController {
     private final ClubService clubService;
     private final ClubMemberService clubMemberService;
     private final UserService userService;
+    private final ActivityCheckinService activityCheckinService;
+    private final ObjectMapper objectMapper;
 
     public ActivityController(ActivityService activityService,
                               ActivityRegistrationService activityRegistrationService,
                               ClubService clubService,
                               ClubMemberService clubMemberService,
-                              UserService userService) {
+                              UserService userService,
+                              ActivityCheckinService activityCheckinService,
+                              ObjectMapper objectMapper) {
         this.activityService = activityService;
         this.activityRegistrationService = activityRegistrationService;
         this.clubService = clubService;
         this.clubMemberService = clubMemberService;
         this.userService = userService;
+        this.activityCheckinService = activityCheckinService;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -779,7 +788,7 @@ public class ActivityController {
 
     /**
      * 查询用户是否报名了某个活动及其审核状态
-     * 根据活动ID和用户ID查询报名状态（待审核、已通过、已拒绝）
+     * 根据活动ID和用户ID查询报名状态（待审核、已通过、已拒绝、签到成功）
      */
     @GetMapping("/{activityId}/registrations/check")
     public Results checkUserRegistration(@PathVariable Long activityId,
@@ -804,9 +813,24 @@ public class ActivityController {
                 result.put("isRegistered", false);
                 result.put("status", null);
             } else {
-                // 已报名，返回报名状态
+                // 已报名，判断状态
+                String status = registration.getStatus();
+                
+                // 如果状态是"已通过"，检查是否已签到
+                if ("已通过".equals(status)) {
+                    ActivityCheckin checkin = activityCheckinService.lambdaQuery()
+                            .eq(ActivityCheckin::getActivityId, activityId)
+                            .eq(ActivityCheckin::getUserId, userId)
+                            .one();
+                    
+                    // 如果已签到，状态改为"签到成功"
+                    if (checkin != null) {
+                        status = "签到成功";
+                    }
+                }
+                
                 result.put("isRegistered", true);
-                result.put("status", registration.getStatus());
+                result.put("status", status);
                 result.put("registrationId", registration.getId());
                 result.put("registrationTime", registration.getRegistrationTime() != null
                         ? registration.getRegistrationTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
@@ -815,8 +839,8 @@ public class ActivityController {
                         ? registration.getAuditTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
                         : null);
                 result.put("score", registration.getScore());
-                // 判断是否被录取（状态为"已通过"）
-                result.put("isAccepted", "已通过".equals(registration.getStatus()));
+                // 判断是否被录取（状态为"已通过"或"签到成功"）
+                result.put("isAccepted", "已通过".equals(registration.getStatus()) || "签到成功".equals(status));
             }
 
             return Results.success()
@@ -1087,6 +1111,138 @@ public class ActivityController {
             return result;
         } catch (Exception e) {
             return Results.fail().message("查询失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 生成活动签到二维码
+     * 二维码内容为JSON格式：{"activityId": 活动ID}
+     */
+    @GetMapping("/{activityId}/qrcode")
+    public Results generateQrCode(@PathVariable Long activityId) {
+        try {
+            Activity activity = activityService.getById(activityId);
+            if (activity == null) {
+                return Results.fail().message("活动不存在");
+            }
+
+            // 构建二维码内容（JSON格式）
+            Map<String, Object> qrContent = new HashMap<>();
+            qrContent.put("activityId", activityId);
+            String qrContentJson = objectMapper.writeValueAsString(qrContent);
+
+            // 生成二维码Base64图片（300x300像素）
+            String qrCodeBase64 = QrCodeUtil.generateQrCodeBase64(qrContentJson, 300, 300);
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("qrCode", qrCodeBase64);
+            result.put("activityId", activityId);
+            result.put("activityName", activity.getName());
+
+            return Results.success()
+                    .message("生成二维码成功")
+                    .data("qrcode", result);
+        } catch (Exception e) {
+            return Results.fail().message("生成二维码失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 扫码签到
+     * 只有报名活动且审核通过的人员才能扫描签到
+     * 只能在活动开始时间至活动结束时间之间签到
+     */
+    @PostMapping("/checkin")
+    public Results checkin(@RequestBody Map<String, Object> request) {
+        try {
+            Long activityId = null;
+            Long userId = null;
+            String qrContent = null;
+
+            // 支持两种方式：直接传activityId和userId，或者传二维码内容
+            if (request.containsKey("activityId") && request.containsKey("userId")) {
+                activityId = Long.valueOf(request.get("activityId").toString());
+                userId = Long.valueOf(request.get("userId").toString());
+            } else if (request.containsKey("qrContent") && request.containsKey("userId")) {
+                qrContent = request.get("qrContent").toString();
+                userId = Long.valueOf(request.get("userId").toString());
+                // 解析二维码内容
+                Map<String, Object> qrData = objectMapper.readValue(qrContent, new TypeReference<Map<String, Object>>() {});
+                activityId = Long.valueOf(qrData.get("activityId").toString());
+            } else {
+                return Results.fail().message("参数不完整，需要提供activityId和userId，或者qrContent和userId");
+            }
+
+            if (activityId == null || userId == null) {
+                return Results.fail().message("活动ID和用户ID不能为空");
+            }
+
+            // 验证活动是否存在
+            Activity activity = activityService.getById(activityId);
+            if (activity == null) {
+                return Results.fail().message("活动不存在");
+            }
+
+            // 验证活动是否已通过审核
+            if (activity.getAuditStatus() == null || activity.getAuditStatus() != 1) {
+                return Results.fail().message("活动尚未通过审核，无法签到");
+            }
+
+            // 验证用户是否报名且审核通过
+            ActivityRegistration registration = activityRegistrationService.lambdaQuery()
+                    .eq(ActivityRegistration::getActivityId, activityId)
+                    .eq(ActivityRegistration::getUserId, userId)
+                    .one();
+
+            if (registration == null) {
+                return Results.fail().message("您未报名该活动，无法签到");
+            }
+
+            if (!"已通过".equals(registration.getStatus())) {
+                return Results.fail().message("您的报名尚未通过审核，无法签到");
+            }
+
+            // 验证时间：只能在活动开始时间至活动结束时间之间签到
+            LocalDateTime now = LocalDateTime.now();
+            if (activity.getStartTime() == null || activity.getEndTime() == null) {
+                return Results.fail().message("活动时间未配置，无法签到");
+            }
+
+            if (now.isBefore(activity.getStartTime())) {
+                return Results.fail().message("活动尚未开始，无法签到");
+            }
+
+            if (now.isAfter(activity.getEndTime())) {
+                return Results.fail().message("活动已结束，无法签到");
+            }
+
+            // 检查是否已经签到过
+            ActivityCheckin existingCheckin = activityCheckinService.lambdaQuery()
+                    .eq(ActivityCheckin::getActivityId, activityId)
+                    .eq(ActivityCheckin::getUserId, userId)
+                    .one();
+
+            if (existingCheckin != null) {
+                return Results.fail().message("您已经签到过了");
+            }
+
+            // 记录签到
+            ActivityCheckin checkin = new ActivityCheckin();
+            checkin.setActivityId(activityId);
+            checkin.setUserId(userId);
+            checkin.setCheckinTime(now);
+            activityCheckinService.save(checkin);
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("checkinId", checkin.getId());
+            result.put("checkinTime", checkin.getCheckinTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+            result.put("activityName", activity.getName());
+
+            return Results.success()
+                    .message("签到成功")
+                    .data("checkin", result);
+        } catch (Exception e) {
+            return Results.fail().message("签到失败: " + e.getMessage());
         }
     }
 

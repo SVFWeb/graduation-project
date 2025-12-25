@@ -33,6 +33,8 @@
 		title: '待录取'
 	}, {
 		title: '已录取'
+	},{
+		title:'未签到'
 	}])
 
 	async function getActiviyStatus() {
@@ -44,12 +46,17 @@
 		if (res.code == 200) {
 			let status = res.data.registration.status
 			registrationTime.value=res.data.registration.registrationTime
+			
+			console.log(res);
 
 			if (status === '已通过') {
-				active.value = 2
+				active.value = 3
 			} else if (status === '已拒绝') {
 				active.value = 2
 				list.value[2].title ='已拒绝'
+			}else if(status==='签到成功'){
+				active.value = 3
+				list.value[3].title ='签到成功'
 			}
 
 		}
