@@ -32,9 +32,9 @@
 	import comActivityItem from './components/com-activity-item/com-activity-item.vue';
 	import comActivityItemManaged from './components/com-activity-item-managed/com-activity-item-managed.vue';
 	import {
-		onMounted,
 		ref
 	} from 'vue'
+	import {onShow} from '@dcloudio/uni-app'
 	import {
 		apiGetJoinOrManangeActivity
 	} from '@/api/activity/index.js'
@@ -80,7 +80,7 @@
 		}
 	}
 
-	onMounted(() => {
+	onShow(() => {
 		getJoinOrManangeActivityList()
 	})
 </script>

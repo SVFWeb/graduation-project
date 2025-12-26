@@ -659,7 +659,113 @@ POST /api/clubs/1/members/1/manager?isManager=true
 
 ---
 
-### 2. 获取待审核活动列表（由 isBoss = true 的用户审核）
+### 2. 编辑已审核成功的活动
+
+**接口**: `PUT /api/activities/update`
+
+**说明**: 只能编辑审核状态为已通过（`audit_status = 1`）的活动。编辑后活动将重新进入审核状态（`audit_status = 0`，`status = "审核中"`），需要重新审核。只有该活动主办社团的管理员才能编辑。
+
+**请求参数**:
+```json
+{
+  "activityId": 1,
+  "managerUserId": 2,
+  "name": "更新后的活动名称",
+  "description": "更新后的活动介绍",
+  "activityType": "活动类型",
+  "location": "活动地点",
+  "notice": "参与须知",
+  "registrationStartTime": "2025-12-20T09:00:00",
+  "registrationEndTime": "2025-12-25T18:00:00",
+  "startTime": "2025-12-26T09:00:00",
+  "endTime": "2025-12-26T18:00:00",
+  "maxParticipants": 150,
+  "needAudit": true,
+  "imageUrls": [
+    "http://123.com/a.jpg",
+    "http://123.com/b.jpg"
+  ]
+}
+```
+
+**参数说明**:
+- `activityId`: 活动ID（必填）
+- `managerUserId`: 管理员用户ID（必填，需要是该活动主办社团的管理员）
+- `name`: 活动名称（可选）
+- `description`: 活动介绍（可选）
+- `activityType`: 活动类型（可选）
+- `location`: 活动地点（可选）
+- `notice`: 参与须知（可选）
+- `registrationStartTime`: 报名开始时间（可选，格式：yyyy-MM-dd HH:mm:ss）
+- `registrationEndTime`: 报名结束时间（可选，格式：yyyy-MM-dd HH:mm:ss）
+- `startTime`: 活动开始时间（可选，格式：yyyy-MM-dd HH:mm:ss）
+- `endTime`: 活动结束时间（可选，格式：yyyy-MM-dd HH:mm:ss）
+- `maxParticipants`: 最大报名人数（可选）
+- `needAudit`: 人员是否需要审核（可选，true/false）
+- `imageUrls`: 活动图片URL数组（可选）
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "编辑活动成功，活动已重新进入审核状态",
+  "success": true,
+  "data": {
+    "activity": {
+      "id": 1,
+      "name": "更新后的活动名称",
+      "description": "更新后的活动介绍",
+      "auditStatus": 0,
+      "status": "审核中",
+      ...
+    }
+  }
+}
+```
+
+**错误响应示例**（活动不存在）:
+```json
+{
+  "code": 400,
+  "message": "活动不存在",
+  "success": false,
+  "data": {}
+}
+```
+
+**错误响应示例**（活动未审核成功）:
+```json
+{
+  "code": 400,
+  "message": "只能编辑已审核成功的活动",
+  "success": false,
+  "data": {}
+}
+```
+
+**错误响应示例**（无权限）:
+```json
+{
+  "code": 400,
+  "message": "无权限编辑该活动，您不是该活动主办社团的管理员",
+  "success": false,
+  "data": {}
+}
+```
+
+**说明**:
+- 只能编辑审核状态为已通过（`audit_status = 1`）的活动
+- 只有该活动主办社团的管理员才能编辑
+- 所有字段均为可选，只更新请求中提供的字段（部分更新）
+- 编辑后活动将重新进入审核状态：
+  - `auditStatus` 设置为 `0`（待审核）
+  - `status` 设置为 `"审核中"`
+  - `auditUserId` 和 `auditTime` 清空
+- 编辑后的活动需要重新通过审核才能发布
+
+---
+
+### 3. 获取待审核活动列表（由 isBoss = true 的用户审核）
 
 **接口**: `GET /api/activities/pending`
 
@@ -693,7 +799,7 @@ GET /api/activities/pending?bossUserId=1&currentPage=1&pageSize=10
 
 ---
 
-### 3. 审核活动
+### 4. 审核活动
 
 **接口**: `POST /api/activities/review`
 
@@ -721,7 +827,7 @@ GET /api/activities/pending?bossUserId=1&currentPage=1&pageSize=10
 
 ---
 
-### 4. 获取待审核人员列表（由主办方管理者审核）
+### 5. 获取待审核人员列表（由主办方管理者审核）
 
 **接口**: `GET /api/activities/{activityId}/registrations/pending`
 
@@ -758,7 +864,7 @@ GET /api/activities/1/registrations/pending?managerUserId=2
 
 ---
 
-### 5. 审核报名人员
+### 6. 审核报名人员
 
 **接口**: `POST /api/activities/registrations/review`
 
@@ -799,7 +905,7 @@ GET /api/activities/1/registrations/pending?managerUserId=2
 
 ---
 
-### 6. 模糊查询活动列表
+### 7. 模糊查询活动列表
 
 **接口**: `POST /api/activities/search`
 
@@ -842,7 +948,7 @@ GET /api/activities/1/registrations/pending?managerUserId=2
 
 ---
 
-### 7. 获取热门活动列表
+### 8. 获取热门活动列表
 
 **接口**: `GET /api/activities/hot`
 
@@ -903,7 +1009,7 @@ GET /api/activities/hot
 
 ---
 
-### 8. 根据社团ID获取该社团的活动列表
+### 9. 根据社团ID获取该社团的活动列表
 
 **接口**: `GET /api/activities/club/{clubId}`
 
@@ -973,7 +1079,7 @@ GET /api/activities/club/1?currentPage=1&pageSize=10
 
 ---
 
-### 9. 根据活动ID查看活动详情
+### 10. 根据活动ID查看活动详情
 
 **接口**: `GET /api/activities/{id}`
 
@@ -1011,7 +1117,7 @@ GET /api/activities/club/1?currentPage=1&pageSize=10
 
 ---
 
-### 10. 生成活动签到二维码
+### 11. 生成活动签到二维码
 
 **接口**: `GET /api/activities/{activityId}/qrcode`
 
@@ -1050,7 +1156,7 @@ GET /api/activities/1/qrcode
 
 ---
 
-### 11. 扫码签到
+### 12. 扫码签到
 
 **接口**: `POST /api/activities/checkin`
 
@@ -1171,7 +1277,7 @@ GET /api/activities/1/qrcode
 
 ---
 
-### 12. 人员活动报名
+### 13. 人员活动报名
 
 **接口**: `POST /api/activities/{activityId}/register`
 
@@ -1204,7 +1310,7 @@ GET /api/activities/1/qrcode
 
 ---
 
-### 13. 人员评价活动
+### 14. 人员评价活动
 
 **接口**: `POST /api/activities/comment`
 
@@ -1231,7 +1337,7 @@ GET /api/activities/1/qrcode
 
 ---
 
-### 14. 获取审核人员列表（由社团的管理者进行审核）
+### 15. 获取审核人员列表（由社团的管理者进行审核）
 
 **接口**: `GET /api/activities/{activityId}/registrations/status`
 
@@ -1289,7 +1395,7 @@ GET /api/activities/1/registrations/status?managerUserId=2
 
 ---
 
-### 15. 查询用户是否报名了某个活动及其审核状态
+### 16. 查询用户是否报名了某个活动及其审核状态
 
 **接口**: `GET /api/activities/{activityId}/registrations/check`
 
@@ -1399,7 +1505,7 @@ GET /api/activities/1/registrations/check?userId=3
 
 ---
 
-### 16. 根据用户ID获取用户参与或管理的社团活动
+### 17. 根据用户ID获取用户参与或管理的社团活动
 
 **接口**: `GET /api/activities/user/{userId}`
 

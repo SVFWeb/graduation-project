@@ -18,7 +18,7 @@
 			</uni-forms-item>
 
 			<uni-forms-item label="活动主办方" name="clubId" required>
-				<uni-data-select v-model="form.clubId" :localdata="organizerOptions" placeholder="请选择主办方" />
+				<uni-data-select v-model="form.clubId" :localdata="organizerOptions" placeholder="请选择主办方" :disabled="isEditMode" />
 			</uni-forms-item>
 
 			<uni-forms-item label="参与须知" name="notice" required>
@@ -50,7 +50,7 @@
 				<view class="tip-text">至少上传 1 张，最多 5 张图片</view>
 			</uni-forms-item>
 
-			<button class="submit-btn" type="primary" @click="handleSubmit">提交</button>
+			<button class="submit-btn" type="primary" @click="handleSubmit">{{ isEditMode ? '保存修改' : '提交' }}</button>
 		</uni-forms>
 	</view>
 </template>
@@ -63,15 +63,23 @@
 		ref
 	} from 'vue'
 	import {
+		onLoad
+	} from '@dcloudio/uni-app'
+	import {
 		apiGetClubManageList
 	} from '@/api/club/index.js'
 	import {
-		apiCreateActivity
+		apiCreateActivity,
+		apiQueryActivity,
+		apiUpdateActivity
 	} from '@/api/activity/index.js'
+	import formatTime from '@/utils/dateUtil.js'
 
 	const userId = uni.getStorageSync('userInfo').id
 	const formRef = ref(null)
 	const filePicker = ref(null)
+	const activityId = ref(null) // 编辑模式的活动ID
+	const isEditMode = computed(() => !!activityId.value)
 	const form = reactive({
 		name: '',
 		description: '',
@@ -241,37 +249,94 @@
 	}
 
 	function selectImageFile(e) {
-		form.imageUrls = e.tempFiles
+		form.imageUrls.push(e.tempFiles)
 	}
 
 	async function successImageFile(e) {
-		let imageUrls = e.tempFiles.map(item => item.url)
-		let fomData = {
-			...form,
-			imageUrls,
-			registrationStartTime: form.signupRange[0],
-			registrationEndTime: form.signupRange[1],
-			startTime: form.activityRange[0],
-			endTime: form.activityRange[1],
-			needAudit:form.needReview=='1'?true:false
-		}
+		let imageUrls = form.imageUrls.map(item => item.url)
+		await submitForm(imageUrls)
+	}
 
-		let res = await apiCreateActivity(fomData)
+	// 提交表单数据
+	async function submitForm(imageUrls) {
+		if (isEditMode.value) {
+			// 编辑模式：调用更新接口
+			// 如果没有新上传的图片，使用原有图片
+			if (!imageUrls || imageUrls.length === 0) {
+				imageUrls = form.imageUrls.map(item => item.url || item)
+			}
+			
+			let updateData = {
+				activityId: activityId.value,
+				managerUserId: userId,
+				name: form.name,
+				description: form.description,
+				activityType: form.activityType,
+				location: form.location,
+				notice: form.notice,
+				registrationStartTime: formatTime(form.signupRange[0]) ,
+				registrationEndTime: formatTime(form.signupRange[1]),
+				startTime: formatTime(form.activityRange[0]),
+				endTime: formatTime(form.activityRange[1]),
+				maxParticipants: Number(form.maxParticipants),
+				needAudit: form.needReview == '1' ? true : false,
+				imageUrls: imageUrls
+			}
 
-		if (res.code == 200) {
-			uni.hideLoading()
+			let res = await apiUpdateActivity(updateData)
 
-			setTimeout(() => {
-				uni.reLaunch({
-					url: '/pages/user/user'
-				})
+			if (res.code == 200) {
+				uni.hideLoading()
 
+				setTimeout(() => {
+					uni.navigateBack()
+
+					uni.showToast({
+						title: '编辑成功',
+						icon: 'success'
+					})
+				}, 1000)
+			} else {
+				uni.hideLoading()
 				uni.showToast({
-					title: '创建成功',
-					icon: 'success'
+					title: res.message || '编辑失败',
+					icon: 'none'
 				})
-			}, 1000)
+			}
+		} else {
+			// 创建模式：调用创建接口
+			let fomData = {
+				...form,
+				imageUrls,
+				registrationStartTime: form.signupRange[0],
+				registrationEndTime: form.signupRange[1],
+				startTime: form.activityRange[0],
+				endTime: form.activityRange[1],
+				needAudit: form.needReview == '1' ? true : false
+			}
 
+			let res = await apiCreateActivity(fomData)
+
+			if (res.code == 200) {
+				uni.hideLoading()
+
+				setTimeout(() => {
+					uni.reLaunch({
+						url: '/pages/user/user'
+					})
+
+					uni.showToast({
+						title: '创建成功',
+						icon: 'success'
+					})
+				}, 1000)
+			} else {
+				uni.hideLoading()
+				uni.showToast({
+					title: res.message || '创建失败',
+					icon: 'none'
+				})
+			}
 		}
 	}
 
@@ -280,18 +345,79 @@
 			// 主动触发表单校验
 			await formRef.value.validate()
 			
-			await filePicker.value.upload()
-
 			uni.showLoading()
-
+			
+			// 检查是否有待上传的文件
+			const hasNewFiles = form.imageUrls.some(item => !item.url || item.status === 'ready')
+			
+			if (hasNewFiles) {
+				// 有新文件需要上传
+				await filePicker.value.upload()
+			} else {
+				// 没有新文件，直接提交（编辑模式下使用原有图片）
+				await submitForm([])
+			}
 
 		} catch (e) {
+			uni.hideLoading()
 			uni.showToast({
 				title: '请完善信息',
 				icon: 'error'
 			})
 		}
 	}
+
+	// 加载活动详情数据（编辑模式）
+	async function loadActivityData(id) {
+		try {
+			const res = await apiQueryActivity(id)
+			console.log(res);
+			if (res.code === 200 && res.data?.activity) {
+				const activity = res.data.activity
+				
+				// 填充表单数据
+				form.name = activity.name || ''
+				form.description = activity.description || ''
+				form.activityType = activity.activityType || ''
+				form.location = activity.location || ''
+				form.clubId = activity.clubId || ''
+				form.notice = activity.notice || ''
+				form.maxParticipants = String(activity.maxParticipants || '1')
+				form.needReview = activity.needAudit ? '1' : '0'
+				
+				// 设置时间范围
+				if (activity.registrationStartTime && activity.registrationEndTime) {
+					form.signupRange = [activity.registrationStartTime, activity.registrationEndTime]
+				}
+				if (activity.startTime && activity.endTime) {
+					form.activityRange = [activity.startTime, activity.endTime]
+				}
+				
+				// 设置图片（需要转换为uni-file-picker需要的格式）
+				if (res.data.imageUrls && res.data.imageUrls.length > 0) {
+					form.imageUrls = res.data.imageUrls.map(url => ({
+						url: url,
+						extname: 'jpg',
+						name: 'image.jpg'
+					}))
+				}
+			}
+		} catch (error) {
+			console.error('加载活动数据失败:', error)
+			uni.showToast({
+				title: '加载活动数据失败',
+				icon: 'none'
+			})
+		}
+	}
+
+	onLoad((options) => {
+		// 检测是否是编辑模式
+		if (options.id) {
+			activityId.value = options.id
+			loadActivityData(options.id)
+		}
+	})
 
 	onMounted(async () => {
 		let res = await apiGetClubManageList(userId)

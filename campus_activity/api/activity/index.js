@@ -94,3 +94,10 @@ export const apiCheckinActivity = (data) => request({
 	method: 'POST',
 	data
 })
+
+// 更新活动
+export const apiUpdateActivity = (data) => request({
+	url: '/activities/update',
+	method: 'PUT',
+	data
+})

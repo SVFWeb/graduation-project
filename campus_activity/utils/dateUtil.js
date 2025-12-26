@@ -1,6 +1,12 @@
 export default function formatTime(timestamp, format = 'YYYY-MM-DD hh:mm:ss') {
 	if (!timestamp) return ''
 
+	// 如果已经是标准格式的时间字符串，直接返回
+	const datetimeRegex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/
+	if (typeof timestamp === 'string' && datetimeRegex.test(timestamp)) {
+		return timestamp
+	}
+
 	// 如果是字符串时间戳，转换为数字
 	timestamp = Number(timestamp)
 

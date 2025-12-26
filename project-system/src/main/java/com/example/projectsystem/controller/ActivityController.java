@@ -105,6 +105,101 @@ public class ActivityController {
     }
 
     /**
+     * 编辑已审核成功的活动
+     * 只能编辑审核状态为已通过（audit_status = 1）的活动
+     * 编辑后活动将重新进入审核状态（audit_status = 0，status = "审核中"）
+     */
+    @PutMapping("/update")
+    public Results updateActivity(@RequestBody ActivityUpdateRequest request) {
+        try {
+            if (request.getActivityId() == null) {
+                return Results.fail().message("活动ID不能为空");
+            }
+            if (request.getManagerUserId() == null) {
+                return Results.fail().message("管理员用户ID不能为空");
+            }
+
+            // 查询活动
+            Activity activity = activityService.getById(request.getActivityId());
+            if (activity == null) {
+                return Results.fail().message("活动不存在");
+            }
+
+            // 验证活动是否已审核成功
+            if (activity.getAuditStatus() == null || activity.getAuditStatus() != 1) {
+                return Results.fail().message("只能编辑已审核成功的活动");
+            }
+
+            // 校验是否为该社团管理员
+            ClubMember member = clubMemberService.lambdaQuery()
+                    .eq(ClubMember::getClubId, activity.getClubId())
+                    .eq(ClubMember::getUserId, request.getManagerUserId())
+                    .one();
+            if (member == null || member.getIsManager() == null || !member.getIsManager()) {
+                return Results.fail().message("无权限编辑该活动，您不是该活动主办社团的管理员");
+            }
+
+            // 更新活动信息（只更新提供的字段）
+            if (StringUtils.hasText(request.getName())) {
+                activity.setName(request.getName());
+            }
+            if (request.getDescription() != null) {
+                activity.setDescription(request.getDescription());
+            }
+            if (request.getActivityType() != null) {
+                activity.setActivityType(request.getActivityType());
+            }
+            if (request.getLocation() != null) {
+                activity.setLocation(request.getLocation());
+            }
+            if (request.getNotice() != null) {
+                activity.setNotice(request.getNotice());
+            }
+            if (request.getRegistrationStartTime() != null) {
+                activity.setRegistrationStartTime(request.getRegistrationStartTime());
+            }
+            if (request.getRegistrationEndTime() != null) {
+                activity.setRegistrationEndTime(request.getRegistrationEndTime());
+            }
+            if (request.getStartTime() != null) {
+                activity.setStartTime(request.getStartTime());
+            }
+            if (request.getEndTime() != null) {
+                activity.setEndTime(request.getEndTime());
+            }
+            if (request.getMaxParticipants() != null) {
+                activity.setMaxParticipants(request.getMaxParticipants());
+            }
+            if (request.getNeedAudit() != null) {
+                activity.setNeedAudit(request.getNeedAudit());
+            }
+            if (request.getImageUrls() != null) {
+                // 图片 URL 数组用逗号拼接存储
+                if (!CollectionUtils.isEmpty(request.getImageUrls())) {
+                    String joined = String.join(",", request.getImageUrls());
+                    activity.setImageUrls(joined);
+                } else {
+                    activity.setImageUrls(null);
+                }
+            }
+
+            // 编辑后重新进入审核状态
+            activity.setAuditStatus(0); // 待审核
+            activity.setStatus("审核中");
+            activity.setAuditUserId(null);
+            activity.setAuditTime(null);
+
+            activityService.updateById(activity);
+
+            return Results.success()
+                    .message("编辑活动成功，活动已重新进入审核状态")
+                    .data("activity", activity);
+        } catch (Exception e) {
+            return Results.fail().message("编辑活动失败: " + e.getMessage());
+        }
+    }
+
+    /**
      * 获取待审核活动列表（由 isBoss = true 的用户查看）
      */
     @GetMapping("/pending")

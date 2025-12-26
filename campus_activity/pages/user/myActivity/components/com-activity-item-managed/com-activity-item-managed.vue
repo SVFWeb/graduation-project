@@ -17,7 +17,7 @@
 			<view class="btn_item" @click="activityDetail">
 				活动详情
 			</view>
-			<view class="btn_item" v-if="activeInfo.needAudit" @click="memberReview">
+			<view class="btn_item"  @click="memberReview">
 				人员审核
 			</view>
 			<view class="btn_item" @click="()=>{
@@ -26,6 +26,9 @@
 				})
 			}">
 				报名统计
+			</view>
+			<view class="btn_item" @click="editActivity">
+				活动编辑
 			</view>
 			<view class="btn_item" @click="showQrcode">
 				签到码
@@ -100,13 +103,12 @@
 		})
 	}
 
-	function onParticipationDetail() {
-
+	function editActivity() {
+		uni.navigateTo({
+			url: `/pages/user/publishActivity/publishActivity?id=${props.activeInfo.id}`
+		})
 	}
 
-	function onOpenRate() {
-
-	}
 
 	// 显示二维码弹窗
 	async function showQrcode() {
@@ -341,7 +343,8 @@
 		}
 
 		.activity_btn {
-			display: flex;
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
 			gap: 20rpx;
 			margin-bottom: 8rpx;
 
