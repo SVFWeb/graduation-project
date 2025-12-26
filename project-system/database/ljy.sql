@@ -45,6 +45,7 @@ CREATE TABLE `activity`  (
   `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `score` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '0' COMMENT '活动总分',
+  `is_published` tinyint(1) NULL DEFAULT 1 COMMENT '是否上架(0-下架,1-上架)',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_club_id`(`club_id` ASC) USING BTREE,
   INDEX `idx_status`(`status` ASC) USING BTREE,

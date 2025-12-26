@@ -104,6 +104,12 @@ public class Activity implements Serializable {
     @TableField("audit_user_id")
     private Long auditUserId;
 
+    /**
+     * 是否上架(0-下架,1-上架)
+     */
+    @TableField("is_published")
+    private Boolean isPublished;
+
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;

@@ -18,8 +18,12 @@
 				</com-activity-item>
 			</view>
 			<view v-else>
-				<com-activity-item-managed v-for="item in activity_managed" :key="item.id" :activeInfo="item">
-
+				<com-activity-item-managed 
+				v-for="item in activity_managed" 
+				:key="item.id" 
+				:activeInfo="item"
+				@updataActivityList="getJoinOrManangeActivityList"
+				>
 				</com-activity-item-managed>
 			</view>
 
@@ -75,6 +79,7 @@
 			let {
 				activities
 			} = res.data
+			
 			activeTab.value === 'participated' ? activity_participated.value = activities : activity_managed.value =
 				activities
 		}

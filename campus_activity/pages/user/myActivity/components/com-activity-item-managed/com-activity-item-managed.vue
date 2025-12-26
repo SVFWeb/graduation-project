@@ -6,6 +6,10 @@
 			</view>
 			<view class="activity_info_right">
 				<view class="title">{{ activeInfo.name }}</view>
+				<view class="status-tag" :class="activeInfo.isPublished ? 'online' : 'offline'">
+					{{ activeInfo.isPublished ? '上线状态' : '下线状态' }}
+				</view>
+				<br />
 				<view class="type">{{ activeInfo.activityType }}</view>
 				<view class="timer">{{ formatTime(activeInfo.startTime,'YYYY.MM.DD hh:mm') }} 至
 					{{ formatTime(activeInfo.endTime,'YYYY.MM.DD hh:mm') }}
@@ -17,7 +21,7 @@
 			<view class="btn_item" @click="activityDetail">
 				活动详情
 			</view>
-			<view class="btn_item"  @click="memberReview">
+			<view class="btn_item" @click="memberReview">
 				人员审核
 			</view>
 			<view class="btn_item" @click="()=>{
@@ -32,6 +36,9 @@
 			</view>
 			<view class="btn_item" @click="showQrcode">
 				签到码
+			</view>
+			<view class="btn_item" @click="onChangeActivityStatus(activeInfo.isPublished)">
+				{{ activeInfo.isPublished?'活动下架':'活动上架' }}
 			</view>
 		</view>
 
@@ -81,10 +88,15 @@
 	import {
 		ref
 	} from 'vue'
+	import {
+		apiUpdateActivityStatus
+	} from '@/api/activity/index.js'
 	import formatTime from '@/utils/dateUtil.js'
 	import request from '@/utils/request.js'
 
 	const props = defineProps(['activeInfo'])
+	const emits=defineEmits(['updataActivityList'])
+	const userId = uni.getStorageSync('userInfo').id
 	const rateActivityPopup = ref()
 	const rateValue = ref(0)
 	const qrcodePopup = ref(null)
@@ -96,8 +108,8 @@
 			url: `/pages/activity/activityDetail/activityDetail?id=${props.activeInfo.id}`
 		})
 	}
-	
-	function memberReview(){
+
+	function memberReview() {
 		uni.navigateTo({
 			url: `/pages/user/memberReview/memberReview?id=${props.activeInfo.id}`
 		})
@@ -109,19 +121,42 @@
 		})
 	}
 
+	function onChangeActivityStatus(value) {
+		uni.showModal({
+			content: value ? '确认活动下架活动？' : '确认活动上架活动？',
+			async success(e) {
+				if (e.confirm) {
+					let res = await apiUpdateActivityStatus(props.activeInfo.id, {
+						managerUserId: userId,
+						isPublished: !value
+					})
+
+					if (res.code == 200) {
+						
+						emits('updataActivityList')
+						uni.showToast({
+							title: res.message,
+							icon: 'success'
+						})
+					}
+				}
+			}
+		})
+	}
+
 
 	// 显示二维码弹窗
 	async function showQrcode() {
 		qrcodePopup.value?.open()
 		loading.value = true
 		qrcodeData.value = null
-		
+
 		try {
 			const res = await request({
 				url: `/activities/${props.activeInfo.id}/qrcode`,
 				method: 'GET'
 			})
-			
+
 			if (res.code === 200 && res.data?.qrcode) {
 				qrcodeData.value = res.data.qrcode
 			} else {
@@ -157,7 +192,7 @@
 		}
 
 		const base64 = qrcodeData.value.qrCode
-		
+
 		// #ifdef MP-WEIXIN
 		uni.showLoading({
 			title: '保存中...'
@@ -166,7 +201,7 @@
 		try {
 			// 将base64转换为临时文件
 			const filePath = await base64ToPath(base64)
-			
+
 			// 保存到相册
 			await new Promise((resolve, reject) => {
 				uni.saveImageToPhotosAlbum({
@@ -211,7 +246,7 @@
 			})
 		}
 		// #endif
-		
+
 		// #ifdef H5
 		// H5端直接下载图片
 		try {
@@ -338,6 +373,46 @@
 					color: #666;
 					display: flex;
 					align-items: center;
+				}
+
+				.status-tag {
+					display: inline-flex;
+					align-items: center;
+					padding: 4rpx 16rpx;
+					border-radius: 20rpx;
+					font-size: 22rpx;
+					font-weight: 500;
+					margin-bottom: 20rpx;
+					line-height: 1.4;
+
+					&.online {
+						background: rgba(76, 175, 80, 0.1);
+						color: #4CAF50;
+						border: 1rpx solid rgba(76, 175, 80, 0.3);
+					}
+
+					&.offline {
+						background: rgba(244, 67, 54, 0.1);
+						color: #F44336;
+						border: 1rpx solid rgba(244, 67, 54, 0.3);
+					}
+
+					&::before {
+						content: '';
+						display: inline-block;
+						width: 8rpx;
+						height: 8rpx;
+						border-radius: 50%;
+						margin-right: 8rpx;
+					}
+
+					&.online::before {
+						background-color: #4CAF50;
+					}
+
+					&.offline::before {
+						background-color: #F44336;
+					}
 				}
 			}
 		}

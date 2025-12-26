@@ -59,6 +59,16 @@ const apiCheckinActivity = (data) => utils_request.request({
   method: "POST",
   data
 });
+const apiUpdateActivity = (data) => utils_request.request({
+  url: "/activities/update",
+  method: "PUT",
+  data
+});
+const apiUpdateActivityStatus = (id, data) => utils_request.request({
+  url: `/activities/${id}/publish-status`,
+  method: "PUT",
+  data
+});
 exports.apiActivityRate = apiActivityRate;
 exports.apiActivityReview = apiActivityReview;
 exports.apiActivityReviewList = apiActivityReviewList;
@@ -74,4 +84,6 @@ exports.apiGetRegistrationStatistics = apiGetRegistrationStatistics;
 exports.apiJoinActivity = apiJoinActivity;
 exports.apiMemberReview = apiMemberReview;
 exports.apiQueryActivity = apiQueryActivity;
+exports.apiUpdateActivity = apiUpdateActivity;
+exports.apiUpdateActivityStatus = apiUpdateActivityStatus;
 //# sourceMappingURL=../../../.sourcemap/mp-weixin/api/activity/index.js.map

@@ -40,6 +40,10 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
         if (activity.getScore() == null) {
             activity.setScore(BigDecimal.ZERO);
         }
+        // 新创建的活动默认下架，需要审核通过后手动上架
+        if (activity.getIsPublished() == null) {
+            activity.setIsPublished(false);
+        }
 
         save(activity);
         return activity;

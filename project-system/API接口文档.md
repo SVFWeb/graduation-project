@@ -827,7 +827,116 @@ GET /api/activities/pending?bossUserId=1&currentPage=1&pageSize=10
 
 ---
 
-### 5. 获取待审核人员列表（由主办方管理者审核）
+### 5. 上架/下架活动
+
+**接口**: `PUT /api/activities/{activityId}/publish-status`
+
+**说明**: 统一接口用于上架或下架活动。只有社团管理员或超级管理员可以操作。只有审核通过的活动才能上架。
+
+**路径参数**:
+- `activityId`: 活动ID（必填）
+
+**请求参数** (请求体):
+```json
+{
+  "managerUserId": 2,
+  "isPublished": true
+}
+```
+
+**参数说明**:
+- `managerUserId`: 管理员用户ID（必填，需要是超级管理员或该活动主办社团的管理员）
+- `isPublished`: 是否上架（必填，true-上架，false-下架）
+
+**请求示例**（上架活动）:
+```json
+PUT /api/activities/1/publish-status
+{
+  "managerUserId": 2,
+  "isPublished": true
+}
+```
+
+**请求示例**（下架活动）:
+```json
+PUT /api/activities/1/publish-status
+{
+  "managerUserId": 2,
+  "isPublished": false
+}
+```
+
+**响应示例**（上架成功）:
+```json
+{
+  "code": 200,
+  "message": "活动上架成功",
+  "success": true,
+  "data": {
+    "activity": {
+      "id": 1,
+      "name": "活动名称",
+      "isPublished": true,
+      ...
+    }
+  }
+}
+```
+
+**响应示例**（下架成功）:
+```json
+{
+  "code": 200,
+  "message": "活动下架成功",
+  "success": true,
+  "data": {
+    "activity": {
+      "id": 1,
+      "name": "活动名称",
+      "isPublished": false,
+      ...
+    }
+  }
+}
+```
+
+**错误响应示例**（无权限）:
+```json
+{
+  "code": 400,
+  "message": "无权限操作该活动",
+  "success": false,
+  "data": {}
+}
+```
+
+**错误响应示例**（活动未审核通过，尝试上架）:
+```json
+{
+  "code": 400,
+  "message": "活动尚未通过审核，无法上架",
+  "success": false,
+  "data": {}
+}
+```
+
+**说明**:
+- **上架操作**（`isPublished = true`）:
+  - 只有审核通过的活动（`auditStatus = 1`）才能上架
+  - 上架后，活动在查询列表中可见（普通用户可以看到）
+  - 如果活动未审核通过，返回："活动尚未通过审核，无法上架"
+- **下架操作**（`isPublished = false`）:
+  - 下架后，活动在普通查询列表中不可见（`isPublished = false`）
+  - 已下架的活动无法报名和签到
+  - 管理员仍可通过管理接口查看已下架的活动
+- **权限要求**：超级管理员（`isBoss = true`）或该活动主办社团的管理员
+- 如果活动不存在，返回："活动不存在"
+- 如果无权限，返回："无权限操作该活动"
+- 如果参数不完整，返回："参数不完整，需要提供 managerUserId 和 isPublished"
+
+---
+
+### 6. 获取待审核人员列表（由主办方管理者审核）
 
 **接口**: `GET /api/activities/{activityId}/registrations/pending`
 
@@ -864,7 +973,7 @@ GET /api/activities/1/registrations/pending?managerUserId=2
 
 ---
 
-### 6. 审核报名人员
+### 7. 审核报名人员
 
 **接口**: `POST /api/activities/registrations/review`
 
@@ -905,7 +1014,7 @@ GET /api/activities/1/registrations/pending?managerUserId=2
 
 ---
 
-### 7. 模糊查询活动列表
+### 8. 模糊查询活动列表
 
 **接口**: `POST /api/activities/search`
 
@@ -943,12 +1052,13 @@ GET /api/activities/1/registrations/pending?managerUserId=2
 
 **说明**:
 - 不返回审核状态为"已拒绝"的活动（`auditStatus = 2`）
+- 只返回已上架的活动（`isPublished = true`）
 - 支持根据关键字、状态、分类、级别等条件进行模糊查询
 - 活动状态会根据当前时间自动刷新（报名中/等待中/进行中/已结束）
 
 ---
 
-### 8. 获取热门活动列表
+### 9. 获取热门活动列表
 
 **接口**: `GET /api/activities/hot`
 
@@ -1000,7 +1110,7 @@ GET /api/activities/hot
 ```
 
 **说明**:
-- 只返回已通过审核且状态为"报名中"的活动（`auditStatus = 1` 且 `status = "报名中"`）
+- 只返回已通过审核、已上架且状态为"报名中"的活动（`auditStatus = 1` 且 `isPublished = true` 且 `status = "报名中"`）
 - 按报名人数（`currentParticipants`）降序排序
 - 最多返回4个活动
 - `currentParticipants`: 当前已通过的报名人数（实时统计状态为"已通过"的报名记录）
@@ -1009,7 +1119,7 @@ GET /api/activities/hot
 
 ---
 
-### 9. 根据社团ID获取该社团的活动列表
+### 10. 根据社团ID获取该社团的活动列表
 
 **接口**: `GET /api/activities/club/{clubId}`
 
@@ -1070,7 +1180,7 @@ GET /api/activities/club/1?currentPage=1&pageSize=10
 ```
 
 **说明**:
-- 返回指定社团的所有活动列表
+- 返回指定社团的所有已上架活动列表（`isPublished = true`）
 - 按创建时间降序排序（最新的在前）
 - 支持分页查询
 - `currentParticipants`: 当前已通过的报名人数（实时统计状态为"已通过"的报名记录）
@@ -1079,14 +1189,17 @@ GET /api/activities/club/1?currentPage=1&pageSize=10
 
 ---
 
-### 10. 根据活动ID查看活动详情
+### 11. 根据活动ID查看活动详情
 
 **接口**: `GET /api/activities/{id}`
 
 **路径参数**:
 - `id`: 活动ID
 
-**说明**: 返回活动实体信息，并额外返回解析好的图片URL数组。活动信息中包含 `currentParticipants` 字段，表示当前已通过的报名人数。
+**请求参数** (查询参数):
+- `managerUserId`: 管理员用户ID（可选），如果提供且用户是管理员，可以查看已下架的活动
+
+**说明**: 返回活动实体信息，并额外返回解析好的图片URL数组。活动信息中包含 `currentParticipants` 字段，表示当前已通过的报名人数。普通用户无法查看已下架的活动，管理员可以查看。
 
 **响应示例**:
 ```json
@@ -1113,11 +1226,14 @@ GET /api/activities/club/1?currentPage=1&pageSize=10
 
 **说明**:
 - `currentParticipants`: 当前已通过的报名人数（统计状态为"已通过"的报名记录）
+- `isPublished`: 是否上架（true-上架，false-下架）
+- 普通用户无法查看已下架的活动（`isPublished = false`），会返回："活动已下架，无法查看"
+- 管理员（超级管理员或该活动主办社团的管理员）可以查看已下架的活动
 - 如果活动不存在，返回错误信息
 
 ---
 
-### 11. 生成活动签到二维码
+### 12. 生成活动签到二维码
 
 **接口**: `GET /api/activities/{activityId}/qrcode`
 
@@ -1156,7 +1272,7 @@ GET /api/activities/1/qrcode
 
 ---
 
-### 12. 扫码签到
+### 13. 扫码签到
 
 **接口**: `POST /api/activities/checkin`
 
@@ -1257,10 +1373,11 @@ GET /api/activities/1/qrcode
 **验证规则**:
 1. 验证活动是否存在
 2. 验证活动是否已通过审核（`auditStatus = 1`）
-3. 验证用户是否报名了该活动
-4. 验证用户报名状态是否为"已通过"
-5. 验证当前时间是否在活动开始时间至活动结束时间之间
-6. 防止重复签到（同一用户对同一活动只能签到一次）
+3. 验证活动是否已上架（`isPublished = true`）
+4. 验证用户是否报名了该活动
+5. 验证用户报名状态是否为"已通过"
+6. 验证当前时间是否在活动开始时间至活动结束时间之间
+7. 防止重复签到（同一用户对同一活动只能签到一次）
 
 **说明**:
 - `checkinId`: 签到记录ID
@@ -1268,6 +1385,7 @@ GET /api/activities/1/qrcode
 - `activityName`: 活动名称
 - 如果活动不存在，返回："活动不存在"
 - 如果活动未通过审核，返回："活动尚未通过审核，无法签到"
+- 如果活动已下架，返回："活动已下架，无法签到"
 - 如果用户未报名，返回："您未报名该活动，无法签到"
 - 如果报名未通过审核，返回："您的报名尚未通过审核，无法签到"
 - 如果活动时间未配置，返回："活动时间未配置，无法签到"
@@ -1277,7 +1395,7 @@ GET /api/activities/1/qrcode
 
 ---
 
-### 13. 人员活动报名
+### 14. 人员活动报名
 
 **接口**: `POST /api/activities/{activityId}/register`
 
@@ -1292,9 +1410,19 @@ GET /api/activities/1/qrcode
 ```
 
 **说明**:
-- 活动必须已通过审核才能报名；
+- 活动必须已通过审核（`auditStatus = 1`）且已上架（`isPublished = true`）才能报名；
 - 报名时间必须在设置的报名时间范围内；
 - 如果活动设置需要审核（`needAudit = true`），报名状态为 `"待审核"`，否则为 `"已通过"`。
+
+**错误响应示例**（活动已下架）:
+```json
+{
+  "code": 400,
+  "message": "活动已下架，无法报名",
+  "success": false,
+  "data": {}
+}
+```
 
 **响应示例**:
 ```json
@@ -1310,7 +1438,7 @@ GET /api/activities/1/qrcode
 
 ---
 
-### 14. 人员评价活动
+### 15. 人员评价活动
 
 **接口**: `POST /api/activities/comment`
 
@@ -1337,7 +1465,7 @@ GET /api/activities/1/qrcode
 
 ---
 
-### 15. 获取审核人员列表（由社团的管理者进行审核）
+### 16. 获取审核人员列表（由社团的管理者进行审核）
 
 **接口**: `GET /api/activities/{activityId}/registrations/status`
 
@@ -1395,7 +1523,7 @@ GET /api/activities/1/registrations/status?managerUserId=2
 
 ---
 
-### 16. 查询用户是否报名了某个活动及其审核状态
+### 17. 查询用户是否报名了某个活动及其审核状态
 
 **接口**: `GET /api/activities/{activityId}/registrations/check`
 
@@ -1505,7 +1633,7 @@ GET /api/activities/1/registrations/check?userId=3
 
 ---
 
-### 17. 根据用户ID获取用户参与或管理的社团活动
+### 18. 根据用户ID获取用户参与或管理的社团活动
 
 **接口**: `GET /api/activities/user/{userId}`
 
@@ -1693,19 +1821,20 @@ GET /api/activities/user/1?keyword=讲座
 
 **说明**:
 - `type` 参数说明：
-  - `participated`: 只返回用户参与的活动，响应数据中 `activities` 字段包含参与的活动列表
-  - `managed`: 只返回用户管理的活动，响应数据中 `activities` 字段包含管理的活动列表
+  - `participated`: 只返回用户参与的活动，响应数据中 `activities` 字段包含参与的活动列表（包括已下架的活动）
+  - `managed`: 只返回用户管理的活动，响应数据中 `activities` 字段包含管理的活动列表（包括已下架的活动）
   - `all` 或不传: 返回两种活动，响应数据中包含 `participated` 和 `managed` 两个字段
 - `keyword` 参数说明：
   - 用于模糊搜索活动名称和描述
   - 不区分大小写
   - 支持部分匹配（如关键字"科技"会匹配"科技创新活动"和"科技前沿讲座"）
-- `participated`: 用户参与的活动列表（通过报名记录查询）
-- `managed`: 用户管理的活动列表（用户是社团管理员，查询这些社团发布的活动）
+- `participated`: 用户参与的活动列表（通过报名记录查询，包括已下架的活动）
+- `managed`: 用户管理的活动列表（用户是社团管理员，查询这些社团发布的活动，包括已下架的活动）
 - 活动列表中的活动都会自动刷新状态（报名中/等待中/进行中/已结束）
 - **活动列表排序规则**：优先显示进行中的活动，其他活动按创建时间倒序排列
 - `currentParticipants`: 当前已通过的报名人数（实时统计状态为"已通过"的报名记录）
 - `imageUrls`: 活动图片URL数组（从数据库中的逗号分隔字符串解析而来）
+- `isPublished`: 是否上架（true-上架，false-下架）
 - 如果用户没有参与任何活动，`participated` 或 `activities` 为空数组
 - 如果用户不是任何社团的管理员，`managed` 或 `activities` 为空数组
 - 如果用户ID为空，返回错误信息

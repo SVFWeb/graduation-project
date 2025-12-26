@@ -33,6 +33,7 @@ public class ActivityDTO {
     private Integer auditStatus;
     private LocalDateTime auditTime;
     private Long auditUserId;
+    private Boolean isPublished;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
 
@@ -72,6 +73,7 @@ public class ActivityDTO {
         this.auditStatus = activity.getAuditStatus();
         this.auditTime = activity.getAuditTime();
         this.auditUserId = activity.getAuditUserId();
+        this.isPublished = activity.getIsPublished();
         this.createTime = activity.getCreateTime();
         this.updateTime = activity.getUpdateTime();
     }
@@ -258,6 +260,14 @@ public class ActivityDTO {
 
     public void setUpdateTime(LocalDateTime updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Boolean getIsPublished() {
+        return isPublished;
+    }
+
+    public void setIsPublished(Boolean isPublished) {
+        this.isPublished = isPublished;
     }
 }
 

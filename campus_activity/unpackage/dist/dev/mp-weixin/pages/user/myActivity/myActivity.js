@@ -45,7 +45,7 @@ const _sfc_main = {
         activeTab.value === "participated" ? activity_participated.value = activities : activity_managed.value = activities;
       }
     }
-    common_vendor.onMounted(() => {
+    common_vendor.onShow(() => {
       getJoinOrManangeActivityList();
     });
     return (_ctx, _cache) => {
@@ -78,8 +78,9 @@ const _sfc_main = {
         g: common_vendor.f(activity_managed.value, (item, k0, i0) => {
           return {
             a: item.id,
-            b: "73e68555-2-" + i0,
-            c: common_vendor.p({
+            b: common_vendor.o(getJoinOrManangeActivityList, item.id),
+            c: "73e68555-2-" + i0,
+            d: common_vendor.p({
               activeInfo: item
             })
           };

@@ -60,20 +60,20 @@ export const apiGetMemberReviewList = (data) => request({
 })
 
 // 审核人员
-export const apiMemberReview=(data)=>request({
-	url:'/activities/registrations/review',
+export const apiMemberReview = (data) => request({
+	url: '/activities/registrations/review',
 	method: 'POST',
 	data
 })
 
 // 审核活动列表
-export const apiActivityReviewList=()=>request({
-	url:'/activities/pending?bossUserId=8'
+export const apiActivityReviewList = () => request({
+	url: '/activities/pending?bossUserId=8'
 })
 
 // 活动审核
-export const apiActivityReview=(data)=>request({
-	url:'/activities/review',
+export const apiActivityReview = (data) => request({
+	url: '/activities/review',
 	method: 'POST',
 	data
 })
@@ -98,6 +98,13 @@ export const apiCheckinActivity = (data) => request({
 // 更新活动
 export const apiUpdateActivity = (data) => request({
 	url: '/activities/update',
+	method: 'PUT',
+	data
+})
+
+// 活动上下架
+export const apiUpdateActivityStatus = (id, data) => request({
+	url: `/activities/${id}/publish-status`,
 	method: 'PUT',
 	data
 })

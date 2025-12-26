@@ -2,6 +2,7 @@
 const common_vendor = require("../../../common/vendor.js");
 const api_club_index = require("../../../api/club/index.js");
 const api_activity_index = require("../../../api/activity/index.js");
+const utils_dateUtil = require("../../../utils/dateUtil.js");
 if (!Array) {
   const _easycom_uni_easyinput2 = common_vendor.resolveComponent("uni-easyinput");
   const _easycom_uni_forms_item2 = common_vendor.resolveComponent("uni-forms-item");
@@ -30,6 +31,8 @@ const _sfc_main = {
     const userId = common_vendor.index.getStorageSync("userInfo").id;
     const formRef = common_vendor.ref(null);
     const filePicker = common_vendor.ref(null);
+    const activityId = common_vendor.ref(null);
+    const isEditMode = common_vendor.computed(() => !!activityId.value);
     const form = common_vendor.reactive({
       name: "",
       description: "",
@@ -204,45 +207,142 @@ const _sfc_main = {
       }
     };
     function selectImageFile(e) {
-      form.imageUrls = e.tempFiles;
+      form.imageUrls.push(e.tempFiles);
     }
     async function successImageFile(e) {
-      let imageUrls = e.tempFiles.map((item) => item.url);
-      let fomData = {
-        ...form,
-        imageUrls,
-        registrationStartTime: form.signupRange[0],
-        registrationEndTime: form.signupRange[1],
-        startTime: form.activityRange[0],
-        endTime: form.activityRange[1],
-        needAudit: form.needReview == "1" ? true : false
-      };
-      let res = await api_activity_index.apiCreateActivity(fomData);
-      if (res.code == 200) {
-        common_vendor.index.hideLoading();
-        setTimeout(() => {
-          common_vendor.index.reLaunch({
-            url: "/pages/user/user"
-          });
+      let imageUrls = form.imageUrls.map((item) => item.url);
+      await submitForm(imageUrls);
+    }
+    async function submitForm(imageUrls) {
+      if (isEditMode.value) {
+        if (!imageUrls || imageUrls.length === 0) {
+          imageUrls = form.imageUrls.map((item) => item.url || item);
+        }
+        let updateData = {
+          activityId: activityId.value,
+          managerUserId: userId,
+          name: form.name,
+          description: form.description,
+          activityType: form.activityType,
+          location: form.location,
+          notice: form.notice,
+          registrationStartTime: utils_dateUtil.formatTime(form.signupRange[0]),
+          registrationEndTime: utils_dateUtil.formatTime(form.signupRange[1]),
+          startTime: utils_dateUtil.formatTime(form.activityRange[0]),
+          endTime: utils_dateUtil.formatTime(form.activityRange[1]),
+          maxParticipants: Number(form.maxParticipants),
+          needAudit: form.needReview == "1" ? true : false,
+          imageUrls
+        };
+        let res = await api_activity_index.apiUpdateActivity(updateData);
+        if (res.code == 200) {
+          common_vendor.index.hideLoading();
+          setTimeout(() => {
+            common_vendor.index.navigateBack();
+            common_vendor.index.showToast({
+              title: "编辑成功",
+              icon: "success"
+            });
+          }, 1e3);
+        } else {
+          common_vendor.index.hideLoading();
           common_vendor.index.showToast({
-            title: "创建成功",
-            icon: "success"
+            title: res.message || "编辑失败",
+            icon: "none"
           });
-        }, 1e3);
+        }
+      } else {
+        let fomData = {
+          ...form,
+          imageUrls,
+          registrationStartTime: form.signupRange[0],
+          registrationEndTime: form.signupRange[1],
+          startTime: form.activityRange[0],
+          endTime: form.activityRange[1],
+          needAudit: form.needReview == "1" ? true : false
+        };
+        let res = await api_activity_index.apiCreateActivity(fomData);
+        if (res.code == 200) {
+          common_vendor.index.hideLoading();
+          setTimeout(() => {
+            common_vendor.index.reLaunch({
+              url: "/pages/user/user"
+            });
+            common_vendor.index.showToast({
+              title: "创建成功",
+              icon: "success"
+            });
+          }, 1e3);
+        } else {
+          common_vendor.index.hideLoading();
+          common_vendor.index.showToast({
+            title: res.message || "创建失败",
+            icon: "none"
+          });
+        }
       }
     }
     const handleSubmit = async () => {
       try {
         await formRef.value.validate();
-        await filePicker.value.upload();
         common_vendor.index.showLoading();
+        const hasNewFiles = form.imageUrls.some((item) => !item.url || item.status === "ready");
+        if (hasNewFiles) {
+          await filePicker.value.upload();
+        } else {
+          await submitForm([]);
+        }
       } catch (e) {
+        common_vendor.index.hideLoading();
         common_vendor.index.showToast({
           title: "请完善信息",
           icon: "error"
         });
       }
     };
+    async function loadActivityData(id) {
+      var _a;
+      try {
+        const res = await api_activity_index.apiQueryActivity(id);
+        common_vendor.index.__f__("log", "at pages/user/publishActivity/publishActivity.vue:374", res);
+        if (res.code === 200 && ((_a = res.data) == null ? void 0 : _a.activity)) {
+          const activity = res.data.activity;
+          form.name = activity.name || "";
+          form.description = activity.description || "";
+          form.activityType = activity.activityType || "";
+          form.location = activity.location || "";
+          form.clubId = activity.clubId || "";
+          form.notice = activity.notice || "";
+          form.maxParticipants = String(activity.maxParticipants || "1");
+          form.needReview = activity.needAudit ? "1" : "0";
+          if (activity.registrationStartTime && activity.registrationEndTime) {
+            form.signupRange = [activity.registrationStartTime, activity.registrationEndTime];
+          }
+          if (activity.startTime && activity.endTime) {
+            form.activityRange = [activity.startTime, activity.endTime];
+          }
+          if (res.data.imageUrls && res.data.imageUrls.length > 0) {
+            form.imageUrls = res.data.imageUrls.map((url) => ({
+              url,
+              extname: "jpg",
+              name: "image.jpg"
+            }));
+          }
+        }
+      } catch (error) {
+        common_vendor.index.__f__("error", "at pages/user/publishActivity/publishActivity.vue:406", "加载活动数据失败:", error);
+        common_vendor.index.showToast({
+          title: "加载活动数据失败",
+          icon: "none"
+        });
+      }
+    }
+    common_vendor.onLoad((options) => {
+      if (options.id) {
+        activityId.value = options.id;
+        loadActivityData(options.id);
+      }
+    });
     common_vendor.onMounted(async () => {
       let res = await api_club_index.apiGetClubManageList(userId);
       organizerOptions.value = res.data.items;
@@ -297,6 +397,7 @@ const _sfc_main = {
         n: common_vendor.p({
           localdata: organizerOptions.value,
           placeholder: "请选择主办方",
+          disabled: isEditMode.value,
           modelValue: form.clubId
         }),
         o: common_vendor.p({
@@ -387,11 +488,12 @@ const _sfc_main = {
           name: "imageUrls",
           required: true
         }),
-        L: common_vendor.o(handleSubmit),
-        M: common_vendor.sr(formRef, "755b73c9-0", {
+        L: common_vendor.t(isEditMode.value ? "保存修改" : "提交"),
+        M: common_vendor.o(handleSubmit),
+        N: common_vendor.sr(formRef, "755b73c9-0", {
           "k": "formRef"
         }),
-        N: common_vendor.p({
+        O: common_vendor.p({
           modelValue: form,
           rules,
           ["label-position"]: "top",

@@ -2,6 +2,10 @@
 function formatTime(timestamp, format = "YYYY-MM-DD hh:mm:ss") {
   if (!timestamp)
     return "";
+  const datetimeRegex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
+  if (typeof timestamp === "string" && datetimeRegex.test(timestamp)) {
+    return timestamp;
+  }
   timestamp = Number(timestamp);
   if (timestamp.toString().length === 10) {
     timestamp *= 1e3;

@@ -125,11 +125,6 @@ public class ActivityController {
                 return Results.fail().message("活动不存在");
             }
 
-            // 验证活动是否已审核成功
-            if (activity.getAuditStatus() == null || activity.getAuditStatus() != 1) {
-                return Results.fail().message("只能编辑已审核成功的活动");
-            }
-
             // 校验是否为该社团管理员
             ClubMember member = clubMemberService.lambdaQuery()
                     .eq(ClubMember::getClubId, activity.getClubId())
@@ -416,6 +411,8 @@ public class ActivityController {
 
             // 排除已拒绝的活动（auditStatus = 2）
             wrapper.ne(Activity::getAuditStatus, 2);
+            // 只查询已上架的活动
+            wrapper.eq(Activity::getIsPublished, true);
 
             if (StringUtils.hasText(request.getKeyword())) {
                 wrapper.and(w -> w
@@ -485,8 +482,9 @@ public class ActivityController {
     public Results getHotActivities() {
         try {
             LambdaQueryWrapper<Activity> wrapper = new LambdaQueryWrapper<>();
-            // 只查询已通过审核的活动
+            // 只查询已通过审核且已上架的活动
             wrapper.eq(Activity::getAuditStatus, 1);
+            wrapper.eq(Activity::getIsPublished, true);
             
             List<Activity> activities = activityService.list(wrapper);
             
@@ -555,6 +553,8 @@ public class ActivityController {
             Page<Activity> page = new Page<>(currentPage, pageSize);
             LambdaQueryWrapper<Activity> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(Activity::getClubId, clubId);
+            // 只查询已上架的活动
+            wrapper.eq(Activity::getIsPublished, true);
             wrapper.orderByDesc(Activity::getCreateTime);
 
             IPage<Activity> result = activityService.page(page, wrapper);
@@ -607,11 +607,36 @@ public class ActivityController {
      * 根据活动ID查看活动详情
      */
     @GetMapping("/{id}")
-    public Results getActivityDetail(@PathVariable Long id) {
+    public Results getActivityDetail(@PathVariable Long id,
+                                    @RequestParam(value = "managerUserId", required = false) Long managerUserId) {
         try {
             Activity activity = activityService.getById(id);
             if (activity == null) {
                 return Results.fail().message("活动不存在");
+            }
+
+            // 如果活动已下架，验证是否为管理员
+            if (!Boolean.TRUE.equals(activity.getIsPublished())) {
+                boolean isAuthorized = false;
+                if (managerUserId != null) {
+                    User user = userService.getById(managerUserId);
+                    boolean isBoss = user != null && Boolean.TRUE.equals(user.getIsBoss());
+                    if (isBoss) {
+                        isAuthorized = true;
+                    } else {
+                        ClubMember member = clubMemberService.lambdaQuery()
+                                .eq(ClubMember::getClubId, activity.getClubId())
+                                .eq(ClubMember::getUserId, managerUserId)
+                                .one();
+                        if (member != null && Boolean.TRUE.equals(member.getIsManager())) {
+                            isAuthorized = true;
+                        }
+                    }
+                }
+                
+                if (!isAuthorized) {
+                    return Results.fail().message("活动已下架，无法查看");
+                }
             }
 
             // 进入详情时也根据时间刷新一次状态
@@ -655,6 +680,7 @@ public class ActivityController {
             activityMap.put("auditStatus", activity.getAuditStatus());
             activityMap.put("auditTime", activity.getAuditTime());
             activityMap.put("auditUserId", activity.getAuditUserId());
+            activityMap.put("isPublished", activity.getIsPublished());
             activityMap.put("createTime", activity.getCreateTime());
             activityMap.put("updateTime", activity.getUpdateTime());
 
@@ -695,6 +721,9 @@ public class ActivityController {
             }
             if (activity.getAuditStatus() == null || activity.getAuditStatus() != 1) {
                 return Results.fail().message("活动尚未通过审核，无法报名");
+            }
+            if (!Boolean.TRUE.equals(activity.getIsPublished())) {
+                return Results.fail().message("活动已下架，无法报名");
             }
 
             // 报名时间范围校验
@@ -1287,6 +1316,10 @@ public class ActivityController {
             if (activity.getAuditStatus() == null || activity.getAuditStatus() != 1) {
                 return Results.fail().message("活动尚未通过审核，无法签到");
             }
+            // 验证活动是否已上架
+            if (!Boolean.TRUE.equals(activity.getIsPublished())) {
+                return Results.fail().message("活动已下架，无法签到");
+            }
 
             // 验证用户是否报名且审核通过
             ActivityRegistration registration = activityRegistrationService.lambdaQuery()
@@ -1395,6 +1428,74 @@ public class ActivityController {
         } else {
             // 即便状态未变化，也保证其他字段更新（例如审核时间等）
             activityService.updateById(activity);
+        }
+    }
+
+    /**
+     * 上架/下架活动
+     * 只有社团管理员或超级管理员可以操作
+     * 
+     * @param activityId 活动ID
+     * @param request 请求参数，包含 managerUserId 和 isPublished
+     */
+    @PutMapping("/{activityId}/publish-status")
+    public Results updatePublishStatus(@PathVariable Long activityId,
+                                      @RequestBody Map<String, Object> request) {
+        try {
+            if (activityId == null) {
+                return Results.fail().message("活动ID不能为空");
+            }
+            
+            Long managerUserId = null;
+            Boolean isPublished = null;
+            
+            if (request.containsKey("managerUserId")) {
+                managerUserId = Long.valueOf(request.get("managerUserId").toString());
+            }
+            if (request.containsKey("isPublished")) {
+                isPublished = Boolean.valueOf(request.get("isPublished").toString());
+            }
+            
+            if (managerUserId == null || isPublished == null) {
+                return Results.fail().message("参数不完整，需要提供 managerUserId 和 isPublished");
+            }
+
+            Activity activity = activityService.getById(activityId);
+            if (activity == null) {
+                return Results.fail().message("活动不存在");
+            }
+
+            // 验证权限：超级管理员或该社团管理员
+            User user = userService.getById(managerUserId);
+            boolean isBoss = user != null && Boolean.TRUE.equals(user.getIsBoss());
+            
+            if (!isBoss) {
+                // 如果不是超级管理员，验证是否为该社团管理员
+                ClubMember member = clubMemberService.lambdaQuery()
+                        .eq(ClubMember::getClubId, activity.getClubId())
+                        .eq(ClubMember::getUserId, managerUserId)
+                        .one();
+                if (member == null || member.getIsManager() == null || !member.getIsManager()) {
+                    return Results.fail().message("无权限操作该活动");
+                }
+            }
+
+            // 只有审核通过的活动才能上架
+            if (Boolean.TRUE.equals(isPublished)) {
+                if (activity.getAuditStatus() == null || activity.getAuditStatus() != 1) {
+                    return Results.fail().message("活动尚未通过审核，无法上架");
+                }
+            }
+
+            activity.setIsPublished(isPublished);
+            activityService.updateById(activity);
+
+            String message = Boolean.TRUE.equals(isPublished) ? "活动上架成功" : "活动下架成功";
+            return Results.success()
+                    .message(message)
+                    .data("activity", activity);
+        } catch (Exception e) {
+            return Results.fail().message("操作失败: " + e.getMessage());
         }
     }
 }
