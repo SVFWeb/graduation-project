@@ -1199,7 +1199,7 @@ GET /api/activities/club/1?currentPage=1&pageSize=10
 **请求参数** (查询参数):
 - `managerUserId`: 管理员用户ID（可选），如果提供且用户是管理员，可以查看已下架的活动
 
-**说明**: 返回活动实体信息，并额外返回解析好的图片URL数组。活动信息中包含 `currentParticipants` 字段，表示当前已通过的报名人数。普通用户无法查看已下架的活动，管理员可以查看。
+**说明**: 返回活动实体信息，并额外返回解析好的图片URL数组。活动信息中包含 `currentParticipants` 字段，表示当前已通过的报名人数。活动信息中还包含 `commentedMembers` 字段，表示进行了文字评价的成员列表。普通用户无法查看已下架的活动，管理员可以查看。
 
 **响应示例**:
 ```json
@@ -1214,6 +1214,26 @@ GET /api/activities/club/1?currentPage=1&pageSize=10
       "description": "活动描述",
       "maxParticipants": 100,
       "currentParticipants": 35,
+      "commentedMembers": [
+        {
+          "userId": 3,
+          "realName": "张三",
+          "studentNo": "2021001",
+          "avatarUrl": "http://example.com/avatar.jpg",
+          "comment": "活动非常棒，组织得很好！",
+          "score": 95,
+          "commentTime": 1704067200000
+        },
+        {
+          "userId": 5,
+          "realName": "李四",
+          "studentNo": "2021002",
+          "avatarUrl": null,
+          "comment": "学到了很多东西",
+          "score": 88,
+          "commentTime": 1704153600000
+        }
+      ],
       ...
     },
     "imageUrls": [
@@ -1226,6 +1246,14 @@ GET /api/activities/club/1?currentPage=1&pageSize=10
 
 **说明**:
 - `currentParticipants`: 当前已通过的报名人数（统计状态为"已通过"的报名记录）
+- `commentedMembers`: 进行了文字评价的成员列表，包含以下字段：
+  - `userId`: 用户ID
+  - `realName`: 用户真实姓名
+  - `studentNo`: 学号
+  - `avatarUrl`: 头像URL（可能为null）
+  - `comment`: 文字评价内容
+  - `score`: 评分（可能为null，如果用户只提供了文字评价）
+  - `commentTime`: 评论时间戳（毫秒），表示用户提交评价的时间
 - `isPublished`: 是否上架（true-上架，false-下架）
 - 普通用户无法查看已下架的活动（`isPublished = false`），会返回："活动已下架，无法查看"
 - 管理员（超级管理员或该活动主办社团的管理员）可以查看已下架的活动
@@ -1442,14 +1470,49 @@ GET /api/activities/1/qrcode
 
 **接口**: `POST /api/activities/comment`
 
-**说明**: 当前仅支持评分（0-100），如需文字评价需在数据库中新增字段。
+**说明**: 支持评分（0-100）和文字评价。评分和文字评价至少需要提供一个。用户只能评价一次，不能重复评价。**必须是活动结束且已签到的成员才能评价**。
 
 **请求参数**:
 ```json
 {
   "activityId": 1,
   "userId": 3,
+  "score": 95,
+  "comment": "活动非常棒，组织得很好！"
+}
+```
+
+**参数说明**:
+- `activityId`: 活动ID（必填）
+- `userId`: 用户ID（必填）
+- `score`: 评分（0-100，可选，但评分和文字评价至少需要提供一个）
+- `comment`: 文字评价（可选，最多1000字符，但评分和文字评价至少需要提供一个）
+
+**请求示例**（仅评分）:
+```json
+{
+  "activityId": 1,
+  "userId": 3,
   "score": 95
+}
+```
+
+**请求示例**（仅文字评价）:
+```json
+{
+  "activityId": 1,
+  "userId": 3,
+  "comment": "活动非常棒，组织得很好！"
+}
+```
+
+**请求示例**（评分+文字评价）:
+```json
+{
+  "activityId": 1,
+  "userId": 3,
+  "score": 95,
+  "comment": "活动非常棒，组织得很好！"
 }
 ```
 
@@ -1459,6 +1522,46 @@ GET /api/activities/1/qrcode
   "code": 200,
   "message": "评价成功",
   "success": true,
+  "data": {}
+}
+```
+
+**错误响应示例**（参数不完整）:
+```json
+{
+  "code": 400,
+  "message": "请至少提供评分或文字评价",
+  "success": false,
+  "data": {}
+}
+```
+
+**错误响应示例**（已评价过）:
+```json
+{
+  "code": 400,
+  "message": "您已经评价过该活动，不能重复评价",
+  "success": false,
+  "data": {}
+}
+```
+
+**错误响应示例**（文字评价过长）:
+```json
+{
+  "code": 400,
+  "message": "文字评价不能超过1000字符",
+  "success": false,
+  "data": {}
+}
+```
+
+**错误响应示例**（未签到）:
+```json
+{
+  "code": 400,
+  "message": "您未签到该活动，不能评价",
+  "success": false,
   "data": {}
 }
 ```

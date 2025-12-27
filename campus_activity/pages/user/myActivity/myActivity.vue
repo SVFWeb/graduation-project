@@ -18,12 +18,8 @@
 				</com-activity-item>
 			</view>
 			<view v-else>
-				<com-activity-item-managed 
-				v-for="item in activity_managed" 
-				:key="item.id" 
-				:activeInfo="item"
-				@updataActivityList="getJoinOrManangeActivityList"
-				>
+				<com-activity-item-managed v-for="item in activity_managed" :key="item.id" :activeInfo="item"
+					@updataActivityList="getJoinOrManangeActivityList">
 				</com-activity-item-managed>
 			</view>
 
@@ -38,7 +34,9 @@
 	import {
 		ref
 	} from 'vue'
-	import {onShow} from '@dcloudio/uni-app'
+	import {
+		onShow
+	} from '@dcloudio/uni-app'
 	import {
 		apiGetJoinOrManangeActivity
 	} from '@/api/activity/index.js'
@@ -62,8 +60,8 @@
 	function onSearch() {
 		getJoinOrManangeActivityList()
 	}
-	
-	function OnChangeActiveTab(tab){
+
+	function OnChangeActiveTab(tab) {
 		activeTab.value = tab
 		getJoinOrManangeActivityList()
 	}
@@ -73,13 +71,13 @@
 		let res = await apiGetJoinOrManangeActivity({
 			id: userId,
 			type: activeTab.value,
-			keyword:searchValue.value
+			keyword: searchValue.value
 		})
 		if (res.code == 200) {
 			let {
 				activities
 			} = res.data
-			
+
 			activeTab.value === 'participated' ? activity_participated.value = activities : activity_managed.value =
 				activities
 		}

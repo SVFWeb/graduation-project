@@ -3,7 +3,7 @@ package com.example.projectsystem.dto;
 import java.math.BigDecimal;
 
 /**
- * 人员评价活动请求（当前表结构仅支持评分，如需文字评价需在表中增加字段）
+ * 人员评价活动请求（支持评分和文字评价）
  */
 public class ActivityCommentRequest {
 
@@ -21,6 +21,11 @@ public class ActivityCommentRequest {
      * 评分（0-100）
      */
     private BigDecimal score;
+
+    /**
+     * 文字评价
+     */
+    private String comment;
 
     public Long getActivityId() {
         return activityId;
@@ -44,6 +49,14 @@ public class ActivityCommentRequest {
 
     public void setScore(BigDecimal score) {
         this.score = score;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }
 

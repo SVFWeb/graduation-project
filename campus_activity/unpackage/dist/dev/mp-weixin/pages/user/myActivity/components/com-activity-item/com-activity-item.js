@@ -20,6 +20,7 @@ const _sfc_main = {
     const userId = common_vendor.index.getStorageSync("userInfo").id;
     const rateActivityPopup = common_vendor.ref();
     const rateValue = common_vendor.ref(0);
+    const commentText = common_vendor.ref("");
     function onActivityDetail() {
       common_vendor.index.navigateTo({
         url: `/pages/activity/activityDetail/activityDetail?id=${props.activeInfo.id}`
@@ -41,7 +42,8 @@ const _sfc_main = {
       let res = await api_activity_index.apiActivityRate({
         activityId: props.activeInfo.id,
         userId,
-        score: rateValue.value
+        score: rateValue.value,
+        comment: commentText.value
       });
       if (res.code == 200) {
         common_vendor.index.showToast({
@@ -63,18 +65,24 @@ const _sfc_main = {
         h: common_vendor.o(onOpenRate),
         i: common_vendor.t(__props.activeInfo.status),
         j: common_vendor.o(onCloseRate),
-        k: common_vendor.t(rateValue.value),
+        k: common_vendor.t(rateValue.value.toFixed(1)),
         l: common_vendor.o(($event) => rateValue.value = $event),
         m: common_vendor.p({
-          size: "35",
+          size: "45",
           ["allow-half"]: true,
+          ["active-color"]: "#FF9500",
+          margin: 15,
           modelValue: rateValue.value
         }),
-        n: common_vendor.o(onGitRate),
-        o: common_vendor.sr(rateActivityPopup, "3405a3f7-0", {
+        n: commentText.value,
+        o: common_vendor.o(($event) => commentText.value = $event.detail.value),
+        p: rateValue.value > 0 ? 1 : "",
+        q: rateValue.value === 0,
+        r: common_vendor.o(onGitRate),
+        s: common_vendor.sr(rateActivityPopup, "3405a3f7-0", {
           "k": "rateActivityPopup"
         }),
-        p: common_vendor.p({
+        t: common_vendor.p({
           type: "bottom",
           ["background-color"]: "#fff"
         })

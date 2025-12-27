@@ -207,6 +207,7 @@
   color: #666;
 }
 .activityDetail .activityDetail_bottom .info_list.data-v-da156902 {
+  margin-bottom: 24rpx;
   background: #fff;
   border-radius: 16rpx;
   overflow: hidden;

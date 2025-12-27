@@ -38,6 +38,11 @@ public class ActivityRegistration implements Serializable {
      */
     private BigDecimal score;
 
+    /**
+     * 文字评价
+     */
+    private String comment;
+
     @TableField("audit_user_id")
     private Long auditUserId;
 

@@ -31,23 +31,44 @@
 
 		<uni-popup ref="rateActivityPopup" type="bottom" background-color="#fff">
 			<view class="popup_container">
-				<view class="title">
-					<view class="left">
-						综合评分
+				<view class="popup_header">
+					<view class="popup_title">
+						评分和留言
 					</view>
-					<view class="right" @click="onCloseRate">
-						取消
-					</view>
-				</view>
-				<view class="rate">
-					<view class="left">
-						你的评分：{{ rateValue }}
-					</view>
-					<view class="right">
-						<uni-rate size="35" allow-half v-model="rateValue" />
+					<view class="popup_close" @click="onCloseRate">
+						<view>取消</view>
 					</view>
 				</view>
-				<view class="btn" @click="onGitRate">确定</view>
+
+				<view class="popup_content">
+					<!-- 评分区域 -->
+					<view class="rate_section">
+						<view class="rate_label">
+							你的评分：
+							<text class="rate_value">{{ rateValue.toFixed(1) }}</text>
+							<text class="rate_max">/5.0</text>
+						</view>
+						<view class="rate_stars">
+							<uni-rate size="45" allow-half v-model="rateValue" active-color="#FF9500" :margin="15" />
+						</view>
+					</view>
+
+					<!-- 留言区域 -->
+					<view class="comment_section">
+						<view class="comment_label">
+							留言（选填）
+						</view>
+						<textarea class="comment_input" v-model="commentText" :maxlength="200"
+							placeholder="分享你的活动体验和建议..." placeholder-class="comment_placeholder" auto-height />
+					</view>
+				</view>
+
+				<view class="popup_footer">
+					<button class="submit_btn" :class="{ 'submit_btn_active': rateValue > 0 }"
+						:disabled="rateValue === 0" @click="onGitRate">
+						提交评价
+					</button>
+				</view>
 			</view>
 		</uni-popup>
 	</view>
@@ -66,6 +87,7 @@
 	const userId = uni.getStorageSync('userInfo').id
 	const rateActivityPopup = ref()
 	const rateValue = ref(0)
+	const commentText = ref('')
 
 	function onActivityDetail() {
 		uni.navigateTo({
@@ -93,7 +115,8 @@
 		let res = await apiActivityRate({
 			activityId: props.activeInfo.id,
 			userId: userId,
-			score: rateValue.value
+			score: rateValue.value,
+			comment:commentText.value
 		})
 
 		if (res.code == 200) {
@@ -243,32 +266,155 @@
 		}
 
 		.popup_container {
-			display: flex;
-			flex-direction: column;
-			padding: 20rpx 20rpx 0 20rpx;
-			width: 100vw;
-			height: 600rpx;
+			background: #ffffff;
+			border-radius: 32rpx 32rpx 0 0;
+			padding-bottom: env(safe-area-inset-bottom);
 
-			.title {
-				height: 90rpx;
+			.popup_header {
 				display: flex;
 				align-items: center;
 				justify-content: space-between;
-				border-bottom: 1px solid #e0e0e0;
+				padding: 32rpx 32rpx 24rpx;
+				border-bottom: 2rpx solid #f5f5f7;
+
+				.popup_title {
+					font-size: 34rpx;
+					font-weight: 600;
+					color: #1a1a1a;
+					line-height: 1.4;
+				}
+
+				.popup_close {
+					width: 64rpx;
+					height: 64rpx;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+
+					.icon-close {
+						font-size: 28rpx;
+						color: #8e8e93;
+					}
+				}
 			}
 
-			.rate {
-				flex: 1;
-				display: flex;
-				align-items: center;
-				justify-content: space-between;
+			.popup_content {
+				padding: 32rpx;
+
+				.rate_section {
+					margin-bottom: 48rpx;
+
+					.rate_label {
+						font-size: 28rpx;
+						color: #8e8e93;
+						margin-bottom: 32rpx;
+
+						.rate_value {
+							font-size: 44rpx;
+							font-weight: 700;
+							color: #1a1a1a;
+							margin: 0 8rpx;
+						}
+
+						.rate_max {
+							font-size: 24rpx;
+							color: #c7c7cc;
+						}
+					}
+
+					.rate_stars {
+						display: flex;
+						justify-content: center;
+
+						::v-deep .uni-rate {
+							.uni-rate__icon {
+								transition: transform 0.2s ease;
+
+								&:active {
+									transform: scale(1.2);
+								}
+							}
+						}
+					}
+				}
+
+				.comment_section {
+					.comment_label {
+						display: flex;
+						justify-content: space-between;
+						align-items: center;
+						font-size: 28rpx;
+						color: #1a1a1a;
+						font-weight: 500;
+						margin-bottom: 20rpx;
+
+						.comment_count {
+							font-size: 24rpx;
+							color: #c7c7cc;
+							font-weight: normal;
+						}
+					}
+
+					.comment_input {
+						width: 100%;
+						min-height: 200rpx;
+						padding: 24rpx;
+						background: #f8f8fa;
+						border-radius: 20rpx;
+						font-size: 28rpx;
+						color: #1a1a1a;
+						line-height: 1.5;
+						box-sizing: border-box;
+						transition: all 0.3s ease;
+
+						&:focus {
+							background: #fff;
+							box-shadow: 0 0 0 4rpx rgba($uni-topic-color, 0.1);
+						}
+					}
+
+					.comment_placeholder {
+						color: #c7c7cc;
+						font-size: 28rpx;
+					}
+				}
 			}
 
-			.btn {
-				border-top: 1px solid #e0e0e0;
-				text-align: center;
-				height: 90rpx;
-				line-height: 90rpx;
+			.popup_footer {
+				padding: 0 32rpx 32rpx;
+
+				.submit_btn {
+					width: 100%;
+					height: 88rpx;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					border-radius: 24rpx;
+					font-size: 32rpx;
+					font-weight: 600;
+					color: #ffffff;
+					background: linear-gradient(135deg, #c7c7cc, #d1d1d6);
+					transition: all 0.3s ease;
+					border: none;
+
+					// 禁用状态
+					&[disabled] {
+						opacity: 0.5;
+						background: linear-gradient(135deg, #c7c7cc, #d1d1d6) !important;
+						box-shadow: none !important;
+					}
+
+					// 激活状态
+					&_active:not([disabled]) {
+						background: linear-gradient(135deg, $uni-topic-color, lighten($uni-topic-color, 10%));
+						box-shadow: 0 8rpx 32rpx rgba($uni-topic-color, 0.25);
+
+						&:active {
+							transform: scale(0.98);
+							box-shadow: 0 4rpx 16rpx rgba($uni-topic-color, 0.2);
+						}
+					}
+				}
 			}
 		}
 	}

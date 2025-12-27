@@ -684,6 +684,34 @@ public class ActivityController {
             activityMap.put("createTime", activity.getCreateTime());
             activityMap.put("updateTime", activity.getUpdateTime());
 
+            // 查询进行了文字评价的成员列表
+            List<ActivityRegistration> commentedRegistrations = activityRegistrationService.lambdaQuery()
+                    .eq(ActivityRegistration::getActivityId, id)
+                    .eq(ActivityRegistration::getStatus, "已通过")
+                    .isNotNull(ActivityRegistration::getComment)
+                    .ne(ActivityRegistration::getComment, "")
+                    .list();
+            
+            List<Map<String, Object>> commentedMembers = new ArrayList<>();
+            for (ActivityRegistration reg : commentedRegistrations) {
+                User user = userService.getById(reg.getUserId());
+                if (user != null) {
+                    Map<String, Object> memberInfo = new HashMap<>();
+                    memberInfo.put("userId", user.getId());
+                    memberInfo.put("realName", user.getRealName());
+                    memberInfo.put("studentNo", user.getStudentNo());
+                    memberInfo.put("avatarUrl", user.getAvatarUrl());
+                    memberInfo.put("comment", reg.getComment());
+                    memberInfo.put("score", reg.getScore());
+                    // 添加评论时间戳（毫秒）
+                    memberInfo.put("commentTime", reg.getUpdateTime() != null
+                            ? reg.getUpdateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                            : null);
+                    commentedMembers.add(memberInfo);
+                }
+            }
+            activityMap.put("commentedMembers", commentedMembers);
+
             // 解析图片 URL 数组给前端更友好一些
             if (StringUtils.hasText(activity.getImageUrls())) {
                 List<String> urls = Arrays.stream(activity.getImageUrls().split(","))
@@ -789,13 +817,17 @@ public class ActivityController {
     }
 
     /**
-     * 人员评价活动（当前仅支持评分）
+     * 人员评价活动（支持评分和文字评价）
      */
     @PostMapping("/comment")
     public Results commentActivity(@RequestBody ActivityCommentRequest request) {
         try {
-            if (request.getActivityId() == null || request.getUserId() == null || request.getScore() == null) {
+            if (request.getActivityId() == null || request.getUserId() == null) {
                 return Results.fail().message("参数不完整");
+            }
+            // 评分和文字评价至少需要提供一个
+            if (request.getScore() == null && (request.getComment() == null || request.getComment().trim().isEmpty())) {
+                return Results.fail().message("请至少提供评分或文字评价");
             }
             Activity activity = activityService.getById(request.getActivityId());
             if (activity == null) {
@@ -822,17 +854,39 @@ public class ActivityController {
                 return Results.fail().message("报名未通过，不能评价");
             }
 
+            // 检查用户是否已签到（必须是活动结束且已签到的成员才能评价）
+            ActivityCheckin checkin = activityCheckinService.lambdaQuery()
+                    .eq(ActivityCheckin::getActivityId, request.getActivityId())
+                    .eq(ActivityCheckin::getUserId, request.getUserId())
+                    .one();
+            if (checkin == null) {
+                return Results.fail().message("您未签到该活动，不能评价");
+            }
+
             // Check if the user has already commented
-            if (registration.getScore() != null) {
+            if (registration.getScore() != null || (registration.getComment() != null && !registration.getComment().trim().isEmpty())) {
                 return Results.fail().message("您已经评价过该活动，不能重复评价");
             }
 
-            BigDecimal score = request.getScore();
-            if (score.compareTo(BigDecimal.ZERO) < 0 || score.compareTo(new BigDecimal("100")) > 0) {
-                return Results.fail().message("评分范围应在0-100之间");
+            // 处理评分
+            if (request.getScore() != null) {
+                BigDecimal score = request.getScore();
+                if (score.compareTo(BigDecimal.ZERO) < 0 || score.compareTo(new BigDecimal("100")) > 0) {
+                    return Results.fail().message("评分范围应在0-100之间");
+                }
+                registration.setScore(score);
             }
 
-            registration.setScore(score);
+            // 处理文字评价
+            if (request.getComment() != null && !request.getComment().trim().isEmpty()) {
+                String comment = request.getComment().trim();
+                // 限制文字评价长度，例如最多1000字符
+                if (comment.length() > 1000) {
+                    return Results.fail().message("文字评价不能超过1000字符");
+                }
+                registration.setComment(comment);
+            }
+
             activityRegistrationService.updateById(registration);
 
             // 计算活动平均评分（仅统计已通过且已评分的报名记录），保留1位小数

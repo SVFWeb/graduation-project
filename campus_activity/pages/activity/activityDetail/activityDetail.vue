@@ -118,12 +118,26 @@
 							<view class="info_value rating">{{ activityInfo?.score }}</view>
 						</view>
 					</view>
+
+					<view class="detail_section" v-if="activityInfo?.status==='已结束'">
+						<view class="section_title">活动留言</view>
+						<view class="section_content">
+							<uni-list  v-if="commentedMembersList.length!=0" border>
+								<uni-list-chat  v-for="item in commentedMembersList" 
+								:key="item.userId" 
+								:title="item.realName"
+									:avatar="item.avatarUrl"
+									:note="item.comment" :time="formatTime(item.commentTime)"></uni-list-chat>
+							</uni-list>
+							<view v-else>暂无评论</view>
+						</view>
+					</view>
 				</view>
 			</scroll-view>
 		</view>
 
 		<!-- 底部操作栏 -->
-		<view v-if="!isReview" class="activityDetail_btn">
+		<view v-if="!isReview&&activityInfo?.status!='已结束'" class="activityDetail_btn">
 			<view class="operation_btn">
 
 			</view>
@@ -133,18 +147,18 @@
 			</view>
 		</view>
 
-		<view v-else class="activityDetail_btn activityDetail_btn--review">
-		  <view class="review_action review_action--reject" @click="handleReview(false)">
-		    <uni-icons type="closeempty" size="24" color="#fff"></uni-icons>
-		    <text class="action_text">拒绝</text>
-		  </view>
-		  
-		  <view class="review_divider"></view>
-		  
-		  <view class="review_action review_action--approve" @click="handleReview(true)">
-		    <uni-icons type="checkmarkempty" size="24" color="#fff"></uni-icons>
-		    <text class="action_text">同意</text>
-		  </view>
+		<view v-if="isReview&&activityInfo?.status!='已结束'" class="activityDetail_btn activityDetail_btn--review">
+			<view class="review_action review_action--reject" @click="handleReview(false)">
+				<uni-icons type="closeempty" size="24" color="#fff"></uni-icons>
+				<text class="action_text">拒绝</text>
+			</view>
+
+			<view class="review_divider"></view>
+
+			<view class="review_action review_action--approve" @click="handleReview(true)">
+				<uni-icons type="checkmarkempty" size="24" color="#fff"></uni-icons>
+				<text class="action_text">同意</text>
+			</view>
 		</view>
 	</view>
 
@@ -177,6 +191,7 @@
 	const isReview = ref(false)
 	const popup = ref(null)
 	const activityInfo = ref(null)
+	const commentedMembersList=ref([])
 	const currentSwiper = ref(0)
 	const isCollected = ref(true)
 	const bannerList = ref([])
@@ -195,6 +210,7 @@
 		let res = await apiQueryActivity(props.id)
 		bannerList.value = res.data.imageUrls
 		activityInfo.value = res.data.activity
+		commentedMembersList.value=res.data.activity.commentedMembers
 		let clubRes = await apiGetClubDetail(res.data.activity.clubId)
 		clubInfo.value = clubRes.data.club
 	}
@@ -217,25 +233,25 @@
 			}, 1000)
 		}
 	}
-	
-	function handleReview(value){
+
+	function handleReview(value) {
 		uni.showModal({
 			title: '提示',
-			content: value?'确认通过此活动吗？':'确认拒绝此活动吗？',
-			success: async function (res) {
+			content: value ? '确认通过此活动吗？' : '确认拒绝此活动吗？',
+			success: async function(res) {
 				if (res.confirm) {
-					let res= await apiActivityReview({
+					let res = await apiActivityReview({
 						activityId: props.id,
-						auditUserId:userId ,
+						auditUserId: userId,
 						pass: value
 					})
-					
-					if(res.code==200){
+
+					if (res.code == 200) {
 						uni.showToast({
 							icon: 'success',
-							title: value?'通过成功':'拒绝成功'
+							title: value ? '通过成功' : '拒绝成功'
 						})
-						
+
 						setTimeout(() => {
 							uni.navigateBack()
 						}, 1000)
@@ -252,7 +268,7 @@
 		// 上一个页面（如果存在）
 		const prevPage = pages[pages.length - 2];
 
-		if (prevPage.route === 'pages/user/clubReview/clubReview') {
+		if (prevPage?.route === 'pages/user/clubReview/clubReview') {
 			isReview.value = true
 		}
 	})
@@ -479,6 +495,7 @@
 			}
 
 			.info_list {
+				margin-bottom: 24rpx;
 				background: #fff;
 				border-radius: 16rpx;
 				overflow: hidden;
@@ -630,58 +647,58 @@
 				border-radius: 40rpx;
 				box-shadow: 0 8rpx 24rpx rgba($uni-topic-color, 0.3);
 			}
-		
-			   &.activityDetail_btn--review {
-			       padding: 0 40rpx;
-			       height: 140rpx;
-			       background: #fff;
-			       box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.1);
-			       
-			       .review_action {
-			         flex: 1;
-			         height: 80rpx;
-			         display: flex;
-			         align-items: center;
-			         justify-content: center;
-			         border-radius: 40rpx;
-			         font-size: 0;
-			         
-			         uni-icons {
-			           margin-right: 12rpx;
-			         }
-			         
-			         .action_text {
-			           font-size: 28rpx;
-			           font-weight: 600;
-			         }
-			         
-			         &--reject {
-			           background: linear-gradient(135deg, #FF6B6B, #FF4757);
-			           color: #fff;
-			           box-shadow: 0 6rpx 16rpx rgba(255, 107, 107, 0.3);
-			           
-			           &:active {
-			             background: linear-gradient(135deg, #FF4757, #FF3838);
-			             transform: translateY(2rpx);
-			           }
-			         }
-			         
-			         &--approve {
-			           background: linear-gradient(135deg, #4CAF50, #2E7D32);
-			           color: #fff;
-			           box-shadow: 0 6rpx 16rpx rgba(76, 175, 80, 0.3);
-			           
-			           &:active {
-			             background: linear-gradient(135deg, #43A047, #1B5E20);
-			             transform: translateY(2rpx);
-			           }
-			         }
-			       }
-			       
-			       .review_divider {
-			         width: 40rpx;
-			       }
-			     }
+
+			&.activityDetail_btn--review {
+				padding: 0 40rpx;
+				height: 140rpx;
+				background: #fff;
+				box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.1);
+
+				.review_action {
+					flex: 1;
+					height: 80rpx;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					border-radius: 40rpx;
+					font-size: 0;
+
+					uni-icons {
+						margin-right: 12rpx;
+					}
+
+					.action_text {
+						font-size: 28rpx;
+						font-weight: 600;
+					}
+
+					&--reject {
+						background: linear-gradient(135deg, #FF6B6B, #FF4757);
+						color: #fff;
+						box-shadow: 0 6rpx 16rpx rgba(255, 107, 107, 0.3);
+
+						&:active {
+							background: linear-gradient(135deg, #FF4757, #FF3838);
+							transform: translateY(2rpx);
+						}
+					}
+
+					&--approve {
+						background: linear-gradient(135deg, #4CAF50, #2E7D32);
+						color: #fff;
+						box-shadow: 0 6rpx 16rpx rgba(76, 175, 80, 0.3);
+
+						&:active {
+							background: linear-gradient(135deg, #43A047, #1B5E20);
+							transform: translateY(2rpx);
+						}
+					}
+				}
+
+				.review_divider {
+					width: 40rpx;
+				}
+			}
 		}
 	}
 </style>
