@@ -88,6 +88,16 @@ export const apiGetRegistrationStatistics = (data) => request({
 	url: `/activities/${data.activityId}/statistics?managerUserId=${data.managerUserId}`,
 })
 
+// 获取签到统计
+export const apiGetCheckinStatistics = (data) => request({
+	url: `/activities/${data.activityId}/checkin-statistics?managerUserId=${data.managerUserId}`,
+})
+
+// 获取评分统计
+export const apiGetScoreStatistics = (data) => request({
+	url: `/activities/${data.activityId}/score-statistics?managerUserId=${data.managerUserId}`,
+})
+
 // 扫码签到
 export const apiCheckinActivity = (data) => request({
 	url: '/activities/checkin',

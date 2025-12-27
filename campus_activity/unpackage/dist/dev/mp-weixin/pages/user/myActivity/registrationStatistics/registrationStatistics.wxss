@@ -27,8 +27,8 @@
   min-height: 100vh;
   padding: 30rpx;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: 30rpx;
 }
 .chart-container.data-v-cee11be1 {
   background: rgba(255, 255, 255, 0.95);
@@ -39,6 +39,7 @@
           backdrop-filter: blur(10rpx);
   width: 100%;
   max-width: 800rpx;
+  margin: 0 auto;
 }
 .chart-title.data-v-cee11be1 {
   font-size: 32rpx;
@@ -76,16 +77,22 @@
 }
 .chart-info text.data-v-cee11be1 {
   flex: 1;
-  min-width: 250rpx;
+  min-width: 200rpx;
   font-size: 26rpx;
   color: #34495e;
   font-weight: 500;
   text-align: center;
   padding: 15rpx 0;
 }
-.chart-info text.data-v-cee11be1:first-child {
+.chart-info text.data-v-cee11be1:nth-child(1) {
   color: #667eea;
 }
-.chart-info text.data-v-cee11be1:last-child {
+.chart-info text.data-v-cee11be1:nth-child(2) {
   color: #764ba2;
+}
+.chart-info text.data-v-cee11be1:nth-child(3) {
+  color: #52C41A;
+}
+.chart-info text.data-v-cee11be1:nth-child(4) {
+  color: #FFA500;
 }

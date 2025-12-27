@@ -29,7 +29,7 @@
 					url:`/pages/user/myActivity/registrationStatistics/registrationStatistics?id=${props.activeInfo.id}`
 				})
 			}">
-				报名统计
+				活动统计
 			</view>
 			<view class="btn_item" @click="editActivity">
 				活动编辑

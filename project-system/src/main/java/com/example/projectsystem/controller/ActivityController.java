@@ -871,8 +871,8 @@ public class ActivityController {
             // 处理评分
             if (request.getScore() != null) {
                 BigDecimal score = request.getScore();
-                if (score.compareTo(BigDecimal.ZERO) < 0 || score.compareTo(new BigDecimal("100")) > 0) {
-                    return Results.fail().message("评分范围应在0-100之间");
+                if (score.compareTo(BigDecimal.ZERO) < 0 || score.compareTo(new BigDecimal("5")) > 0) {
+                    return Results.fail().message("评分范围应在0-5之间");
                 }
                 registration.setScore(score);
             }
@@ -1092,6 +1092,169 @@ public class ActivityController {
             statistics.put("successRate", successRate);
             statistics.put("maxParticipants", activity.getMaxParticipants());
             statistics.put("currentParticipants", activity.getCurrentParticipants());
+
+            return Results.success()
+                    .message("查询成功")
+                    .data("statistics", statistics);
+        } catch (Exception e) {
+            return Results.fail().message("查询失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取单个活动的签到统计（用于ECharts饼图）
+     */
+    @GetMapping("/{activityId}/checkin-statistics")
+    public Results getCheckinStatistics(@PathVariable Long activityId,
+                                       @RequestParam("managerUserId") Long managerUserId) {
+        try {
+            Activity activity = activityService.getById(activityId);
+            if (activity == null) {
+                return Results.fail().message("活动不存在");
+            }
+
+            // 校验是否为该社团管理员
+            ClubMember member = clubMemberService.lambdaQuery()
+                    .eq(ClubMember::getClubId, activity.getClubId())
+                    .eq(ClubMember::getUserId, managerUserId)
+                    .one();
+            if (member == null || member.getIsManager() == null || !member.getIsManager()) {
+                return Results.fail().message("无权限查看该活动统计信息");
+            }
+
+            // 统计已通过审核的报名人数（这些人有资格签到）
+            long approvedCount = activityRegistrationService.lambdaQuery()
+                    .eq(ActivityRegistration::getActivityId, activityId)
+                    .eq(ActivityRegistration::getStatus, "已通过")
+                    .count();
+
+            // 统计已签到人数
+            long checkedInCount = activityCheckinService.lambdaQuery()
+                    .eq(ActivityCheckin::getActivityId, activityId)
+                    .count();
+
+            // 未签到人数 = 已通过审核人数 - 已签到人数
+            long notCheckedInCount = approvedCount - checkedInCount;
+
+            // 签到率
+            double checkinRate = 0.0;
+            if (approvedCount > 0) {
+                checkinRate = (double) checkedInCount / approvedCount * 100;
+                checkinRate = new BigDecimal(checkinRate).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            }
+
+            // 构建返回数据
+            Map<String, Object> statistics = new HashMap<>();
+            statistics.put("activityInfo", new ActivityDTO(activity));
+            statistics.put("checkedIn", checkedInCount);
+            statistics.put("notCheckedIn", notCheckedInCount);
+            statistics.put("totalApproved", approvedCount);
+            statistics.put("checkinRate", checkinRate);
+
+            return Results.success()
+                    .message("查询成功")
+                    .data("statistics", statistics);
+        } catch (Exception e) {
+            return Results.fail().message("查询失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取单个活动的评分统计（用于ECharts柱状图或饼图）
+     */
+    @GetMapping("/{activityId}/score-statistics")
+    public Results getScoreStatistics(@PathVariable Long activityId,
+                                     @RequestParam("managerUserId") Long managerUserId) {
+        try {
+            Activity activity = activityService.getById(activityId);
+            if (activity == null) {
+                return Results.fail().message("活动不存在");
+            }
+
+            // 校验是否为该社团管理员
+            ClubMember member = clubMemberService.lambdaQuery()
+                    .eq(ClubMember::getClubId, activity.getClubId())
+                    .eq(ClubMember::getUserId, managerUserId)
+                    .one();
+            if (member == null || member.getIsManager() == null || !member.getIsManager()) {
+                return Results.fail().message("无权限查看该活动统计信息");
+            }
+
+            // 查询所有已通过审核且有评分的报名记录
+            List<ActivityRegistration> scoredRegistrations = activityRegistrationService.lambdaQuery()
+                    .eq(ActivityRegistration::getActivityId, activityId)
+                    .eq(ActivityRegistration::getStatus, "已通过")
+                    .isNotNull(ActivityRegistration::getScore)
+                    .list();
+
+            // 按分数段统计：0.5-1.0, 1.5-2.0, 2.5-3.0, 3.5-4.0, 4.5-5.0
+            long score05_10 = 0;
+            long score15_20 = 0;
+            long score25_30 = 0;
+            long score35_40 = 0;
+            long score45_50 = 0;
+
+            BigDecimal totalScore = BigDecimal.ZERO;
+            int scoredCount = scoredRegistrations.size();
+
+            for (ActivityRegistration reg : scoredRegistrations) {
+                BigDecimal score = reg.getScore();
+                if (score != null) {
+                    totalScore = totalScore.add(score);
+                    double scoreValue = score.doubleValue();
+                    if (scoreValue >= 0.5 && scoreValue <= 1.0) {
+                        score05_10++;
+                    } else if (scoreValue >= 1.5 && scoreValue <= 2.0) {
+                        score15_20++;
+                    } else if (scoreValue >= 2.5 && scoreValue <= 3.0) {
+                        score25_30++;
+                    } else if (scoreValue >= 3.5 && scoreValue <= 4.0) {
+                        score35_40++;
+                    } else if (scoreValue >= 4.5 && scoreValue <= 5.0) {
+                        score45_50++;
+                    }
+                }
+            }
+
+            // 计算平均分
+            BigDecimal averageScore = BigDecimal.ZERO;
+            if (scoredCount > 0) {
+                averageScore = totalScore.divide(BigDecimal.valueOf(scoredCount), 2, RoundingMode.HALF_UP);
+            }
+
+            // 统计已通过审核的总人数
+            long totalApproved = activityRegistrationService.lambdaQuery()
+                    .eq(ActivityRegistration::getActivityId, activityId)
+                    .eq(ActivityRegistration::getStatus, "已通过")
+                    .count();
+
+            // 未评分人数
+            long notScoredCount = totalApproved - scoredCount;
+
+            // 评分率
+            double scoreRate = 0.0;
+            if (totalApproved > 0) {
+                scoreRate = (double) scoredCount / totalApproved * 100;
+                scoreRate = new BigDecimal(scoreRate).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            }
+
+            // 构建分数段统计数据
+            Map<String, Object> scoreDistribution = new HashMap<>();
+            scoreDistribution.put("0.5-1.0", score05_10);
+            scoreDistribution.put("1.5-2.0", score15_20);
+            scoreDistribution.put("2.5-3.0", score25_30);
+            scoreDistribution.put("3.5-4.0", score35_40);
+            scoreDistribution.put("4.5-5.0", score45_50);
+
+            // 构建返回数据
+            Map<String, Object> statistics = new HashMap<>();
+            statistics.put("activityInfo", new ActivityDTO(activity));
+            statistics.put("scoreDistribution", scoreDistribution);
+            statistics.put("averageScore", averageScore);
+            statistics.put("scoredCount", scoredCount);
+            statistics.put("notScoredCount", notScoredCount);
+            statistics.put("totalApproved", totalApproved);
+            statistics.put("scoreRate", scoreRate);
 
             return Results.success()
                     .message("查询成功")

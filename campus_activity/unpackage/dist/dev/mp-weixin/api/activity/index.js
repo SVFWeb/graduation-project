@@ -54,6 +54,12 @@ const apiActivityReview = (data) => utils_request.request({
 const apiGetRegistrationStatistics = (data) => utils_request.request({
   url: `/activities/${data.activityId}/statistics?managerUserId=${data.managerUserId}`
 });
+const apiGetCheckinStatistics = (data) => utils_request.request({
+  url: `/activities/${data.activityId}/checkin-statistics?managerUserId=${data.managerUserId}`
+});
+const apiGetScoreStatistics = (data) => utils_request.request({
+  url: `/activities/${data.activityId}/score-statistics?managerUserId=${data.managerUserId}`
+});
 const apiCheckinActivity = (data) => utils_request.request({
   url: "/activities/checkin",
   method: "POST",
@@ -76,11 +82,13 @@ exports.apiCheckinActivity = apiCheckinActivity;
 exports.apiCreateActivity = apiCreateActivity;
 exports.apiGetActivityList = apiGetActivityList;
 exports.apiGetActiviyStatus = apiGetActiviyStatus;
+exports.apiGetCheckinStatistics = apiGetCheckinStatistics;
 exports.apiGetClubActivity = apiGetClubActivity;
 exports.apiGetHotActivity = apiGetHotActivity;
 exports.apiGetJoinOrManangeActivity = apiGetJoinOrManangeActivity;
 exports.apiGetMemberReviewList = apiGetMemberReviewList;
 exports.apiGetRegistrationStatistics = apiGetRegistrationStatistics;
+exports.apiGetScoreStatistics = apiGetScoreStatistics;
 exports.apiJoinActivity = apiJoinActivity;
 exports.apiMemberReview = apiMemberReview;
 exports.apiQueryActivity = apiQueryActivity;
