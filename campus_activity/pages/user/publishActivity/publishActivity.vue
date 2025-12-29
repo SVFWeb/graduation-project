@@ -371,7 +371,6 @@
 	async function loadActivityData(id) {
 		try {
 			const res = await apiQueryActivity(id)
-			console.log(res);
 			if (res.code === 200 && res.data?.activity) {
 				const activity = res.data.activity
 				

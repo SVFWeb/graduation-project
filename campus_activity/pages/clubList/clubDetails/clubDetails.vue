@@ -26,7 +26,8 @@
 		<view class="clubDatails_activity">
 			<view class="title">社团活动</view>
 			<view class="activity_list">
-				<com-activity-item v-if="activityList.length!=0" v-for="item in activityList" :activiyInfo="item"></com-activity-item>
+				<com-activity-item v-if="activityList.length!=0" v-for="item in activityList"
+					:activiyInfo="item"></com-activity-item>
 				<view>社团暂无活动</view>
 			</view>
 		</view>
@@ -42,7 +43,7 @@
 		<view class="scroll-view">
 			<scroll-view class="scroll-view-box" scroll-y>
 				<uni-list>
-					<uni-list-item clickable style="height: 170rpx;" v-for="item in userList" :key="item.userId"
+					<uni-list-item :clickable="isBoss" style="height: 170rpx;" v-for="item in userList" :key="item.userId"
 						:title="item.user.realName"
 						:note="item.user.schoolName+item.user.collegeName+item.user.className"
 						:thumb="item.user.avatarUrl" thumb-size="lg" @click="onShowSettingManagerDialog(item.userId)">
@@ -57,7 +58,7 @@
 		</view>
 	</uni-drawer>
 
-	<uni-popup  ref="settingManagerDialog" type="dialog">
+	<uni-popup ref="settingManagerDialog" type="dialog">
 		<uni-popup-dialog type="info" confirmText="设置" cancelText="取消" content="是否设置该成员为管理员"
 			@confirm="settingManager" />
 	</uni-popup>
@@ -79,7 +80,14 @@
 		apiGetJoinClubUserList,
 		apiSettingClubManager
 	} from '@/api/club/index.js'
-	import { apiGetClubActivity } from '@/api/activity/index.js'
+	import {
+		apiGetClubActivity
+	} from '@/api/activity/index.js'
+	import useUserPermission from '@/hooks/useUserPermission';
+
+	const {
+		isBoss
+	} = useUserPermission()
 
 	const props = defineProps({
 		info: {
@@ -91,7 +99,7 @@
 	const alertDialog = ref(null)
 	const settingManagerDialog = ref(null)
 	const showRight = ref(null)
-	const activityList=ref([])
+	const activityList = ref([])
 	const clubInfo = ref([])
 	const userList = ref([])
 	const userInfo = ref(uni.getStorageSync('userInfo'))
@@ -112,13 +120,13 @@
 				icon: 'success',
 				title: res.message
 			})
-			
-			
-			setTimeout(()=>{
+
+
+			setTimeout(() => {
 				uni.reLaunch({
-					url:'/pages/clubList/clubList'
+					url: '/pages/clubList/clubList'
 				})
-			},1500)
+			}, 1500)
 		}
 	}
 
@@ -131,7 +139,6 @@
 
 	function onShowSettingManagerDialog(id) {
 		settingManagerUserid.value = id
-		settingManagerDialog.value?.open()
 		showRight.value?.close()
 	}
 
@@ -149,11 +156,11 @@
 			})
 		}
 	}
-	
-	async function getClubActivity(){
-		let res= await apiGetClubActivity(clubInfo.value.id)
+
+	async function getClubActivity() {
+		let res = await apiGetClubActivity(clubInfo.value.id)
 		if (res.code == 200) {
-			activityList.value= res.data.page.records
+			activityList.value = res.data.page.records
 		}
 	}
 
@@ -169,8 +176,8 @@
 			clubInfo.value = JSON.parse(decodeURIComponent(rawInfo))
 		}
 	})
-	
-	onMounted(()=>{
+
+	onMounted(() => {
 		getClubActivity()
 	})
 </script>

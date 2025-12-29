@@ -1,6 +1,7 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
 const common_assets = require("../../common/assets.js");
+const hooks_useUserPermission = require("../../hooks/useUserPermission.js");
 if (!Array) {
   const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
   const _easycom_uni_popup_dialog2 = common_vendor.resolveComponent("uni-popup-dialog");
@@ -19,6 +20,7 @@ const _sfc_main = {
   setup(__props) {
     const token = common_vendor.index.getStorageSync("token");
     const userInfo = common_vendor.index.getStorageSync("userInfo");
+    const { isBoss, isManager } = hooks_useUserPermission.useUserPermission();
     const logoutPopup = common_vendor.ref(null);
     function onOutLogin() {
       var _a;
@@ -54,82 +56,97 @@ const _sfc_main = {
         i: common_vendor.o(() => common_vendor.index.navigateTo({
           url: "/pages/user/userInfo/userInfo"
         })),
-        j: common_vendor.p({
+        j: common_vendor.unref(isManager)
+      }, common_vendor.unref(isManager) ? {
+        k: common_vendor.p({
           type: "plusempty",
           size: "24",
           color: "#fff"
         }),
-        k: common_vendor.o(() => common_vendor.index.navigateTo({
+        l: common_vendor.o(() => common_vendor.index.navigateTo({
           url: "/pages/user/publishActivity/publishActivity"
-        })),
-        l: common_vendor.p({
-          type: "plusempty",
-          size: "24",
-          color: "#fff"
-        }),
-        m: common_vendor.o(() => common_vendor.index.navigateTo({
-          url: "/pages/user/createClub/createClub"
-        })),
+        }))
+      } : {}, {
+        m: common_vendor.unref(isBoss)
+      }, common_vendor.unref(isBoss) ? {
         n: common_vendor.p({
           type: "plusempty",
           size: "24",
           color: "#fff"
         }),
         o: common_vendor.o(() => common_vendor.index.navigateTo({
+          url: "/pages/user/createClub/createClub"
+        }))
+      } : {}, {
+        p: common_vendor.unref(isBoss)
+      }, common_vendor.unref(isBoss) ? {
+        q: common_vendor.p({
+          type: "plusempty",
+          size: "24",
+          color: "#fff"
+        }),
+        r: common_vendor.o(() => common_vendor.index.navigateTo({
           url: "/pages/user/createClass/createClass"
-        })),
-        p: common_vendor.p({
+        }))
+      } : {}, {
+        s: common_vendor.unref(isBoss)
+      }, common_vendor.unref(isBoss) ? {
+        t: common_vendor.p({
           type: "calendar",
           size: "24",
           color: "#fff"
         }),
-        q: common_vendor.o(($event) => common_vendor.index.navigateTo({
+        v: common_vendor.o(($event) => common_vendor.index.navigateTo({
           url: "/pages/user/clubReview/clubReview"
-        })),
-        r: common_vendor.p({
+        }))
+      } : {}, {
+        w: common_vendor.p({
           type: "star",
           size: "24",
           color: "#fff"
         }),
-        s: common_vendor.o(() => {
+        x: common_vendor.o(() => {
           common_vendor.index.navigateTo({
             url: "/pages/user/myActivity/myActivity"
           });
         }),
-        t: common_vendor.p({
+        y: common_vendor.p({
           type: "medal",
           size: "24",
           color: "#fff"
         }),
-        v: common_vendor.o(() => {
+        z: common_vendor.o(() => {
           common_vendor.index.navigateTo({
             url: `/pages/user/myClub/myClub?id=${common_vendor.unref(userInfo).id}`
           });
         }),
-        w: common_vendor.p({
+        A: common_vendor.unref(isBoss)
+      }, common_vendor.unref(isBoss) ? {
+        B: common_vendor.p({
           type: "contact",
           size: "24",
           color: "#fff"
         }),
-        x: common_vendor.o(() => common_vendor.index.navigateTo({
+        C: common_vendor.o(() => common_vendor.index.navigateTo({
           url: "/pages/user/classList/classList"
-        })),
-        y: common_vendor.unref(token)
-      }, common_vendor.unref(token) ? {
-        z: common_vendor.o(onOutLogin)
+        }))
       } : {}, {
-        A: common_vendor.o(confirmLogout),
-        B: common_vendor.p({
+        D: common_vendor.unref(token)
+      }, common_vendor.unref(token) ? {
+        E: common_vendor.o(onOutLogin)
+      } : {}, {
+        F: common_vendor.o(confirmLogout),
+        G: common_vendor.p({
           type: "info",
           title: "退出登录",
           content: "确认退出当前账号？",
           confirmText: "退出",
           cancelText: "取消"
         }),
-        C: common_vendor.sr(logoutPopup, "0f7520f0-8", {
+        H: common_vendor.sr(logoutPopup, "0f7520f0-8", {
           "k": "logoutPopup"
         }),
-        D: common_vendor.p({
+        I: common_vendor.p({
           type: "dialog",
           ["background-color"]: "#fff"
         })

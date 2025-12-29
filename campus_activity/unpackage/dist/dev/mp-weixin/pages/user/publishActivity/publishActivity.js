@@ -304,7 +304,6 @@ const _sfc_main = {
       var _a;
       try {
         const res = await api_activity_index.apiQueryActivity(id);
-        common_vendor.index.__f__("log", "at pages/user/publishActivity/publishActivity.vue:374", res);
         if (res.code === 200 && ((_a = res.data) == null ? void 0 : _a.activity)) {
           const activity = res.data.activity;
           form.name = activity.name || "";
@@ -330,7 +329,7 @@ const _sfc_main = {
           }
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/user/publishActivity/publishActivity.vue:406", "加载活动数据失败:", error);
+        common_vendor.index.__f__("error", "at pages/user/publishActivity/publishActivity.vue:405", "加载活动数据失败:", error);
         common_vendor.index.showToast({
           title: "加载活动数据失败",
           icon: "none"

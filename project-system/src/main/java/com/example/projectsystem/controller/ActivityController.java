@@ -615,29 +615,8 @@ public class ActivityController {
                 return Results.fail().message("活动不存在");
             }
 
-            // 如果活动已下架，验证是否为管理员
-            if (!Boolean.TRUE.equals(activity.getIsPublished())) {
-                boolean isAuthorized = false;
-                if (managerUserId != null) {
-                    User user = userService.getById(managerUserId);
-                    boolean isBoss = user != null && Boolean.TRUE.equals(user.getIsBoss());
-                    if (isBoss) {
-                        isAuthorized = true;
-                    } else {
-                        ClubMember member = clubMemberService.lambdaQuery()
-                                .eq(ClubMember::getClubId, activity.getClubId())
-                                .eq(ClubMember::getUserId, managerUserId)
-                                .one();
-                        if (member != null && Boolean.TRUE.equals(member.getIsManager())) {
-                            isAuthorized = true;
-                        }
-                    }
-                }
-                
-                if (!isAuthorized) {
-                    return Results.fail().message("活动已下架，无法查看");
-                }
-            }
+            // 允许查看所有活动的详情，不管是否上架
+            // 上架/下架状态只影响活动列表的显示，不影响查看详情
 
             // 进入详情时也根据时间刷新一次状态
             refreshActivityStatusByTime(activity);

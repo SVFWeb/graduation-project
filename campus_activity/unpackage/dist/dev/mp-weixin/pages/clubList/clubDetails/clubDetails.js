@@ -2,6 +2,7 @@
 const common_vendor = require("../../../common/vendor.js");
 const api_club_index = require("../../../api/club/index.js");
 const api_activity_index = require("../../../api/activity/index.js");
+const hooks_useUserPermission = require("../../../hooks/useUserPermission.js");
 if (!Array) {
   const _easycom_uni_popup_dialog2 = common_vendor.resolveComponent("uni-popup-dialog");
   const _easycom_uni_popup2 = common_vendor.resolveComponent("uni-popup");
@@ -30,6 +31,9 @@ const _sfc_main = {
     }
   },
   setup(__props) {
+    const {
+      isBoss
+    } = hooks_useUserPermission.useUserPermission();
     const props = __props;
     const alertDialog = common_vendor.ref(null);
     const settingManagerDialog = common_vendor.ref(null);
@@ -67,10 +71,9 @@ const _sfc_main = {
       }
     }
     function onShowSettingManagerDialog(id) {
-      var _a, _b;
+      var _a;
       settingManagerUserid.value = id;
-      (_a = settingManagerDialog.value) == null ? void 0 : _a.open();
-      (_b = showRight.value) == null ? void 0 : _b.close();
+      (_a = showRight.value) == null ? void 0 : _a.close();
     }
     async function settingManager() {
       let res = await api_club_index.apiSettingClubManager({
@@ -157,7 +160,7 @@ const _sfc_main = {
             g: common_vendor.o(($event) => onShowSettingManagerDialog(item.userId), item.userId),
             h: "e409fb66-5-" + i0 + ",e409fb66-4",
             i: common_vendor.p({
-              clickable: true,
+              clickable: common_vendor.unref(isBoss),
               title: item.user.realName,
               note: item.user.schoolName + item.user.collegeName + item.user.className,
               thumb: item.user.avatarUrl,

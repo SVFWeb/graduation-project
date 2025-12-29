@@ -31,7 +31,7 @@
 					<text class="quick-label">基本信息</text>
 				</view>
 				<!-- 发布活动 -->
-				<view class="quick-item" @click="() => uni.navigateTo({
+				<view v-if="isManager" class="quick-item" @click="() => uni.navigateTo({
 					url: '/pages/user/publishActivity/publishActivity'
 				})">
 					<view class="quick-icon purple">
@@ -40,7 +40,7 @@
 					<text class="quick-label">发布活动</text>
 				</view>
 				<!-- 创建社团 -->
-				<view class="quick-item" @click="()=>uni.navigateTo({
+				<view v-if="isBoss" class="quick-item" @click="()=>uni.navigateTo({
 					url:'/pages/user/createClub/createClub'
 				})">
 					<view class="quick-icon blue">
@@ -49,7 +49,7 @@
 					<text class="quick-label">创建社团</text>
 				</view>
 				<!-- 创建班级 -->
-				<view class="quick-item" @click="() => uni.navigateTo({
+				<view v-if="isBoss" class="quick-item" @click="() => uni.navigateTo({
 					url: '/pages/user/createClass/createClass'
 				})">
 					<view class="quick-icon grey">
@@ -64,8 +64,8 @@
 		<view class="services-section">
 			<text class="section-title">我的服务</text>
 			<view class="services-grid">
-				<!-- 待办事项 -->
-				<view class="service-item" @click="uni.navigateTo({
+				<!-- 活动审核 -->
+				<view v-if="isBoss" class="service-item" @click="uni.navigateTo({
 					url:'/pages/user/clubReview/clubReview'
 				})">
 					<view class="service-icon blue">
@@ -99,7 +99,7 @@
 				</view>
 
 				<!-- 班级列表 -->
-				<view class="service-item" @click="() => uni.navigateTo({
+				<view v-if="isBoss" class="service-item" @click="() => uni.navigateTo({
 					url: '/pages/user/classList/classList'
 				})">
 					<view class="service-icon red">
@@ -129,9 +129,11 @@ import {
 	ref
 } from 'vue';
 import customTabbar from '@/components/custom-tabbar/custom-tabbar.vue';
+import useUserPermission from '@/hooks/useUserPermission.js'
 
 const token = uni.getStorageSync('token')
 const userInfo = uni.getStorageSync('userInfo')
+const { isBoss,isManager }=useUserPermission()
 
 const logoutPopup = ref(null)
 
